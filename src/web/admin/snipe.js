@@ -7,7 +7,7 @@ export default class Snipe extends React.Component{
 
 	render(){
 		return (
-			<h1>Snipe</h1>
+			<h1>this is Snipe</h1>
 		);
 	}
 }

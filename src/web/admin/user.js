@@ -7,7 +7,7 @@ export default class User extends React.Component{
 
 	render(){
 		return (
-			<h1>User</h1>
+			<h1>this is User page</h1>
 		);
 	}
 }

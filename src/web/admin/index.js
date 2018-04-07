@@ -1,21 +1,24 @@
 import React from 'react'
 import ReactDOM from 'react-dom'
 import { BrowserRouter, Route } from 'react-router-dom'
+import Nav from '../common/nav'
+import Snipe from './snipe'
+import User from './user'
 
 const PrimaryLayout = () => (
   <div className="primary-layout">
     <header>
-      Admin Our React Router 4 App
+      <Nav items={[
+        {text:'Snipe',href:'/admin/snipe'},
+        {text:'User',href:'/admin/user'}
+        ]} />
     </header>
     <main>
-      <Route path="/admin/" exact component={HomePage} />
-      <Route path="/admin/u" component={UsersPage} />
+      <Route path="/admin/snipe" exact component={Snipe} />
+      <Route path="/admin/user" component={User} />
     </main>
   </div>
 )
-
-const HomePage =() => <div>admin Home Page</div>
-const UsersPage = () => <div>admin Users Page</div>
 
 const App = () => (
   <BrowserRouter>
