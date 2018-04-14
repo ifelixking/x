@@ -1,0 +1,62 @@
+//m_storage.Open();
+
+//string[] urlWithTags = {
+//	"http://1024.917rbb.pw/pw/thread.php?fid=3", "",
+//	"http://1024.917rbb.pw/pw/thread.php?fid=5", "亚洲;无码",
+//	"http://1024.917rbb.pw/pw/thread.php?fid=22","日本;有码",
+//	"http://1024.917rbb.pw/pw/thread.php?fid=7", "欧美;无码",
+//	"http://1024.917rbb.pw/pw/thread.php?fid=30","日本",
+//	"http://1024.917rbb.pw/pw/thread.php?fid=37","",
+//	"http://1024.917rbb.pw/pw/thread.php?fid=79","",
+//	"http://1024.917rbb.pw/pw/thread.php?fid=81","",
+//	"http://1024.917rbb.pw/pw/thread.php?fid=83","",
+//};
+//// const string pageVar = "page";
+//const string pathPage = "div:#main/div:@4/table/tbody/tr/td:@0/div/div/a:@-1";
+//const string strContainer = "table:#ajaxtable/tbody:@1";
+//const string strItor = "tr";
+//var attrList = new PathAttribute[]{
+//	new PathAttribute(){ pathElement = "td:@1/h3/a".Split('/'), attributeName = "innerText" },
+//	new PathAttribute(){ pathElement = "td:@1/h3/a".Split('/'), attributeName = "href" },
+//	new PathAttribute(){ pathElement = "td:@4/a".Split('/'), attributeName = "innerText" }
+//};
+
+//int pageNumber = 1;
+//for (var i = 0; i < urlWithTags.Length; i += 2) {
+//	if (OnProcessSite != null) { OnProcessSite(i, urlWithTags.Length >> 1, urlWithTags[i]); }
+
+//	string tags = urlWithTags[i + 1];
+
+//	string url = Sniper.mergeUrlParam(urlWithTags[i], pageVar, pageNumber.ToString());
+//	if (OnProcessPage != null) { OnProcessPage(pageNumber, pageNumber, url); }
+//	var doc = Sniper.retryGetDocument(url);
+
+//	// 获得页数
+//	int pageCount;
+//	{
+//		var elePage = Sniper.stepToElement(doc, null, pathPage.Split('/'));
+//		IHTMLDOMNode node = ((IHTMLDOMNode)elePage).nextSibling;
+//		var pageText = node.nodeValue as string;
+//		var a = pageText.Substring(pageText.IndexOf('/') + 1);
+//		var b = a.Substring(0, a.IndexOf(' '));
+//		pageCount = int.Parse(b);
+//	}
+//	if (OnProcessPage != null) { OnProcessPage(pageNumber, pageCount, url); }
+
+//	for (;;) {
+//		var eleContainer = Sniper.getElementItor(doc, strContainer, strItor);
+//		var result = getElementAttr(doc, eleContainer, attrList);
+//		m_storage.AddPage(result.Select((item) => {
+//			DateTime date; DateTime.TryParse(item[2], out date);
+//			return new Storage.Page() { title = item[0], url = item[1], tags = tags, date = date, sniper = SNIPER_LIST_CODE };
+//		}));
+//		if (++pageNumber <= pageCount) {
+//			url = Sniper.mergeUrlParam(urlWithTags[i], pageVar, pageNumber.ToString());
+//			if (OnProcessPage != null) { OnProcessPage(pageNumber, pageCount, url); }
+//			doc = Sniper.retryGetDocument(url);
+//		} else { break; }
+//	}
+//	pageNumber = 1;
+//}
+
+//m_storage.Close();
