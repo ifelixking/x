@@ -26,7 +26,8 @@ namespace Snipe
 			public int sniper;
 		}
 
-		public class Art{
+		public class Art
+		{
 			public long id;
 			public long pageID;
 			public string text;
@@ -104,11 +105,14 @@ namespace Snipe
 			}
 		}
 
-		public List<Page> GetAllUnprocessPage(int sniperCode)
+		public List<Page> GetAllUnprocessPage(int[] sniperCodes)
 		{
+			if (sniperCodes == null || sniperCodes.Length == 0) { return new List<Page>(); }
 			List<Page> result = new List<Page>();
 			using (var cmd = m_conn.CreateCommand()) {
-				cmd.CommandText = string.Format("SELECT id, url, tags FROM page WHERE processed=0 AND sniper={0}", sniperCode);
+				cmd.CommandText = sniperCodes.Length == 1 ?
+					string.Format("SELECT id, url, tags FROM page WHERE processed=0 AND sniper={0}", sniperCodes[0]) :
+					string.Format("SELECT id, url, tags FROM page WHERE processed=0 AND sniper in [{0}]", string.Join(",", sniperCodes));
 				using (var reader = cmd.ExecuteReader()) {
 					int idxID = reader.GetOrdinal("id");
 					int idxURL = reader.GetOrdinal("url");
@@ -121,15 +125,16 @@ namespace Snipe
 		}
 
 		// 可子线程调用
-		public void AddPageArt(Page page, List<Art> arts) {
-			using (var cmd = m_conn.CreateCommand()){
-				{	
+		public void AddPageArt(Page page, List<Art> arts)
+		{
+			using (var cmd = m_conn.CreateCommand()) {
+				{
 					cmd.CommandText = "INSERT INTO art(pageID, text, downloads, images) VALUES(@pageID, @text, @downloads, @images)";
 					var pPageID = cmd.CreateParameter(); pPageID.ParameterName = "@pageID"; pPageID.Value = page.id; cmd.Parameters.Add(pPageID);
 					var pText = cmd.CreateParameter(); pText.ParameterName = "@text"; cmd.Parameters.Add(pText);
 					var pDownloads = cmd.CreateParameter(); pDownloads.ParameterName = "@downloads"; cmd.Parameters.Add(pDownloads);
 					var pImages = cmd.CreateParameter(); pImages.ParameterName = "@images"; cmd.Parameters.Add(pImages);
-					foreach (var art in arts){
+					foreach (var art in arts) {
 						pText.Value = art.text; pDownloads.Value = art.downloads; pImages.Value = art.images;
 						cmd.ExecuteNonQuery();
 					}
@@ -144,5 +149,53 @@ namespace Snipe
 			}
 		}
 
+		// 去重
+		public int DistinctPageByURL()
+		{
+			List<long> deleteIDs;
+			using (var cmd = m_conn.CreateCommand()) {
+				// 找到重复的 url
+				cmd.CommandText = "SELECT url, COUNT(*) AS c FROM page GROUP BY url ORDER BY c DESC";
+				List<string> duplicateURLs = new List<string>();
+				int duplicateCount = 0;
+				using (var reader = cmd.ExecuteReader()) {
+					int idxURL = reader.GetOrdinal("url");
+					int idxC = reader.GetOrdinal("c");
+					while (reader.Read()) {
+						int count = reader.GetInt32(idxC);
+						if (count == 1) { break; }
+						duplicateURLs.Add(reader.GetString(idxURL));
+						duplicateCount += (count - 1);
+					}
+				}
+				// 计算出需要删除的 ID 列表
+				deleteIDs = new List<long>(duplicateCount);
+				cmd.CommandText = "SELECT id FROM page WHERE url=@url";
+				var pURL = cmd.CreateParameter(); pURL.ParameterName = "@url"; cmd.Parameters.Add(pURL);
+				foreach (var url in duplicateURLs) {
+					pURL.Value = url;
+					using (var reader = cmd.ExecuteReader()) {
+						int idxID = reader.GetOrdinal("id");
+						reader.Read();      // 排除第一个
+						while (reader.Read()) {
+							deleteIDs.Add(reader.GetInt64(idxID));
+						}
+					}
+				}
+			}
+			// 执行删除
+			using (var trans = m_conn.BeginTransaction()) {
+				using (var cmd = m_conn.CreateCommand()) {
+					cmd.CommandText = "DELETE FROM page WHERE id=@id";
+					var pID = cmd.CreateParameter(); pID.ParameterName = "@id"; cmd.Parameters.Add(pID);
+					foreach (var id in deleteIDs) {
+						pID.Value = id;
+						cmd.ExecuteNonQuery();
+					}
+				}
+				trans.Commit();
+			}
+			return deleteIDs.Count;
+		}
 	}
 }

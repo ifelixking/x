@@ -13,13 +13,24 @@ namespace Snipe
 
 		protected override IEnumerable<UrlTask> GetUrlTaskList()
 		{
-			// return m_storage.GetAllUnprocessPage(Sniper_list_xp1024.SNIPER_LIST_CODE).Select(a => new UrlTask() { param = a, url = a.url });
-			return null;
+			var codes = new int[] { 1001, 1002, 1003, 1004, 1005, 1006, 1007, 1008, 1009, };
+			Storage storage = new Storage(); storage.Open();
+			var result = storage.GetAllUnprocessPage(codes).Select(a => new UrlTask() { param = a, url = a.url });
+			storage.Close();
+			return result;
 		}
 
 		protected override void processDoc(HTMLDocumentClass doc, Storage storage, object param)
 		{
 			Storage.Page page = param as Storage.Page;
+			List<Storage.Art> arts = new List<Storage.Art>();
+
+			switch (page.sniper) {
+				case 1001:{
+					
+				}break;
+			}
+			storage.AddPageArt(page, arts);
 		}
 	}
 }

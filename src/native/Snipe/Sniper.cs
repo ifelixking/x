@@ -19,8 +19,7 @@ namespace Snipe
 			public string url;
 			public object param;
 		}
-
-		// protected Storage m_storage;
+		
 		private ConcurrentQueue<UrlTask> m_queuePage;
 		private int m_queueItemTotalCount;
 		private int m_threadCount;
@@ -33,18 +32,12 @@ namespace Snipe
 
 		public delegate void FinishHandler(bool mainThreadRequest);
 		public event FinishHandler OnFinish;
-
-		public Sniper()
-		{
-			// m_storage = new Storage();
-		}
-
+		
 		public virtual void Run()
 		{
 			int threadCount = 8;
 			EMIT_LOG("parallel task, thread count {0}", threadCount);
 			m_threadCount = threadCount;
-			// m_storage.Open();
 			m_queuePage = new ConcurrentQueue<UrlTask>(this.GetUrlTaskList());
 			m_queueItemTotalCount = m_queuePage.Count;
 			for (var i = 0; i < threadCount; ++i) {

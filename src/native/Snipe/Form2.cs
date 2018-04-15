@@ -47,5 +47,14 @@ namespace Snipe
 			label1.Text = string.Format("{0}/{1}", value, max);
 			if (mainThreadRequest) { Application.DoEvents(); }
 		}
+
+		private void button2_Click(object sender, EventArgs e)
+		{
+			Storage storage = new Storage();
+			storage.Open();
+			var count = storage.DistinctPageByURL();
+			storage.Close();
+			MessageBox.Show(string.Format("删除了 {0} 条重复 Page", count));
+		}
 	}
 }
