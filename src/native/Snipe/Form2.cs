@@ -24,6 +24,7 @@ namespace Snipe
 			sn.OnProgress += Sn_OnProgress;
 			sn.OnLog += Sn_OnLog;
 			sn.OnFinish += Sn_OnFinish;
+			m_sn = sn;
 			sn.Run();
 		}
 
@@ -55,6 +56,25 @@ namespace Snipe
 			var count = storage.DistinctPageByURL();
 			storage.Close();
 			MessageBox.Show(string.Format("删除了 {0} 条重复 Page", count));
+		}
+
+		Sniper m_sn = null;
+
+		private void button3_Click(object sender, EventArgs e)
+		{
+			var sn = new Sniper_detail_xp1024();
+			sn.OnProgress += Sn_OnProgress;
+			sn.OnLog += Sn_OnLog;
+			sn.OnFinish += Sn_OnFinish;
+			sn.Run();
+			m_sn = sn;
+		}
+
+		private void button4_Click(object sender, EventArgs e)
+		{
+			if (m_sn != null){
+				m_sn.AddThread();
+			}
 		}
 	}
 }

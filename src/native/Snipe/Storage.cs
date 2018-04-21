@@ -35,6 +35,12 @@ namespace Snipe
 			public string images;
 		}
 
+		public struct URL
+		{
+			public string text;
+			public string href;
+		}
+
 		private DbConnection m_conn;
 
 		public Storage()
@@ -42,12 +48,15 @@ namespace Snipe
 			m_conn = null;
 		}
 
+		private Dictionary<String, long> m_dicTag = new Dictionary<string, long>();
+
 		public void Open()
 		{
 			if (m_conn != null) { Close(); }
 			string connStr = "server=localhost;user=root;database=x;port=3306;password=000000";
 			m_conn = new MySqlConnection(connStr);
 			m_conn.Open();
+			m_dicTag = GetAllTag();
 		}
 
 		public void Close()
@@ -111,13 +120,14 @@ namespace Snipe
 			List<Page> result = new List<Page>();
 			using (var cmd = m_conn.CreateCommand()) {
 				cmd.CommandText = sniperCodes.Length == 1 ?
-					string.Format("SELECT id, url, tags FROM page WHERE processed=0 AND sniper={0}", sniperCodes[0]) :
-					string.Format("SELECT id, url, tags FROM page WHERE processed=0 AND sniper in [{0}]", string.Join(",", sniperCodes));
+					string.Format("SELECT id, url, tags, sniper FROM page WHERE processed=0 AND sniper={0}", sniperCodes[0]) :
+					string.Format("SELECT id, url, tags, sniper FROM page WHERE processed=0 AND sniper in ({0})", string.Join(",", sniperCodes));
 				using (var reader = cmd.ExecuteReader()) {
 					int idxID = reader.GetOrdinal("id");
 					int idxURL = reader.GetOrdinal("url");
 					int idxTags = reader.GetOrdinal("tags");
-					while (reader.Read()) { result.Add(new Page() { id = reader.GetInt64(idxID), url = reader.GetString(idxURL), tags = reader.GetString(idxTags) }); }
+					int idxSniper = reader.GetOrdinal("sniper");
+					while (reader.Read()) { result.Add(new Page() { id = reader.GetInt64(idxID), url = reader.GetString(idxURL), tags = reader.GetString(idxTags), sniper = reader.GetInt32(idxSniper) }); }
 					reader.Close();
 				}
 			}
@@ -128,7 +138,7 @@ namespace Snipe
 		public void AddPageArt(Page page, List<Art> arts)
 		{
 			using (var cmd = m_conn.CreateCommand()) {
-				{
+				if (arts.Count > 0) {
 					cmd.CommandText = "INSERT INTO art(pageID, text, downloads, images) VALUES(@pageID, @text, @downloads, @images)";
 					var pPageID = cmd.CreateParameter(); pPageID.ParameterName = "@pageID"; pPageID.Value = page.id; cmd.Parameters.Add(pPageID);
 					var pText = cmd.CreateParameter(); pText.ParameterName = "@text"; cmd.Parameters.Add(pText);
@@ -141,7 +151,7 @@ namespace Snipe
 				}
 				cmd.Parameters.Clear();
 				{
-					cmd.CommandText = "UPDAE page SET processed=1, artCount=@artCount WHERE id=@id";
+					cmd.CommandText = "UPDATE page SET processed=1, artCount=@artCount WHERE id=@id";
 					var pArtCount = cmd.CreateParameter(); pArtCount.ParameterName = "@artCount"; cmd.Parameters.Add(pArtCount); pArtCount.Value = arts.Count;
 					var pID = cmd.CreateParameter(); pID.ParameterName = "@id"; cmd.Parameters.Add(pID); pID.Value = page.id;
 					cmd.ExecuteNonQuery();
@@ -197,5 +207,6 @@ namespace Snipe
 			}
 			return deleteIDs.Count;
 		}
+
 	}
 }

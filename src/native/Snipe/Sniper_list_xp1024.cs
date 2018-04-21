@@ -28,11 +28,11 @@ namespace Snipe
 			new EntryPage(){ url ="http://1024.917rbb.pw/pw/thread.php?fid=5",  sniperCode = 1002, pathPage="div:#main/div:@3/table/tbody/tr/td:@0/div/div/a:@-1", tags = "亚洲;无码" },
 			new EntryPage(){ url ="http://1024.917rbb.pw/pw/thread.php?fid=22", sniperCode = 1003, pathPage="div:#main/div:@3/table/tbody/tr/td:@0/div/div/a:@-1", tags = "日本;有码" },
 			new EntryPage(){ url ="http://1024.917rbb.pw/pw/thread.php?fid=7",  sniperCode = 1004, pathPage="div:#main/div:@3/table/tbody/tr/td:@0/div/div/a:@-1", tags = "欧美;无码" },
-			new EntryPage(){ url ="http://1024.917rbb.pw/pw/thread.php?fid=30", sniperCode = 1005, pathPage="div:#main/div:@3/table/tbody/tr/td:@0/div/div/a:@-1", tags = "日本" },
-			new EntryPage(){ url ="http://1024.917rbb.pw/pw/thread.php?fid=37", sniperCode = 1006, pathPage="div:#main/div:@3/table/tbody/tr/td:@0/div/div/a:@-1", tags = "" },
+			// new EntryPage(){ url ="http://1024.917rbb.pw/pw/thread.php?fid=30", sniperCode = 1005, pathPage="div:#main/div:@3/table/tbody/tr/td:@0/div/div/a:@-1", tags = "日本" },
+			// new EntryPage(){ url ="http://1024.917rbb.pw/pw/thread.php?fid=37", sniperCode = 1006, pathPage="div:#main/div:@3/table/tbody/tr/td:@0/div/div/a:@-1", tags = "" },
 			new EntryPage(){ url ="http://1024.917rbb.pw/pw/thread.php?fid=79", sniperCode = 1007, pathPage="div:#main/div:@4/table/tbody/tr/td:@0/div/div/a:@-1", tags = "" },
 			new EntryPage(){ url ="http://1024.917rbb.pw/pw/thread.php?fid=81", sniperCode = 1008, pathPage="div:#main/div:@3/table/tbody/tr/td:@0/div/div/a:@-1", tags = "" },
-			new EntryPage(){ url ="http://1024.917rbb.pw/pw/thread.php?fid=83", sniperCode = 1009, pathPage="div:#main/div:@3/table/tbody/tr/td:@0/div/div/a:@-1", tags = "" },
+			// new EntryPage(){ url ="http://1024.917rbb.pw/pw/thread.php?fid=83", sniperCode = 1009, pathPage="div:#main/div:@3/table/tbody/tr/td:@0/div/div/a:@-1", tags = "" },
 		};
 		private List<TaskInfo> m_taskList = new List<TaskInfo>();
 

@@ -6,6 +6,7 @@ using System.Linq;
 using System.Net;
 using System.Text;
 using System.Threading;
+using System.Windows.Forms;
 
 namespace Snipe
 {
@@ -45,6 +46,14 @@ namespace Snipe
 				}
 			}
 			throw new Exception();
+		}
+
+		internal static void SleepWithDoEvent(int ms)
+		{
+			DateTime time = DateTime.Now;
+			while((DateTime.Now - time).TotalMilliseconds < ms){
+				Application.DoEvents();
+			}
 		}
 
 		public static IEnumerable<IHTMLElement> stepElement(HTMLDocumentClass doc, IHTMLElement eleParent, string strStep)
@@ -138,6 +147,22 @@ namespace Snipe
 				result = string.Format("{0}&{1}={2}", result, paramWithValues[0], paramWithValues[1]);
 			}
 			return result;
+		}
+
+		public static List<IHTMLElement> recFindElementByTag(IHTMLElement element, string tagName, bool includeSelf = false){
+			List<IHTMLElement> result = new List<IHTMLElement>();
+			if (includeSelf) { if (element.tagName.ToLower() == tagName) { result.Add(element); } }
+			recFindElementByTag(element, tagName, result);
+			return result;
+		}
+
+		private static void recFindElementByTag(IHTMLElement element, string tagName, List<IHTMLElement> result){
+			foreach(IHTMLElement ele in (IHTMLElementCollection)element.children){
+				if (ele.tagName.ToLower() == tagName){
+					result.Add(ele);
+				}
+				recFindElementByTag(ele, tagName, result);
+			}
 		}
 		#endregion
 	}
