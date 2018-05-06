@@ -98,6 +98,7 @@ namespace Snipe
 		{
 			using (var trans = m_conn.BeginTransaction()) {
 				using (var cmd = m_conn.CreateCommand()) {
+					cmd.Transaction = trans;
 					cmd.CommandText = "INSERT INTO page(title, url, `date`, tags, sniper) VALUES(@title, @url, @date, @tags, @sniper)";
 					var pTitle = cmd.CreateParameter(); cmd.Parameters.Add(pTitle); pTitle.ParameterName = "@title";
 					var pUrl = cmd.CreateParameter(); cmd.Parameters.Add(pUrl); pUrl.ParameterName = "@url";
@@ -137,25 +138,29 @@ namespace Snipe
 		// 可子线程调用
 		public void AddPageArt(Page page, List<Art> arts)
 		{
-			using (var cmd = m_conn.CreateCommand()) {
-				if (arts.Count > 0) {
-					cmd.CommandText = "INSERT INTO art(pageID, text, downloads, images) VALUES(@pageID, @text, @downloads, @images)";
-					var pPageID = cmd.CreateParameter(); pPageID.ParameterName = "@pageID"; pPageID.Value = page.id; cmd.Parameters.Add(pPageID);
-					var pText = cmd.CreateParameter(); pText.ParameterName = "@text"; cmd.Parameters.Add(pText);
-					var pDownloads = cmd.CreateParameter(); pDownloads.ParameterName = "@downloads"; cmd.Parameters.Add(pDownloads);
-					var pImages = cmd.CreateParameter(); pImages.ParameterName = "@images"; cmd.Parameters.Add(pImages);
-					foreach (var art in arts) {
-						pText.Value = art.text; pDownloads.Value = art.downloads; pImages.Value = art.images;
+			using (var trans = m_conn.BeginTransaction()) {
+				using (var cmd = m_conn.CreateCommand()) {
+					cmd.Transaction = trans;
+					if (arts.Count > 0) {
+						cmd.CommandText = "INSERT INTO art(pageID, text, downloads, images) VALUES(@pageID, @text, @downloads, @images)";
+						var pPageID = cmd.CreateParameter(); pPageID.ParameterName = "@pageID"; pPageID.Value = page.id; cmd.Parameters.Add(pPageID);
+						var pText = cmd.CreateParameter(); pText.ParameterName = "@text"; cmd.Parameters.Add(pText);
+						var pDownloads = cmd.CreateParameter(); pDownloads.ParameterName = "@downloads"; cmd.Parameters.Add(pDownloads);
+						var pImages = cmd.CreateParameter(); pImages.ParameterName = "@images"; cmd.Parameters.Add(pImages);
+						foreach (var art in arts) {
+							pText.Value = art.text; pDownloads.Value = art.downloads; pImages.Value = art.images;
+							cmd.ExecuteNonQuery();
+						}
+					}
+					cmd.Parameters.Clear();
+					{
+						cmd.CommandText = "UPDATE page SET processed=1, artCount=@artCount WHERE id=@id";
+						var pArtCount = cmd.CreateParameter(); pArtCount.ParameterName = "@artCount"; cmd.Parameters.Add(pArtCount); pArtCount.Value = arts.Count;
+						var pID = cmd.CreateParameter(); pID.ParameterName = "@id"; cmd.Parameters.Add(pID); pID.Value = page.id;
 						cmd.ExecuteNonQuery();
 					}
 				}
-				cmd.Parameters.Clear();
-				{
-					cmd.CommandText = "UPDATE page SET processed=1, artCount=@artCount WHERE id=@id";
-					var pArtCount = cmd.CreateParameter(); pArtCount.ParameterName = "@artCount"; cmd.Parameters.Add(pArtCount); pArtCount.Value = arts.Count;
-					var pID = cmd.CreateParameter(); pID.ParameterName = "@id"; cmd.Parameters.Add(pID); pID.Value = page.id;
-					cmd.ExecuteNonQuery();
-				}
+				trans.Commit();
 			}
 		}
 

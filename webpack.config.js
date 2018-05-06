@@ -29,6 +29,12 @@ module.exports = {
 			template: 'src/web/index.tpl.html'
 		})
 	],
+	devServer:{
+		port: 8080,
+		proxy: {
+			'/api': "http://localhost"
+		}
+	},
 	module: {
 		rules: [
 			{

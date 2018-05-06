@@ -1,25 +1,24 @@
-// let div1 = document.createElement('h1');
-// div1.innerText = 'hello1';
-// document.body.appendChild(div1);
-
 import React from 'react'
 import ReactDOM from 'react-dom'
-import { BrowserRouter, Route } from 'react-router-dom'
+import { BrowserRouter, Route, IndexRoute } from 'react-router-dom'
+import Nav from './common/nav'
+import HomePage from './home'
+import ActorPage from './actor'
 
 const PrimaryLayout = () => (
   <div className="primary-layout">
     <header>
-      Our React Router 4 App
+      <Nav items={[
+        { text: '主页', href: '/' },
+        { text: '演员', href: '/actor' }
+      ]} />
     </header>
     <main>
-      <Route path="/" exact component={HomePage} />
-      <Route path="/users" component={UsersPage} />
+        <Route path="/" exact component={HomePage} />
+        <Route path="/actor" component={ActorPage} />
     </main>
   </div>
 )
-
-const HomePage =() => <div>Home Page</div>
-const UsersPage = () => <div>Users Page</div>
 
 const App = () => (
   <BrowserRouter>

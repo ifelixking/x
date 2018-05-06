@@ -1,9 +1,12 @@
 const express = require('express')
 const path = require('path')
+const conn = require('./data')
+
 var app = express();
 
 app.use('/api', express.Router()
-	.use('/actor', require('./biz/actor.js'))
+	.use('/page', require('./biz/page.js'))
+	.use('/art', require('./biz/art.js'))
 );
 app.use('/asset', express.static(path.join(__dirname, '../../dist/static/asset')));
 app.use('/admin', express.Router().get('/*', function(req, res){

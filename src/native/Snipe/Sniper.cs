@@ -35,7 +35,7 @@ namespace Snipe
 
 		public virtual void Run()
 		{
-			int threadCount = 4;
+			int threadCount = 1;
 			EMIT_LOG("parallel task, thread count {0}", threadCount);
 			m_queuePage = new ConcurrentQueue<UrlTask>(this.GetUrlTaskList());
 			m_queueItemTotalCount = m_queuePage.Count;
@@ -59,7 +59,7 @@ namespace Snipe
 						return;
 					}
 					HTMLDocumentClass doc = null;
-					for (var i = 0; i < 10; ++i) {
+					for (var i = 0; i < 4; ++i) {
 						try {
 							EMIT_LOG("{0}: open doc: {1}", Thread.CurrentThread.Name, task.url);
 							doc = Utils.retryGetDocument(task.url);
