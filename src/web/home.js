@@ -17,6 +17,7 @@ class HomePage extends React.Component {
 class ArtList extends React.Component {
 	constructor(props) {
 		super(props)
+		this.onPageTo = this.onPageTo.bind(this)
 		this.state = {
 			currentPage: 0,
 			totalPageCount: 1,
@@ -25,9 +26,23 @@ class ArtList extends React.Component {
 	}
 
 	componentWillMount() {
+		API.getArtPageCount().then((res) => {
+			res.json().then((data) => {
+				this.setState({ totalPageCount: data.pageCount })
+			})
+		})
+
 		API.getArt(this.state.currentPage).then((res) => {
 			res.json().then((data) => {
-				this.setState({ artList: data })
+				this.setState({ artList: data.items })
+			})
+		})
+	}
+
+	onPageTo(page){
+		API.getArt(page).then((res) => {
+			res.json().then((data) => {
+				this.setState({ artList: data.items, currentPage: data.page })
 			})
 		})
 	}
@@ -37,9 +52,12 @@ class ArtList extends React.Component {
 		return (
 			<div>
 				<div style={{ textAlign: 'right', paddingTop: '8px' }}>
-					<Page current={this.props.currentPage} count={this.props.totalPageCount} onPagePrev={null} />
+					<Page current={this.state.currentPage} count={this.state.totalPageCount} onPageTo={this.onPageTo} />
 				</div>
 				<div style={{}}>{items}</div>
+				<div style={{ textAlign: 'right', paddingTop: '8px' }}>
+					<Page current={this.state.currentPage} count={this.state.totalPageCount} onPageTo={this.onPageTo} />
+				</div>
 			</div>
 		)
 	}
@@ -52,7 +70,7 @@ class ArtItem extends React.Component {
 	}
 
 	render() {
-		const css_div = { border: '1px solid gray', width: '200px', float: 'left', padding: '8px', margin: '8px', fontSize: '12px', fontFamily: 'tahoma, arial, "Microsoft YaHei", "Hiragino Sans GB", sans-serif' }
+		const css_div = { border: '1px solid gray', width: '200px', display:'inline-block', padding: '8px', margin: '8px', fontSize: '12px', fontFamily: 'tahoma, arial, "Microsoft YaHei", "Hiragino Sans GB", sans-serif' }
 		const css_more_download = { float: 'right' }
 		const css_content = { height: '47px', overflow: 'hidden', marginTop: '8px' };
 		const css_download = { marginTop: '8px' }
