@@ -1,6 +1,7 @@
 import React from 'react'
 import API from './api'
 import Page from './common/page'
+import Dialog from './common/dlg'
 
 class HomePage extends React.Component {
 	constructor(props) {
@@ -39,7 +40,7 @@ class ArtList extends React.Component {
 		})
 	}
 
-	onPageTo(page){
+	onPageTo(page) {
 		API.getArt(page).then((res) => {
 			res.json().then((data) => {
 				this.setState({ artList: data.items, currentPage: data.page })
@@ -58,6 +59,9 @@ class ArtList extends React.Component {
 				<div style={{ textAlign: 'right', paddingTop: '8px' }}>
 					<Page current={this.state.currentPage} count={this.state.totalPageCount} onPageTo={this.onPageTo} />
 				</div>
+				<Dialog>
+					<ImageGallery />
+				</Dialog>
 			</div>
 		)
 	}
@@ -70,7 +74,7 @@ class ArtItem extends React.Component {
 	}
 
 	render() {
-		const css_div = { border: '1px solid gray', width: '200px', display:'inline-block', padding: '8px', margin: '8px', fontSize: '12px', fontFamily: 'tahoma, arial, "Microsoft YaHei", "Hiragino Sans GB", sans-serif' }
+		const css_div = { border: '1px solid gray', width: '200px', display: 'inline-block', padding: '8px', margin: '8px', fontSize: '12px', fontFamily: 'tahoma, arial, "Microsoft YaHei", "Hiragino Sans GB", sans-serif' }
 		const css_more_download = { float: 'right' }
 		const css_content = { height: '47px', overflow: 'hidden', marginTop: '8px' };
 		const css_download = { marginTop: '8px' }
@@ -94,6 +98,27 @@ class ArtItem extends React.Component {
 				<p style={css_download}>{links}</p>
 			</div>
 		)
+	}
+}
+
+class ArtDownload extends React.Component {
+	constructor(props) {
+		super(props)
+	}
+	render() {
+		return (
+			<Dialog>{"asdf"}</Dialog>
+		)
+	}
+}
+
+class ImageGallery extends React.Component {
+	constructor(props) {
+		super(props)
+	}
+
+	render() {
+		return null
 	}
 }
 

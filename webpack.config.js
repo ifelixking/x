@@ -9,7 +9,7 @@ module.exports = {
 	output: {
 		// output.path 不仅作用于js, 也作用于下面的 HtmlWebpackPlugin
 		// 我的目的是要将除了.html文件之外的所有文件都放到staitc/asset/中, .html文件则放在static目录下
-		path: __dirname + '/dist/static',		
+		path: __dirname + '/dist/static',
 		filename: 'asset/[name]-bundle.js',
 		// 这里需要制定 publicPath, 时 HtmlWebpackPlugin 生成引用 js 文件为绝对路径, 因为使用了 react-router 的缘故, 会导致相对路径失效
 		// node Server 会根据路径 转换为对某个具体的 html 文件的访问
@@ -29,7 +29,7 @@ module.exports = {
 			template: 'src/web/index.tpl.html'
 		})
 	],
-	devServer:{
+	devServer: {
 		port: 8080,
 		proxy: {
 			'/api': "http://localhost"
@@ -47,6 +47,23 @@ module.exports = {
 						presets: ['@babel/preset-react']
 					}
 				}
+			},
+			{
+				test: /\.svg$/,
+				use: [
+					"babel-loader",
+					{
+						loader: "react-svg-loader",
+						options: {
+							svgo: {
+								plugins: [
+									{ removeTitle: false }
+								],
+								floatPrecision: 2
+							}
+						}
+					}
+				]
 			}
 		]
 	}
