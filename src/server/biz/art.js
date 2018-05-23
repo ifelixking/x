@@ -5,7 +5,9 @@ const pageSize = 50
 
 router.get('/', function (req, res) {
 	let page = req.query.page; if (typeof page == 'undefined') { page = 0 }
-	query(`SELECT * FROM art LIMIT ${page * pageSize}, ${pageSize}`, (err, result, fields) => {
+	query(`SELECT art.id, art.text, art.downloads, art.images, page.date FROM art LEFT JOIN page on art.pageID=page.id 
+		ORDER BY page.date desc 
+		LIMIT ${page * pageSize}, ${pageSize}`, (err, result, fields) => {
 		if (err) { console.log(err) }
 		res.send(JSON.stringify({ page, pageSize, items: result }));
 	})
@@ -18,3 +20,5 @@ router.get('/pageCount', function (req, res) {
 })
 
 module.exports = router;
+
+// 
