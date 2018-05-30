@@ -16,6 +16,11 @@ namespace Snipe
 			public string name;
 		}
 
+		public DbTransaction CreateTransaction()
+		{
+			return m_conn.BeginTransaction();
+		}
+
 		public class Page
 		{
 			public long id;
@@ -39,6 +44,13 @@ namespace Snipe
 		{
 			public string text;
 			public string href;
+		}
+
+		public struct ArtIDWithTagsString
+		{
+			public long artID;
+			public long pageID;
+			public string tags;
 		}
 
 		private DbConnection m_conn;
@@ -83,12 +95,14 @@ namespace Snipe
 			return result;
 		}
 
-		public Tag NewTag(string tagName)
+		public Tag NewTag(string tagName, DbTransaction trans = null)
 		{
 			using (var cmd = m_conn.CreateCommand()) {
+				cmd.Transaction = trans;
 				cmd.CommandText = "INSERT INTO tag(name) VALUES(@name)";
 				var param = cmd.CreateParameter(); param.ParameterName = "@name"; param.Value = tagName;
 				cmd.Parameters.Add(param);
+				cmd.ExecuteNonQuery();
 				var id = ((MySqlCommand)cmd).LastInsertedId;
 				return new Tag() { id = id, name = tagName };
 			}
@@ -213,5 +227,51 @@ namespace Snipe
 			return deleteIDs.Count;
 		}
 
+		// 
+		public List<ArtIDWithTagsString> GetArtIDWithTagsStringList()
+		{
+			List<ArtIDWithTagsString> result = new List<ArtIDWithTagsString>();
+			using (var cmd = m_conn.CreateCommand()) {
+				cmd.CommandText = "SELECT page.tags as tags, page.id as pageID, art.id as artID FROM art LEFT JOIN page ON art.pageID=page.id WHERE page.processed=1 AND page.tags IS NOT NULL AND page.tags <> ''";
+				using (var reader = cmd.ExecuteReader()) {
+					var idxTags = reader.GetOrdinal("tags");
+					var idxPageID = reader.GetOrdinal("pageID");
+					var idxArtID = reader.GetOrdinal("artID");
+					while (reader.Read()) {
+						result.Add(new ArtIDWithTagsString() {
+							artID = reader.GetInt64(idxArtID),
+							pageID = reader.GetInt64(idxPageID),
+							tags = reader.GetString(idxTags)
+						});
+					}
+				}
+			}
+			return result;
+		}
+
+		public void AddRelArtTag(List<KeyValuePair<long, long>> art_tag_list, DbTransaction trans = null)
+		{
+			using (var cmd = m_conn.CreateCommand()) {
+				cmd.Transaction = trans;
+				cmd.CommandText = "INSERT INTO rel_art_tag(artID, tagID) VALUES(@artID, @tagID)";
+				var pArtID = cmd.CreateParameter(); pArtID.ParameterName = "@artID"; cmd.Parameters.Add(pArtID);
+				var pTagID = cmd.CreateParameter(); pTagID.ParameterName = "@tagID"; cmd.Parameters.Add(pTagID);
+				foreach (var item in art_tag_list) {
+					pArtID.Value = item.Key;
+					pTagID.Value = item.Value;
+					cmd.ExecuteNonQuery();
+				}
+			}
+		}
+
+		public void setPageProcessStage(IEnumerable<long> pageIDs, int stage, DbTransaction trans = null)
+		{
+			string strIn = string.Join(",", pageIDs);
+			using (var cmd = m_conn.CreateCommand()) {
+				cmd.Transaction = trans;
+				cmd.CommandText = string.Format("UPDATE page SET processed={0} WHERE id IN ({1})", stage, strIn);
+				cmd.ExecuteNonQuery();
+			}
+		}
 	}
 }

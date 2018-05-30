@@ -32,38 +32,56 @@ class ArtList extends React.Component {
 		this.onArtImageClick = this.onArtImageClick.bind(this)
 		this.onArtMoreDownloadClick = this.onArtMoreDownloadClick.bind(this)
 		this.onItemClick = this.onItemClick.bind(this)
+		this.flushPageCount = this.flushPageCount
+		this.flushList = this.flushList
 
 		this.state = {
 			currentPage: 0,
+			currentTagID: null,
 			totalPageCount: 1,
 			artList: [],
 			dlgImageGallery: false,
 			dlgImageGallery_images: [],
 			dlgMoreDownload: false,
-			dlgMoreDownload_data: []
+			dlgMoreDownload_data: [],
+			tags: [],
 		}
 
 		this.m_lastActiveItem = null;
 	}
 
 	componentWillMount() {
-		API.getArtPageCount().then((res) => {
+		API.getTag().then((res) => {
 			res.json().then((data) => {
-				this.setState({ totalPageCount: data.pageCount })
+				this.setState({ tags: data.items })
 			})
 		})
 
-		API.getArt(this.state.currentPage).then((res) => {
+		this.flushPageCount(this.state.currentTagID);
+		this.flushList(0, this.state.currentTagID);
+	}
+
+	onPageTo(page) {
+		this.flushList(page, this.state.currentTagID);
+	}
+
+	onTagFilter(tagID) {
+		this.flushPageCount(tagID);
+		this.flushList(0, tagID);
+	}
+
+	flushPageCount(tagID) {
+		API.getArtPageCount(tagID).then((res) => {
 			res.json().then((data) => {
-				this.setState({ artList: data.items })
+				this.setState({ totalPageCount: data.pageCount, currentTagID: tagID })
 			})
 		})
 	}
 
-	onPageTo(page) {
-		API.getArt(page).then((res) => {
+	flushList(page, tagID) {
+		API.getArt(page, tagID).then((res) => {
 			res.json().then((data) => {
-				this.setState({ artList: data.items, currentPage: data.page })
+				this.setState({ artList: data.items, currentPage: data.page, currentTagID: tagID })
 			})
 		})
 	}
@@ -89,6 +107,7 @@ class ArtList extends React.Component {
 
 	render() {
 		let items = this.state.artList.map(a => { return <ArtItem key={a.id} data={a} onImageClick={this.onArtImageClick} onMoreDownloadClick={this.onArtMoreDownloadClick} onClick={this.onItemClick} /> });
+		let tags = this.state.tags.map(a => { let active = a.id == this.state.currentTagID ? 'active' : null; return <Tag active={active} text={a.name} key={a.id} onClick={() => { this.onTagFilter(a.id) }} />; })
 
 		let dlg = null;
 		if (this.state.dlgImageGallery) {
@@ -99,18 +118,29 @@ class ArtList extends React.Component {
 
 		return (
 			<div>
-				<div style={{ paddingTop: '8px' }}>
-					<Page current={this.state.currentPage} count={this.state.totalPageCount} onPageTo={this.onPageTo} />
-				</div>
+				<div style={{ paddingTop: '32px', textAlign: 'center' }}><input style={{ fontSize: '26px', padding: '4px', width: '560px' }} type={'text'} /><input style={{ fontSize: '20px', padding: '6px', marginLeft: '8px', width: '80px' }} type={'button'} value={'搜索'} /></div>
+				<div style={{ paddingTop: '32px' }}>{tags}</div>
+				<div style={{ paddingTop: '32px' }}><Page current={this.state.currentPage} count={this.state.totalPageCount} onPageTo={this.onPageTo} /></div>
 				<div style={{}}>{items}</div>
-				<div style={{ paddingTop: '8px' }}>
-					<Page current={this.state.currentPage} count={this.state.totalPageCount} onPageTo={this.onPageTo} />
-				</div>
+				<div style={{ paddingTop: '8px' }}><Page current={this.state.currentPage} count={this.state.totalPageCount} onPageTo={this.onPageTo} /></div>
 				{dlg}
 			</div>
 		)
 	}
 
+}
+
+class Tag extends React.Component {
+	constructor(props) {
+		super(props)
+	}
+
+	render() {
+		let active = this.props.active ? 'active' : null;
+		return (
+			<a style={{}} active={active} className={Styles.tag} href='javascript:;' onClick={this.props.onClick}>{this.props.text}</a>
+		)
+	}
 }
 
 class ArtItem extends React.Component {
@@ -119,7 +149,8 @@ class ArtItem extends React.Component {
 		this.ref_img = React.createRef();
 	}
 
-	componentWillMount() {
+	componentWillMount() {		
+		// return;
 		var imgs = JSON.parse(this.props.data.images)
 		if (imgs.length == 0) { return }
 		let img = new Image(); img.src = imgs[0]

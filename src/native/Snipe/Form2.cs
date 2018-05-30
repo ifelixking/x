@@ -76,5 +76,10 @@ namespace Snipe
 				m_sn.AddThread();
 			}
 		}
+
+		private void button5_Click(object sender, EventArgs e)
+		{
+			new TagOp().Run();
+		}
 	}
 }
