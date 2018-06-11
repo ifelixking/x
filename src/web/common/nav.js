@@ -32,7 +32,7 @@ export default class Nav extends React.Component {
 
 	render() {
 		let links = this.props.items.map((item) => {
-			return (<NavLink exact={item.href == '/'} key={item.text} activeStyle={sty_link_active} style={sty_link} to={item.href}>{item.text}</NavLink>)
+			return (<NavLink exact={true} key={item.text} activeStyle={sty_link_active} style={sty_link} to={item.href}>{item.text}</NavLink>)
 		})
 		return (
 			<div style={sty_main}>

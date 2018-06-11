@@ -4,10 +4,17 @@ const conn = require('./data')
 
 var app = express();
 
+// app.use('/api', express.Router()
+// 	.use('/page', require('./biz/page.js'))
+// 	.use('/art', require('./biz/art.js'))
+// );
 app.use('/api', express.Router()
 	.use('/page', require('./biz/page.js'))
 	.use('/art', require('./biz/art.js'))
+	.use('/tag', require('./biz/tag.js'))
+	.use('/actor', require('./biz/actor.js'))
 );
+
 app.use('/asset', express.static(path.join(__dirname, '../../dist/static/asset')));
 app.use('/admin', express.Router().get('/*', function(req, res){
 	// console.log(req);

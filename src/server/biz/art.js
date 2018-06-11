@@ -1,5 +1,7 @@
 var router = require('express').Router();
 const query = require('../data')
+const elasticsearch = require('elasticsearch')
+const esClient = new elasticsearch.Client({ host: '192.168.31.187:9200', log: 'trace' });
 
 const pageSize = 50
 
@@ -42,11 +44,20 @@ router.get('/pageCount', function (req, res) {
 	})
 })
 
-router.get('/tag', function (req, res) {
-	query(`SELECT * FROM tag`, (err, result, fields) => {
-		if (err) { console.log(err) }
-		res.send(JSON.stringify({ items: result }));
-	})
+router.get('/search', function (req, res) {
+	let k = req.query.k;
+	if (typeof k == 'undefined' || k == '') { res.redirect('/api/art') }
+	let page = req.query.page; if (typeof page == 'undefined') { page = 0 }
+	esClient.search({
+		index: 'x',
+		type: 'art',
+		body: { "query": { "bool": { "must": [{ "term": { "text": k } }] } }, "from": page*pageSize, "size": pageSize, }
+	}).then(function (resp) {
+		var items = Array.from(resp.hits.hits, i=>i._source); 
+		res.send(JSON.stringify({ page, pageSize, items, pageCount: Math.ceil(resp.hits.total / pageSize), tookTime: resp.took }));
+	}, function (err) {
+		console.trace(err.message);
+	});
 })
 
 module.exports = router;

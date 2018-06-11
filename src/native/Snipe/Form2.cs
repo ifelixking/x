@@ -41,11 +41,12 @@ namespace Snipe
 			if (mainThreadRequest) { Application.DoEvents(); }
 		}
 
-		private void Sn_OnProgress(bool mainThreadRequest, int value, int max)
+		private void Sn_OnProgress(bool mainThreadRequest, long value, long max)
 		{
-			progressBar1.Maximum = max;
-			progressBar1.Value = value;
-			label1.Text = string.Format("{0}/{1}", value, max);
+			int val = (int)(value * 100.0 / max);
+			if (val == progressBar1.Value) { return; }
+			progressBar1.Value = val;
+			label1.Text = string.Format("{0}/{1}", value, max);			
 			if (mainThreadRequest) { Application.DoEvents(); }
 		}
 
@@ -80,6 +81,21 @@ namespace Snipe
 		private void button5_Click(object sender, EventArgs e)
 		{
 			new TagOp().Run();
+			MessageBox.Show("完成");
+		}
+
+		private void button6_Click(object sender, EventArgs e)
+		{
+			Storage.BuildArtES(createTick());
+		}
+
+
+		private Tick createTick(){
+			var tick = new Tick();
+			tick.OnProgress += Sn_OnProgress;
+			tick.OnLog += Sn_OnLog;
+			tick.OnFinish += Sn_OnFinish;
+			return tick;
 		}
 	}
 }

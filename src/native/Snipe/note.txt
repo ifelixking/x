@@ -1,3 +1,20 @@
+# 为 index[库] x 的 type[表] art 的 property[字段] text 建全文索引
+curl -XPUT http://192.168.31.187:9200/x -d '
+{
+  "mappings": {
+    "art": {
+      "properties": {
+        "text": {
+          "type": "text",
+          "analyzer": "ik_max_word",
+          "search_analyzer": "ik_max_word"
+        }
+      }
+    }
+  }
+}'
+
+
 //m_storage.Open();
 
 //string[] urlWithTags = {
@@ -60,3 +77,77 @@
 //}
 
 //m_storage.Close();
+
+
+//update page set tags="国产无码" where processed=1 and title like '%国产无码%';
+//update page set tags="国产无码" where processed=1 and title like '%國产无码%';
+//update page set tags="国产无码" where processed=1 and title like '%國產无码%';
+//update page set tags="国产无码" where processed=1 and title like '%国產无码%';
+//update page set tags="国产无码" where processed=1 and title like '%国产無码%';
+//update page set tags="国产无码" where processed=1 and title like '%國产無码%';
+//update page set tags="国产无码" where processed=1 and title like '%國產無码%';
+//update page set tags="国产无码" where processed=1 and title like '%国產無码%';
+
+//update page set tags="国产有码" where processed=1 and title like '%国产有码%';
+//update page set tags="国产有码" where processed=1 and title like '%國产有码%';
+//update page set tags="国产有码" where processed=1 and title like '%國產有码%';
+//update page set tags="国产有码" where processed=1 and title like '%国產有码%';
+//update page set tags="国产有码" where processed=1 and title like '%国产有碼%';
+//update page set tags="国产有码" where processed=1 and title like '%國产有碼%';
+//update page set tags="国产有码" where processed=1 and title like '%國產有碼%';
+//update page set tags="国产有码" where processed=1 and title like '%国產有碼%';
+
+//update page set tags="国产无码" where processed=1 and title like '%国产%';
+//update page set tags="国产无码" where processed=1 and title like '%國产%';
+//update page set tags="国产无码" where processed=1 and title like '%国產%';
+//update page set tags="国产无码" where processed=1 and title like '%國產%';
+
+//update page set tags="欧美无码" where processed=1 and title like '%欧美无码%';
+//update page set tags="欧美无码" where processed=1 and title like '%欧美无碼%';
+//update page set tags="欧美无码" where processed=1 and title like '%欧美無码%';
+//update page set tags="欧美无码" where processed=1 and title like '%欧美無碼%';
+
+//update page set tags="日本有码" where processed=1 and title like '%日本有码%';
+//update page set tags="日本有码" where processed=1 and title like '%日本有碼%';
+
+//update page set tags="日本有码" where processed=1 and title like '%騎兵%';
+//update page set tags="日本有码" where processed=1 and title like '%骑兵%';
+//update page set tags="日本有码" where processed=1 and title like '%脫拉庫%';
+//update page set tags="日本有码" where processed=1 and title like '%灣搭%';
+//update page set tags="日本有码" where processed=1 and title like '%金8天國 %';
+//update page set tags="日本无码" where processed=1 and title like '%東京熱%';
+//update page set tags="日本无码" where processed=1 and title like '%一本道%';
+
+//update page set tags="日本无码" where processed=1 and title like '%日本无码%';
+//update page set tags="日本无码" where processed=1 and title like '%日本無碼%';
+//update page set tags="日本无码" where processed=1 and title like '%日本无碼%';
+//update page set tags="日本无码" where processed=1 and title like '%日本無码%';
+
+//update page set tags="日本有码" where processed=1 and title like '%亚洲有码%';
+//update page set tags="日本有码" where processed=1 and title like '%亚洲有碼%';
+
+//update page set tags="日本无码" where processed=1 and title like '%亚洲无码%';
+//update page set tags="日本无码" where processed=1 and title like '%亚洲無碼%';
+//update page set tags="日本无码" where processed=1 and title like '%亚洲无碼%';
+//update page set tags="日本无码" where processed=1 and title like '%亚洲無码%';
+
+//update page set tags="日本有码" where processed=1 and title like '%亞洲有码%';
+//update page set tags="日本有码" where processed=1 and title like '%亞洲有碼%';
+
+//update page set tags="日本无码" where processed=1 and title like '%亞洲无码%';
+//update page set tags="日本无码" where processed=1 and title like '%亞洲無碼%';
+//update page set tags="日本无码" where processed=1 and title like '%亞洲无碼%';
+//update page set tags="日本无码" where processed=1 and title like '%亞洲無码%';
+
+//update page set tags="动漫" where processed=1 and title like '%动漫%';
+//update page set tags="动漫" where processed=1 and title like '%動漫%';
+//update page set tags="动漫" where processed=1 and title like '%卡通%';
+
+
+//update page set tags="日本有码" where processed=1 and title like '%有码%';
+//update page set tags="日本有码" where processed=1 and title like '%有碼%';
+
+//update page set tags="日本无码" where processed=1 and title like '%无码%';
+//update page set tags="日本无码" where processed=1 and title like '%無碼%';
+//update page set tags="日本无码" where processed=1 and title like '%无碼%';
+//update page set tags="日本无码" where processed=1 and title like '%無码%';

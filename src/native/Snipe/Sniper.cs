@@ -24,7 +24,7 @@ namespace Snipe
 		private int m_queueItemTotalCount;
 		private int m_threadCount;
 
-		public delegate void ProgressHandler(bool mainThreadRequest, int value, int max);
+		public delegate void ProgressHandler(bool mainThreadRequest, long value, long max);
 		public event ProgressHandler OnProgress;
 
 		public delegate void LogHandler(bool mainThreadRequest, string text);

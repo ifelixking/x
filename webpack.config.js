@@ -33,7 +33,8 @@ module.exports = {
 		port: 8080,
 		proxy: {
 			'/api': "http://localhost"
-		}
+		},
+		historyApiFallback: true,	// 让dev-server 支持 route, 即始终指向 index.html
 	},
 	module: {
 		rules: [
@@ -75,7 +76,12 @@ module.exports = {
 			{
 				test: /\.(png|jpg|gif)$/,
 				use: [
-					'file-loader'
+					{
+						loader: 'file-loader',
+						options: {
+							outputPath: 'asset/',
+						}
+					}
 				]
 			}
 		]

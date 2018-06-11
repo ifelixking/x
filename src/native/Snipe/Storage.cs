@@ -1,4 +1,5 @@
 ﻿using MySql.Data.MySqlClient;
+using Nest;
 using System;
 using System.Collections.Generic;
 using System.Data.Common;
@@ -38,7 +39,14 @@ namespace Snipe
 			public string text;
 			public string downloads;
 			public string images;
+			public DateTime date;
 		}
+
+		//public class ArtES
+		//{
+		//	public long id { get; set; }
+		//	public string text { get; set; }
+		//}
 
 		public struct URL
 		{
@@ -272,6 +280,60 @@ namespace Snipe
 				cmd.CommandText = string.Format("UPDATE page SET processed={0} WHERE id IN ({1})", stage, strIn);
 				cmd.ExecuteNonQuery();
 			}
+		}
+
+		public static void BuildArtES(Tick tick)
+		{
+			var client = new ElasticClient(new ConnectionSettings(new Uri("http://192.168.31.187:9200")));
+
+			Storage storage = new Storage();
+			storage.Open();
+			using (var cmd = storage.m_conn.CreateCommand()) {
+				cmd.CommandText = "SELECT count(*) FROM art WHERE art.esStage=0";
+				var count = (long)cmd.ExecuteScalar(); long itor = 0;
+				cmd.CommandText = "SELECT art.id, art.text, art.downloads, art.images, art.pageID, page.date FROM art LEFT JOIN page ON art.pageID=page.id WHERE art.esStage=0";
+				using (var reader = cmd.ExecuteReader()) {
+					var idxID = reader.GetOrdinal("id");
+					var idxText = reader.GetOrdinal("text");
+					var idxDownloads = reader.GetOrdinal("downloads");
+					var idxImages = reader.GetOrdinal("images");
+					var idxPageID = reader.GetOrdinal("pageID");
+					var idxDate = reader.GetOrdinal("date");
+					while (reader.Read()) {
+						var id = reader.GetInt64(idxID);
+						var text = reader.GetString(idxText);
+						var downloads = reader.GetString(idxDownloads);
+						var images = reader.GetString(idxImages);
+						var pageID = reader.GetInt64(idxPageID);
+						var date = reader.GetDateTime(idxDate);
+						client.Index(new Art() { id = id, text = text, downloads = downloads, images = images, pageID = pageID, date = date }, i => i.Index("x").Type("art").Id(id));
+						++itor;
+						tick.EMIT_PROGRESS(itor, count);
+					}
+					reader.Close();
+				}
+				cmd.CommandText = "UPDATE art SET esStage=1 WHERE esStage=0";
+				cmd.ExecuteNonQuery();
+			}
+			storage.Close();
+
+			// client.Index(new ArtES() { id = 1, text = aa }, i => i.Index("x").Type("art").Id(123));
+			//MatchQuery q = new MatchQuery();
+			//q.Field = new Field("text");
+			// q.MinimumShouldMatch = 2;
+			// q.Query = "吉泽明步";
+			// q.Operator = Operator.Or;
+
+			// SearchRequest sr = new SearchRequest("x", "art");
+			// sr .Query = q;
+			// sr.From = 0;
+			// sr.Size = 50;
+			// //sr.Sort = new List<ISort>();
+			// //sr.Sort.Add
+
+			// ISearchResponse<ArtES> result = client.Search<ArtES>(sr);            
+			//var kk = result.Documents.ToList<ArtES>();
+
 		}
 	}
 }

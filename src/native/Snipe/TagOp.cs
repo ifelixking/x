@@ -16,7 +16,6 @@ namespace Snipe
 				storage = new Storage(); storage.Open();
 				buildTagFromPage(storage);
 			} catch (Exception ex) {
-				if (storage != null) { storage.Close(); }
 				EMIT_LOG(ex.ToString());
 			} finally {
 				storage.Close();
@@ -48,7 +47,7 @@ namespace Snipe
 					processedPageIDs.Add(item.pageID);
 				}
 				storage.AddRelArtTag(artTagList, trans);
-				storage.setPageProcessStage(processedPageIDs.Distinct(), 2, trans);
+				if (processedPageIDs.Count > 0) { storage.setPageProcessStage(processedPageIDs.Distinct(), 2, trans); }
 				trans.Commit();
 			}
 		}

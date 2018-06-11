@@ -45,3 +45,26 @@
 	background-color: #555;
 	border:1px solid #777;
 }
+
+.art_item{
+	width: 240px;
+	display: inline-block;
+	padding: 10px;
+	margin: 10px 20px 10px 0px;
+	font-size: 12px;
+	box-sizing: border-box;
+	font-family: tahoma arial, "Microsoft YaHei", "Hiragino Sans GB", sans-serif;
+	cursor: pointer;
+}
+
+.actor_item{
+	width: 160px;
+	display: inline-block;
+	padding: 10px;
+	margin: 10px 20px 10px 0px;
+	font-size: 12px;
+	box-sizing: border-box;
+	font-family: tahoma arial, "Microsoft YaHei", "Hiragino Sans GB", sans-serif;
+	text-align: center;
+}
+

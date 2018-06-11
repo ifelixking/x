@@ -10,7 +10,7 @@ import { debug } from 'util';
 import Img_waiting from './waiting.png'
 import Img_404 from './404.png'
 
-class HomePage extends React.Component {
+export class HomePage extends React.Component {
 	constructor(props) {
 		super(props)
 	}
@@ -18,56 +18,53 @@ class HomePage extends React.Component {
 	render() {
 		return (
 			<div style={{ padding: '0px 80px' }}>
-				<ArtList />
+				<Main />
 			</div>
 		)
 	}
 }
 
-class ArtList extends React.Component {
+class Main extends React.Component {
 	constructor(props) {
 		super(props)
 
 		this.onPageTo = this.onPageTo.bind(this)
-		this.onArtImageClick = this.onArtImageClick.bind(this)
-		this.onArtMoreDownloadClick = this.onArtMoreDownloadClick.bind(this)
-		this.onItemClick = this.onItemClick.bind(this)
-		this.flushPageCount = this.flushPageCount
-		this.flushList = this.flushList
+		this.flushPageCount = this.flushPageCount.bind(this);
+		this.flushList = this.flushList.bind(this);
+		this.onSearchClick = this.onSearchClick.bind(this);
+
+		this.ref_keyword = React.createRef();
 
 		this.state = {
 			currentPage: 0,
 			currentTagID: null,
+			currentKeyword: null,
 			totalPageCount: 1,
 			artList: [],
-			dlgImageGallery: false,
-			dlgImageGallery_images: [],
-			dlgMoreDownload: false,
-			dlgMoreDownload_data: [],
-			tags: [],
+			tags: []
 		}
-
-		this.m_lastActiveItem = null;
 	}
 
 	componentWillMount() {
 		API.getTag().then((res) => {
 			res.json().then((data) => {
 				this.setState({ tags: data.items })
+				let theTag = data.items.find((i) => i.name == decodeURI('%e6%97%a5%e6%9c%ac%e6%9c%89%e7%a0%81'))
+				this.flushPageCount(theTag && theTag.id);
+				this.flushList(0, theTag && theTag.id, null);
 			})
 		})
 
-		this.flushPageCount(this.state.currentTagID);
-		this.flushList(0, this.state.currentTagID);
+		
 	}
 
 	onPageTo(page) {
-		this.flushList(page, this.state.currentTagID);
+		this.flushList(page, this.state.currentTagID, this.state.currentKeyword);
 	}
 
 	onTagFilter(tagID) {
 		this.flushPageCount(tagID);
-		this.flushList(0, tagID);
+		this.flushList(0, tagID, null);
 	}
 
 	flushPageCount(tagID) {
@@ -78,12 +75,62 @@ class ArtList extends React.Component {
 		})
 	}
 
-	flushList(page, tagID) {
-		API.getArt(page, tagID).then((res) => {
-			res.json().then((data) => {
-				this.setState({ artList: data.items, currentPage: data.page, currentTagID: tagID })
+	flushList(page, tagID, keyword) {
+		if (keyword != null) {
+			API.searchArt(page, keyword).then((res) => {
+				res.json().then((data) => {
+					this.setState({ artList: data.items, currentPage: data.page, currentTagID: null, currentKeyword: keyword, totalPageCount: data.pageCount })
+				})
 			})
-		})
+		} else {
+			API.getArt(page, tagID).then((res) => {
+				res.json().then((data) => {
+					this.setState({ artList: data.items, currentPage: data.page, currentTagID: tagID, currentKeyword: null })
+					this.ref_keyword.current && (this.ref_keyword.current.value == '')
+				})
+			})
+		}
+	}
+
+	onSearchClick() {
+		if (this.ref_keyword.current == null) { return; }
+		this.flushList(0, null, this.ref_keyword.current.value)
+	}
+
+	render() {
+		let tags = this.state.tags.map(a => { let active = a.id == this.state.currentTagID ? 'active' : null; return <Tag active={active} text={a.name} key={a.id} onClick={() => { this.onTagFilter(a.id) }} />; })
+
+		return (
+			<div>
+				<form style={{ paddingTop: '32px', textAlign: 'center' }} onSubmit={(e) => { e.preventDefault(); return false }}>
+					<input style={{ fontSize: '26px', padding: '4px', width: '560px' }} type={'text'} ref={this.ref_keyword} />
+					<input style={{ fontSize: '20px', padding: '6px', marginLeft: '8px', width: '80px' }} type={'submit'} value={'搜索'} onClick={this.onSearchClick} />
+				</form>
+				<div style={{ paddingTop: '32px' }}>{tags}</div>
+				<div style={{ paddingTop: '32px' }}><Page current={this.state.currentPage} count={this.state.totalPageCount} onPageTo={this.onPageTo} /></div>
+				<ArtList items={this.state.artList} />
+				<div style={{ paddingTop: '8px' }}><Page current={this.state.currentPage} count={this.state.totalPageCount} onPageTo={this.onPageTo} /></div>
+			</div>
+		)
+	}
+
+}
+
+export class ArtList extends React.Component {
+	constructor(props) {
+		super(props)
+		this.onArtImageClick = this.onArtImageClick.bind(this)
+		this.onArtMoreDownloadClick = this.onArtMoreDownloadClick.bind(this)
+		this.onItemClick = this.onItemClick.bind(this)
+
+		this.state = {
+			dlgImageGallery: false,
+			dlgImageGallery_images: [],
+			dlgMoreDownload: false,
+			dlgMoreDownload_data: [],
+		}
+
+		this.m_lastActiveItem = null;
 	}
 
 	onArtImageClick(images) {
@@ -106,28 +153,20 @@ class ArtList extends React.Component {
 	}
 
 	render() {
-		let items = this.state.artList.map(a => { return <ArtItem key={a.id} data={a} onImageClick={this.onArtImageClick} onMoreDownloadClick={this.onArtMoreDownloadClick} onClick={this.onItemClick} /> });
-		let tags = this.state.tags.map(a => { let active = a.id == this.state.currentTagID ? 'active' : null; return <Tag active={active} text={a.name} key={a.id} onClick={() => { this.onTagFilter(a.id) }} />; })
-
+		let items = this.props.items.map(a => { return <ArtItem key={a.id} data={a} onImageClick={this.onArtImageClick} onMoreDownloadClick={this.onArtMoreDownloadClick} onClick={this.onItemClick} /> });
 		let dlg = null;
 		if (this.state.dlgImageGallery) {
 			dlg = <DialogImageGallery images={this.state.dlgImageGallery_images} onBtnCloseClick={() => { this.setState({ dlgImageGallery: false }) }} />
 		} else if (this.state.dlgMoreDownload) {
 			dlg = <DialogMoreDownload downloads={this.state.dlgMoreDownload_data} onBtnCloseClick={() => { this.setState({ dlgMoreDownload: false }) }} />
 		}
-
 		return (
 			<div>
-				<div style={{ paddingTop: '32px', textAlign: 'center' }}><input style={{ fontSize: '26px', padding: '4px', width: '560px' }} type={'text'} /><input style={{ fontSize: '20px', padding: '6px', marginLeft: '8px', width: '80px' }} type={'button'} value={'搜索'} /></div>
-				<div style={{ paddingTop: '32px' }}>{tags}</div>
-				<div style={{ paddingTop: '32px' }}><Page current={this.state.currentPage} count={this.state.totalPageCount} onPageTo={this.onPageTo} /></div>
 				<div style={{}}>{items}</div>
-				<div style={{ paddingTop: '8px' }}><Page current={this.state.currentPage} count={this.state.totalPageCount} onPageTo={this.onPageTo} /></div>
 				{dlg}
 			</div>
 		)
 	}
-
 }
 
 class Tag extends React.Component {
@@ -149,20 +188,16 @@ class ArtItem extends React.Component {
 		this.ref_img = React.createRef();
 	}
 
-	componentWillMount() {		
+	componentWillMount() {
 		// return;
 		var imgs = JSON.parse(this.props.data.images)
 		if (imgs.length == 0) { return }
 		let img = new Image(); img.src = imgs[0]
-		img.onload = function () { this.ref_img.current.style.backgroundImage = 'url(' + imgs[0] + ')'; }.bind(this)
-		img.onerror = img.onabort = function () { this.ref_img.current.style.backgroundImage = 'url(' + Img_404 + ')'; }.bind(this)
+		img.onload = function () { this.ref_img.current && (this.ref_img.current.style.backgroundImage = 'url(' + imgs[0] + ')') }.bind(this)
+		img.onerror = img.onabort = function () { this.ref_img.current && (this.ref_img.current.style.backgroundImage = 'url(' + Img_404 + ')') }.bind(this)
 	}
 
 	render() {
-		const css_div = {
-			width: '240px', display: 'inline-block', padding: '10px', margin: '10px 20px 10px 0px', fontSize: '12px', boxSizing: 'border-box',
-			fontFamily: 'tahoma, arial, "Microsoft YaHei", "Hiragino Sans GB", sans-serif',
-		}
 		const css_content = { height: '47px', overflow: 'hidden', marginTop: '8px' };
 		const css_link = { marginRight: '8px' }
 		const content = this.props.data.text;
@@ -179,11 +214,11 @@ class ArtItem extends React.Component {
 			links.push(<a key='more' style={css_link} href="javascript:;" onClick={() => this.props.onMoreDownloadClick(downloads)}>更多下载...</a>)
 		}
 		links.push(<a key="img" href='javascript:;' onClick={() => this.props.onImageClick(imgs)}>{`[${imgs.length}图] `}</a>)
-		let date = dateFormat(new Date(this.props.data.date), 'yyyy-mm-dd');
-		links.push(<span key="date" style={{ float: 'right' }}>{date.toString()}</span>)
+		let date = this.props.data.date && dateFormat(new Date(this.props.data.date), 'yyyy-mm-dd');
+		links.push(<span key="date" style={{ float: 'right' }}>{date && date.toString()}</span>)
 
 		return (
-			<div style={css_div} className={Styles.shadow} onClick={this.props.onClick}>
+			<div className={[Styles.art_item, Styles.shadow].join(' ')} onClick={this.props.onClick}>
 				<div ref={this.ref_img} style={css_div_img} onClick={() => this.props.onImageClick(imgs)}></div>
 				<p title={content} style={css_content}>{content}</p>
 				<p style={{ marginTop: '8px' }}>{links}</p>
@@ -245,5 +280,3 @@ class DialogMoreDownload extends React.Component {
 		)
 	}
 }
-
-export default HomePage
