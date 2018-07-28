@@ -138,8 +138,10 @@ namespace Collecter.Scripts
 				}
 			}
 
+			int i = 0;
 			for (;;) {
 				SetProgressString(nextURL);
+				Core.SetPrograss(m_host, i++.ToString(), 0);
 				nextURL = pageRun(nextURL);
 				if (string.IsNullOrEmpty(nextURL)) {
 					SetProgressString("finish");
@@ -152,7 +154,6 @@ namespace Collecter.Scripts
 
 		public string pageRun(string url)
 		{
-			Core.SetPrograss(m_host, url, 0);
 			var result = new List<Core.Art>();
 			Item[] listResult;
 			for (;;) {
@@ -163,7 +164,7 @@ namespace Collecter.Scripts
 			var nextURL = Core.Fetch<string>(url, m_script_next);
 			int i = 0;
 			foreach (var artUrl in listResult) {
-				Core.SetPrograss(m_host, artUrl.url, (int)(++i * 100.0f / listResult.Length));
+				Core.SetPrograss(m_host, null, (int)(++i * 100.0f / listResult.Length));
 				ContentResult content;
 				for (;;) {
 					Core.WaitRandom();

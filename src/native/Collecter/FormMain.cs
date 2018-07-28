@@ -17,7 +17,7 @@ namespace Collecter
 		public FormMain()
 		{
 			InitializeComponent();
-			progress1.Visible = false;			
+			progress2.Visible = false;			
 		}
 
 		private void FormMain_Load(object sender, EventArgs e)
@@ -43,26 +43,26 @@ namespace Collecter
 
 		private void webKitBrowser1_DocumentCompleted(object sender, WebBrowserDocumentCompletedEventArgs e)
 		{
-			progress1.Visible = false;
-			labTip.Text = "Completed:" + e.Url.ToString();
+			progress2.Visible = false;
+			labTip2.Text = "Completed:" + e.Url.ToString();
 		}
 
 		private void webKitBrowser1_Navigated(object sender, WebBrowserNavigatedEventArgs e)
 		{
 			Uri url; try { url = e.Url; } catch (NullReferenceException) { return; }
-			labTip.Text = "Navigated:" + e.Url;
+			labTip2.Text = "Navigated:" + e.Url;
 		}
 
 		private void webKitBrowser1_Navigating(object sender, WebKit.WebKitBrowserNavigatingEventArgs e)
 		{
 			Uri url; try { url = e.Url; } catch (NullReferenceException) { return; }
-			labTip.Text = "Navigating:" + e.Url;
-			progress1.Visible = true;
+			labTip2.Text = "Navigating:" + e.Url;
+			progress2.Visible = true;
 		}
 
 		private void webKitBrowser1_ProgressChanged(object sender, WebKit.ProgressChangesEventArgs e)
 		{
-			progress1.Value = e.Percent;
+			progress2.Value = e.Percent;
 		}
 
 		private void FormMain_Shown(object sender, EventArgs e)
@@ -72,12 +72,13 @@ namespace Collecter
 
 		internal void SetPrograss(object sender, string info, int prograss)
 		{
-			progress2.Value = prograss;
+			if (info != null) { labTip1.Text = info; }
+			progress1.Value = prograss;
 		}
 
 		private void labTip_DoubleClick(object sender, EventArgs e)
 		{
-			MessageBox.Show(labTip.Text);
+			MessageBox.Show(labTip2.Text);
 		}
 	}
 }

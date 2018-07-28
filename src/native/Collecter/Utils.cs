@@ -37,7 +37,7 @@ namespace Collecter
 		public static void Init()
 		{
 			m_random = new Random(DateTime.Now.Millisecond);
-			string connStr = "server=localhost;user=root;database=x;port=3306;password=000000";
+			string connStr = "server=localhost;user=root;database=x;port=3306;password=000000;sslmode=none;CharSet=utf8";
 			m_conn = new MySqlConnection(connStr);
 			m_conn.Open();
 			m_dicTag = getAllTag();

@@ -31,10 +31,12 @@
 			this.fileToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			this.openToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			this.statusStrip1 = new System.Windows.Forms.StatusStrip();
-			this.progress2 = new System.Windows.Forms.ToolStripProgressBar();
-			this.labTip = new System.Windows.Forms.ToolStripStatusLabel();
 			this.progress1 = new System.Windows.Forms.ToolStripProgressBar();
+			this.labTip2 = new System.Windows.Forms.ToolStripStatusLabel();
+			this.progress2 = new System.Windows.Forms.ToolStripProgressBar();
 			this.webKitBrowser1 = new WebKit.WebKitBrowser();
+			this.labTip1 = new System.Windows.Forms.ToolStripStatusLabel();
+			this.toolStripStatusLabel1 = new System.Windows.Forms.ToolStripStatusLabel();
 			this.menuStrip1.SuspendLayout();
 			this.statusStrip1.SuspendLayout();
 			this.SuspendLayout();
@@ -45,7 +47,7 @@
             this.fileToolStripMenuItem});
 			this.menuStrip1.Location = new System.Drawing.Point(0, 0);
 			this.menuStrip1.Name = "menuStrip1";
-			this.menuStrip1.Size = new System.Drawing.Size(573, 25);
+			this.menuStrip1.Size = new System.Drawing.Size(624, 25);
 			this.menuStrip1.TabIndex = 0;
 			this.menuStrip1.Text = "menuStrip1";
 			// 
@@ -68,35 +70,39 @@
 			// statusStrip1
 			// 
 			this.statusStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.labTip1,
+            this.progress1,
+            this.toolStripStatusLabel1,
             this.progress2,
-            this.labTip,
-            this.progress1});
-			this.statusStrip1.Location = new System.Drawing.Point(0, 414);
+            this.labTip2});
+			this.statusStrip1.Location = new System.Drawing.Point(0, 420);
 			this.statusStrip1.Name = "statusStrip1";
-			this.statusStrip1.Size = new System.Drawing.Size(573, 22);
+			this.statusStrip1.Size = new System.Drawing.Size(624, 22);
+			this.statusStrip1.SizingGrip = false;
+			this.statusStrip1.Stretch = false;
 			this.statusStrip1.TabIndex = 1;
 			this.statusStrip1.Text = "statusStrip1";
-			// 
-			// progress2
-			// 
-			this.progress2.Name = "progress2";
-			this.progress2.Size = new System.Drawing.Size(100, 16);
-			// 
-			// labTip
-			// 
-			this.labTip.AutoSize = false;
-			this.labTip.AutoToolTip = true;
-			this.labTip.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
-			this.labTip.Name = "labTip";
-			this.labTip.Size = new System.Drawing.Size(300, 17);
-			this.labTip.Text = "about:blank";
-			this.labTip.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
-			this.labTip.DoubleClick += new System.EventHandler(this.labTip_DoubleClick);
 			// 
 			// progress1
 			// 
 			this.progress1.Name = "progress1";
 			this.progress1.Size = new System.Drawing.Size(100, 16);
+			// 
+			// labTip2
+			// 
+			this.labTip2.AutoToolTip = true;
+			this.labTip2.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
+			this.labTip2.DoubleClickEnabled = true;
+			this.labTip2.Name = "labTip2";
+			this.labTip2.Size = new System.Drawing.Size(77, 17);
+			this.labTip2.Text = "about:blank";
+			this.labTip2.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+			this.labTip2.DoubleClick += new System.EventHandler(this.labTip_DoubleClick);
+			// 
+			// progress2
+			// 
+			this.progress2.Name = "progress2";
+			this.progress2.Size = new System.Drawing.Size(100, 16);
 			// 
 			// webKitBrowser1
 			// 
@@ -107,7 +113,7 @@
 			this.webKitBrowser1.Name = "webKitBrowser1";
 			this.webKitBrowser1.Password = null;
 			this.webKitBrowser1.PrivateBrowsing = false;
-			this.webKitBrowser1.Size = new System.Drawing.Size(573, 389);
+			this.webKitBrowser1.Size = new System.Drawing.Size(624, 395);
 			this.webKitBrowser1.TabIndex = 2;
 			this.webKitBrowser1.Url = null;
 			this.webKitBrowser1.Username = null;
@@ -116,11 +122,23 @@
 			this.webKitBrowser1.Navigated += new System.Windows.Forms.WebBrowserNavigatedEventHandler(this.webKitBrowser1_Navigated);
 			this.webKitBrowser1.Navigating += new WebKit.WebKitBrowserNavigatingEventHandler(this.webKitBrowser1_Navigating);
 			// 
+			// labTip1
+			// 
+			this.labTip1.Name = "labTip1";
+			this.labTip1.Size = new System.Drawing.Size(15, 17);
+			this.labTip1.Text = "0";
+			// 
+			// toolStripStatusLabel1
+			// 
+			this.toolStripStatusLabel1.Name = "toolStripStatusLabel1";
+			this.toolStripStatusLabel1.Size = new System.Drawing.Size(11, 17);
+			this.toolStripStatusLabel1.Text = "|";
+			// 
 			// FormMain
 			// 
 			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-			this.ClientSize = new System.Drawing.Size(573, 436);
+			this.ClientSize = new System.Drawing.Size(624, 442);
 			this.Controls.Add(this.webKitBrowser1);
 			this.Controls.Add(this.statusStrip1);
 			this.Controls.Add(this.menuStrip1);
@@ -146,9 +164,11 @@
 		private System.Windows.Forms.ToolStripMenuItem fileToolStripMenuItem;
 		private System.Windows.Forms.ToolStripMenuItem openToolStripMenuItem;
 		private System.Windows.Forms.StatusStrip statusStrip1;
-		private System.Windows.Forms.ToolStripStatusLabel labTip;
-		private System.Windows.Forms.ToolStripProgressBar progress1;
+		private System.Windows.Forms.ToolStripStatusLabel labTip2;
 		private System.Windows.Forms.ToolStripProgressBar progress2;
+		private System.Windows.Forms.ToolStripProgressBar progress1;
 		internal WebKit.WebKitBrowser webKitBrowser1;
+		private System.Windows.Forms.ToolStripStatusLabel labTip1;
+		private System.Windows.Forms.ToolStripStatusLabel toolStripStatusLabel1;
 	}
 }
