@@ -1,6 +1,7 @@
 ﻿using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -24,10 +25,9 @@ namespace Collecter.Scripts
 			return "thz.com - 亚洲有碼原創";
 		}
 
-		public void Run()
-		{
-			m_policy.Run();
-		}
+		public void Run(bool reset) { m_policy.Run(reset); }
+		public string GetProgressString() { return m_policy.GetProgressString(); }
+		public void ResetProgress() { m_policy.ResetProgress(); }
 	}
 
 	class Class12 : IScript
@@ -47,10 +47,9 @@ namespace Collecter.Scripts
 			return "thz.com - 亚洲無碼原創";
 		}
 
-		public void Run()
-		{
-			m_policy.Run();
-		}
+		public void Run(bool reset) { m_policy.Run(reset); }
+		public string GetProgressString() { return m_policy.GetProgressString(); }
+		public void ResetProgress() { m_policy.ResetProgress(); }
 	}
 
 	class Class13 : IScript
@@ -70,10 +69,9 @@ namespace Collecter.Scripts
 			return "thz.com - 欧美無碼";
 		}
 
-		public void Run()
-		{
-			m_policy.Run();
-		}
+		public void Run(bool reset) { m_policy.Run(reset); }
+		public string GetProgressString() { return m_policy.GetProgressString(); }
+		public void ResetProgress() { m_policy.ResetProgress(); }
 	}
 
 	class Policy11
@@ -107,9 +105,9 @@ namespace Collecter.Scripts
 		private readonly string m_script_download = "JSON.stringify($('a[onclick=\"hideWindow(\\'imc_attachad\\')\"]')[0].href)";
 
 		private readonly string[] m_tags;
-		private object m_host;
+		private IScript m_host;
 
-		public Policy11(object host, string startURL, string[] tags)
+		public Policy11(IScript host, string startURL, string[] tags)
 		{
 			m_host = host;
 			m_url = startURL;
@@ -130,13 +128,25 @@ namespace Collecter.Scripts
 			public string images { get; set; }
 		}
 
-		public void Run()
+		public void Run(bool reset)
 		{
 			string nextURL = m_url;
-			for (;;) {
-				nextURL = pageRun(nextURL);
-				if (string.IsNullOrEmpty(nextURL)) { break; }
+			if (!reset) {
+				var progress = GetProgressString();
+				if (string.IsNullOrEmpty(progress) && progress != "finish") {
+					nextURL = progress;
+				}
 			}
+
+			for (;;) {
+				SetProgressString(nextURL);
+				nextURL = pageRun(nextURL);
+				if (string.IsNullOrEmpty(nextURL)) {
+					SetProgressString("finish");
+					break;
+				}
+			}
+
 			Core.SetPrograss(m_host, "Finish", 100);
 		}
 
@@ -146,22 +156,25 @@ namespace Collecter.Scripts
 			var result = new List<Core.Art>();
 			Item[] listResult;
 			for (;;) {
-				listResult = Core.Fetch<Item[]>(url, m_script_getArtURLList, Core.m_formMain.CommonWebKitBrowser);
+				listResult = Core.Fetch<Item[]>(url, m_script_getArtURLList);
 				if (listResult.Length > 0) { break; }
+				Core.WaitRandom();
 			}
-			var nextURL = Core.Fetch<string>(url, m_script_next, Core.m_formMain.CommonWebKitBrowser);
+			var nextURL = Core.Fetch<string>(url, m_script_next);
 			int i = 0;
 			foreach (var artUrl in listResult) {
 				Core.SetPrograss(m_host, artUrl.url, (int)(++i * 100.0f / listResult.Length));
 				ContentResult content;
 				for (;;) {
-					content = Core.Fetch<ContentResult>(artUrl.url, m_script_getArt, Core.m_formMain.CommonWebKitBrowser);
+					Core.WaitRandom();
+					content = Core.Fetch<ContentResult>(artUrl.url, m_script_getArt);
 					if (content != null) { break; }
 				}
 
 				List<string> downloads = new List<string>();
 				foreach (var dl in content.downloads) {
-					downloads.Add(Core.Fetch<string>(dl, m_script_download, Core.m_formMain.CommonWebKitBrowser));
+					Core.WaitRandom();
+					downloads.Add(Core.Fetch<string>(dl, m_script_download));
 				}
 
 				result.Add(new Core.Art() {
@@ -175,6 +188,25 @@ namespace Collecter.Scripts
 			}
 			Core.CollectArt(result);
 			return nextURL;
+		}
+
+		private string progressFilename {
+			get { return string.Format("progress.{0}.txt", m_host); }
+		}
+
+		public string GetProgressString()
+		{
+			return File.Exists(progressFilename) ? File.ReadAllText(progressFilename) : string.Empty;
+		}
+
+		private void SetProgressString(string value)
+		{
+			File.WriteAllText(progressFilename, value);
+		}
+
+		public void ResetProgress()
+		{
+			File.Delete(progressFilename);
 		}
 	}
 }

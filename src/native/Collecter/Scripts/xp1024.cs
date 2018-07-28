@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -12,20 +13,19 @@ namespace Collecter.Scripts
 		public Class1()
 		{
 			m_policy = new Policy1(this,
-				"http://d2.sku117.org/forum.php?mod=forumdisplay&fid=22&page=1",
+				"http://d.91jinwandalaohu.rocks/forum-22-1.html",
 				new string[] { "日本" }
 			);
 		}
 
 		public override string ToString()
 		{
-			return "xp1024.com - 日本";
+			return "xp1024.com - 日本騎兵";
 		}
 
-		public void Run()
-		{
-			m_policy.Run();
-		}
+		public void Run(bool reset) { m_policy.Run(reset); }
+		public string GetProgressString() { return m_policy.GetProgressString(); }
+		public void ResetProgress() { m_policy.ResetProgress(); }
 	}
 
 	class Class2 : IScript
@@ -35,7 +35,7 @@ namespace Collecter.Scripts
 		public Class2()
 		{
 			m_policy = new Policy1(this,
-				"http://d2.sku117.org/forum.php?mod=forumdisplay&fid=5&page=1",
+				"http://d.91jinwandalaohu.rocks/forum-5-1.html",
 				new string[] { "亚洲无码" }
 			);
 		}
@@ -45,11 +45,9 @@ namespace Collecter.Scripts
 			return "xp1024.com - 亞洲無碼";
 		}
 
-		public void Run()
-		{
-			m_policy.Run();
-		}
-
+		public void Run(bool reset) { m_policy.Run(reset); }
+		public string GetProgressString() { return m_policy.GetProgressString(); }
+		public void ResetProgress() { m_policy.ResetProgress(); }
 	}
 
 	class Class3 : IScript
@@ -59,7 +57,7 @@ namespace Collecter.Scripts
 		public Class3()
 		{
 			m_policy = new Policy1(this,
-				"http://d2.sku117.org/forum.php?mod=forumdisplay&fid=7&page=1",
+				"http://d.91jinwandalaohu.rocks/forum-7-1.html",
 				new string[] { "欧美无码" }
 			);
 		}
@@ -69,11 +67,9 @@ namespace Collecter.Scripts
 			return "xp1024.com - 歐美新片";
 		}
 
-		public void Run()
-		{
-			m_policy.Run();
-		}
-
+		public void Run(bool reset) { m_policy.Run(reset); }
+		public string GetProgressString() { return m_policy.GetProgressString(); }
+		public void ResetProgress() { m_policy.ResetProgress(); }
 	}
 
 	class Class4 : IScript
@@ -83,7 +79,7 @@ namespace Collecter.Scripts
 		public Class4()
 		{
 			m_policy = new Policy1(this,
-				"http://d2.sku117.org/forum.php?mod=forumdisplay&fid=18&page=1",
+				"http://d.91jinwandalaohu.rocks/forum-18-1.html",
 				new string[] { "三級" }
 			);
 		}
@@ -93,20 +89,29 @@ namespace Collecter.Scripts
 			return "xp1024.com - 三級寫真";
 		}
 
-		public void Run()
-		{
-			m_policy.Run();
-		}
-
+		public void Run(bool reset) { m_policy.Run(reset); }
+		public string GetProgressString() { return m_policy.GetProgressString(); }
+		public void ResetProgress() { m_policy.ResetProgress(); }
 	}
 
 	class Policy1
 	{
 		private readonly string m_url;
 		private readonly string m_script_getArtURLList = @"
-			JSON.stringify($('#moderate table tbody tr td:nth-last-child(2).max-td table.article tbody tr.article-title td a[target]').map(function (i, a) {
-				return { text: a.innerText, url: a.href, date: new Date((new Date()).getFullYear() + '-' + $(a).children('span').text()) }
-			}).toArray())
+			//JSON.stringify($('#moderate table tbody tr td:nth-last-child(2).max-td table.article tbody tr.article-title td a[target]').map(function (i, a) {
+			//	return { text: a.innerText, url: a.href, date: new Date((new Date()).getFullYear() + '-' + $(a).children('span').text()) }
+			//}).toArray())
+			JSON.stringify($('table#threadlisttableid tbody tr')
+				.filter(function () {
+					return $(this).children('th').children('a.s.xst').length > 0
+						&& $(this).children('td.by').length > 0
+						&& $(this).children('td').children('a.showhide').length == 0
+				})
+				.map(function (i, a) {
+					var item = $(a).children('th').children('a.s.xst')[0]
+					return item && { text: item.innerText, url: item.href, date: $('td.by:first em span span', a).attr('title') }
+				}
+			).toArray())
 		";
 		private readonly string m_script_getArt = @"
 			JSON.stringify($('td.t_f').map(function (i, a) {
@@ -121,8 +126,8 @@ namespace Collecter.Scripts
 			JSON.stringify($('#fd_page_bottom div.pg a.nxt').length ? $('#fd_page_bottom div.pg a.nxt')[0].href : '')
 		";
 		private readonly string[] m_tags;
-		private object m_host;
-		public Policy1(object host, string startURL, string[] tags)
+		private IScript m_host;
+		public Policy1(IScript host, string startURL, string[] tags)
 		{
 			m_host = host;
 			m_url = startURL;
@@ -142,14 +147,26 @@ namespace Collecter.Scripts
 			public string downloads { get; set; }
 			public string images { get; set; }
 		}
-
-		public void Run()
+		
+		public void Run(bool reset)
 		{
 			string nextURL = m_url;
-			for (;;) {
-				nextURL = pageRun(nextURL);
-				if (string.IsNullOrEmpty(nextURL)) { break; }
+			if (!reset) {
+				var progress = GetProgressString();
+				if (string.IsNullOrEmpty(progress) && progress != "finish") {
+					nextURL = progress;
+				}
 			}
+
+			for (;;) {
+				SetProgressString(nextURL);
+				nextURL = pageRun(nextURL);
+				if (string.IsNullOrEmpty(nextURL)) {
+					SetProgressString("finish");
+					break;
+				}
+			}
+
 			Core.SetPrograss(m_host, "Finish", 100);
 		}
 
@@ -159,16 +176,18 @@ namespace Collecter.Scripts
 			var result = new List<Core.Art>();
 			Item[] listResult;
 			for (;;) {
-				listResult = Core.Fetch<Item[]>(url, m_script_getArtURLList, Core.m_formMain.CommonWebKitBrowser);
+				listResult = Core.Fetch<Item[]>(url, m_script_getArtURLList);
 				if (listResult.Length > 0) { break; }
+				Core.WaitRandom();
 			}
-			var nextURL = Core.Fetch<string>(url, m_script_next, Core.m_formMain.CommonWebKitBrowser);
+			var nextURL = Core.Fetch<string>(url, m_script_next);
 			int i = 0;
 			foreach (var artUrl in listResult) {
 				Core.SetPrograss(m_host, artUrl.url, (int)(++i * 100.0f / listResult.Length));
 				ContentResult[] contentList;
 				for (;;) {
-					contentList = Core.Fetch<ContentResult[]>(artUrl.url, m_script_getArt, Core.m_formMain.CommonWebKitBrowser);
+					Core.WaitRandom();
+					contentList = Core.Fetch<ContentResult[]>(artUrl.url, m_script_getArt);
 					if (contentList.Length > 0) { break; }
 				}
 
@@ -185,6 +204,25 @@ namespace Collecter.Scripts
 			}
 			Core.CollectArt(result);
 			return nextURL;
+		}
+
+				private string progressFilename {
+			get { return string.Format("progress.{0}.txt", m_host); }
+		}
+
+		public string GetProgressString()
+		{
+			return File.Exists(progressFilename) ? File.ReadAllText(progressFilename) : string.Empty;
+		}
+
+		private void SetProgressString(string value)
+		{
+			File.WriteAllText(progressFilename, value);
+		}
+
+		public void ResetProgress()
+		{
+			File.Delete(progressFilename);
 		}
 	}
 
@@ -266,14 +304,14 @@ namespace Collecter.Scripts
 	//	{
 	//		Core.SetPrograss(this, url, 0);
 	//		var result = new List<Core.Art>();
-	//		var listResult = Core.Fetch<Item[]>(url, m_script_getArtURLList, Core.m_formMain.CommonWebKitBrowser);
-	//		var nextURL = Core.Fetch<string>(url, m_script_next, Core.m_formMain.CommonWebKitBrowser);
+	//		var listResult = Core.Fetch<Item[]>(url, m_script_getArtURLList, m_wkb);
+	//		var nextURL = Core.Fetch<string>(url, m_script_next, m_wkb);
 	//		int i = 0;
 	//		foreach (var artUrl in listResult) {
 	//			Core.SetPrograss(this, artUrl.url, (int)(++i * 100.0f / listResult.Length));
 	//			ContentResult[] contentList;
 	//			for (;;) {
-	//				contentList = Core.Fetch<ContentResult[]>(artUrl.url, m_script_getArt, Core.m_formMain.CommonWebKitBrowser);
+	//				contentList = Core.Fetch<ContentResult[]>(artUrl.url, m_script_getArt, m_wkb);
 	//				if (contentList.Length > 0) { break; }
 	//			}
 

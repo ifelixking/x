@@ -3,14 +3,14 @@
 	partial class FormMain
 	{
 		/// <summary>
-		/// 必需的设计器变量。
+		/// Required designer variable.
 		/// </summary>
 		private System.ComponentModel.IContainer components = null;
 
 		/// <summary>
-		/// 清理所有正在使用的资源。
+		/// Clean up any resources being used.
 		/// </summary>
-		/// <param name="disposing">如果应释放托管资源，为 true；否则为 false。</param>
+		/// <param name="disposing">true if managed resources should be disposed; otherwise, false.</param>
 		protected override void Dispose(bool disposing)
 		{
 			if (disposing && (components != null)) {
@@ -19,24 +19,24 @@
 			base.Dispose(disposing);
 		}
 
-		#region Windows 窗体设计器生成的代码
+		#region Windows Form Designer generated code
 
 		/// <summary>
-		/// 设计器支持所需的方法 - 不要修改
-		/// 使用代码编辑器修改此方法的内容。
+		/// Required method for Designer support - do not modify
+		/// the contents of this method with the code editor.
 		/// </summary>
 		private void InitializeComponent()
 		{
 			this.menuStrip1 = new System.Windows.Forms.MenuStrip();
 			this.fileToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-			this.runToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-			this.listView1 = new System.Windows.Forms.ListView();
-			this.columnHeader1 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
-			this.columnHeader2 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
-			this.columnHeader3 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
-			this.panel1 = new System.Windows.Forms.Panel();
-			this.logToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+			this.openToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+			this.statusStrip1 = new System.Windows.Forms.StatusStrip();
+			this.progress2 = new System.Windows.Forms.ToolStripProgressBar();
+			this.labTip = new System.Windows.Forms.ToolStripStatusLabel();
+			this.progress1 = new System.Windows.Forms.ToolStripProgressBar();
+			this.webKitBrowser1 = new WebKit.WebKitBrowser();
 			this.menuStrip1.SuspendLayout();
+			this.statusStrip1.SuspendLayout();
 			this.SuspendLayout();
 			// 
 			// menuStrip1
@@ -45,89 +45,95 @@
             this.fileToolStripMenuItem});
 			this.menuStrip1.Location = new System.Drawing.Point(0, 0);
 			this.menuStrip1.Name = "menuStrip1";
-			this.menuStrip1.Size = new System.Drawing.Size(631, 25);
+			this.menuStrip1.Size = new System.Drawing.Size(573, 25);
 			this.menuStrip1.TabIndex = 0;
 			this.menuStrip1.Text = "menuStrip1";
 			// 
 			// fileToolStripMenuItem
 			// 
 			this.fileToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.runToolStripMenuItem,
-            this.logToolStripMenuItem});
+            this.openToolStripMenuItem});
 			this.fileToolStripMenuItem.Name = "fileToolStripMenuItem";
 			this.fileToolStripMenuItem.Size = new System.Drawing.Size(39, 21);
 			this.fileToolStripMenuItem.Text = "&File";
 			// 
-			// runToolStripMenuItem
+			// openToolStripMenuItem
 			// 
-			this.runToolStripMenuItem.Name = "runToolStripMenuItem";
-			this.runToolStripMenuItem.ShortcutKeys = System.Windows.Forms.Keys.F5;
-			this.runToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
-			this.runToolStripMenuItem.Text = "&Run";
-			this.runToolStripMenuItem.Click += new System.EventHandler(this.btnRun_Click);
+			this.openToolStripMenuItem.Name = "openToolStripMenuItem";
+			this.openToolStripMenuItem.Size = new System.Drawing.Size(117, 22);
+			this.openToolStripMenuItem.Text = "&Open...";
+			this.openToolStripMenuItem.Click += new System.EventHandler(this.openToolStripMenuItem_Click);
 			// 
-			// listView1
+			// statusStrip1
 			// 
-			this.listView1.CheckBoxes = true;
-			this.listView1.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
-            this.columnHeader1,
-            this.columnHeader2,
-            this.columnHeader3});
-			this.listView1.Dock = System.Windows.Forms.DockStyle.Fill;
-			this.listView1.FullRowSelect = true;
-			this.listView1.HideSelection = false;
-			this.listView1.Location = new System.Drawing.Point(0, 25);
-			this.listView1.Name = "listView1";
-			this.listView1.Size = new System.Drawing.Size(631, 331);
-			this.listView1.TabIndex = 1;
-			this.listView1.UseCompatibleStateImageBehavior = false;
-			this.listView1.View = System.Windows.Forms.View.Details;
+			this.statusStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.progress2,
+            this.labTip,
+            this.progress1});
+			this.statusStrip1.Location = new System.Drawing.Point(0, 414);
+			this.statusStrip1.Name = "statusStrip1";
+			this.statusStrip1.Size = new System.Drawing.Size(573, 22);
+			this.statusStrip1.TabIndex = 1;
+			this.statusStrip1.Text = "statusStrip1";
 			// 
-			// columnHeader1
+			// progress2
 			// 
-			this.columnHeader1.Text = "Name";
-			this.columnHeader1.Width = 98;
+			this.progress2.Name = "progress2";
+			this.progress2.Size = new System.Drawing.Size(100, 16);
 			// 
-			// columnHeader2
+			// labTip
 			// 
-			this.columnHeader2.Text = "Info";
-			this.columnHeader2.Width = 466;
+			this.labTip.AutoSize = false;
+			this.labTip.AutoToolTip = true;
+			this.labTip.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
+			this.labTip.Name = "labTip";
+			this.labTip.Size = new System.Drawing.Size(300, 17);
+			this.labTip.Text = "about:blank";
+			this.labTip.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+			this.labTip.DoubleClick += new System.EventHandler(this.labTip_DoubleClick);
 			// 
-			// columnHeader3
+			// progress1
 			// 
-			this.columnHeader3.Text = "Progress";
+			this.progress1.Name = "progress1";
+			this.progress1.Size = new System.Drawing.Size(100, 16);
 			// 
-			// panel1
+			// webKitBrowser1
 			// 
-			this.panel1.Location = new System.Drawing.Point(219, 90);
-			this.panel1.Name = "panel1";
-			this.panel1.Size = new System.Drawing.Size(157, 144);
-			this.panel1.TabIndex = 2;
-			// 
-			// logToolStripMenuItem
-			// 
-			this.logToolStripMenuItem.Name = "logToolStripMenuItem";
-			this.logToolStripMenuItem.ShortcutKeys = System.Windows.Forms.Keys.F6;
-			this.logToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
-			this.logToolStripMenuItem.Text = "&Log";
-			this.logToolStripMenuItem.Click += new System.EventHandler(this.logToolStripMenuItem_Click);
+			this.webKitBrowser1.AllowDrop = true;
+			this.webKitBrowser1.BackColor = System.Drawing.Color.White;
+			this.webKitBrowser1.Dock = System.Windows.Forms.DockStyle.Fill;
+			this.webKitBrowser1.Location = new System.Drawing.Point(0, 25);
+			this.webKitBrowser1.Name = "webKitBrowser1";
+			this.webKitBrowser1.Password = null;
+			this.webKitBrowser1.PrivateBrowsing = false;
+			this.webKitBrowser1.Size = new System.Drawing.Size(573, 389);
+			this.webKitBrowser1.TabIndex = 2;
+			this.webKitBrowser1.Url = null;
+			this.webKitBrowser1.Username = null;
+			this.webKitBrowser1.ProgressChanged += new WebKit.ProgressChangedEventHandler(this.webKitBrowser1_ProgressChanged);
+			this.webKitBrowser1.DocumentCompleted += new System.Windows.Forms.WebBrowserDocumentCompletedEventHandler(this.webKitBrowser1_DocumentCompleted);
+			this.webKitBrowser1.Navigated += new System.Windows.Forms.WebBrowserNavigatedEventHandler(this.webKitBrowser1_Navigated);
+			this.webKitBrowser1.Navigating += new WebKit.WebKitBrowserNavigatingEventHandler(this.webKitBrowser1_Navigating);
 			// 
 			// FormMain
 			// 
 			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-			this.ClientSize = new System.Drawing.Size(631, 356);
-			this.Controls.Add(this.panel1);
-			this.Controls.Add(this.listView1);
+			this.ClientSize = new System.Drawing.Size(573, 436);
+			this.Controls.Add(this.webKitBrowser1);
+			this.Controls.Add(this.statusStrip1);
 			this.Controls.Add(this.menuStrip1);
 			this.MainMenuStrip = this.menuStrip1;
 			this.Name = "FormMain";
 			this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
-			this.Text = "Collecter";
+			this.Text = "FormMain";
 			this.FormClosed += new System.Windows.Forms.FormClosedEventHandler(this.FormMain_FormClosed);
 			this.Load += new System.EventHandler(this.FormMain_Load);
+			this.Shown += new System.EventHandler(this.FormMain_Shown);
 			this.menuStrip1.ResumeLayout(false);
 			this.menuStrip1.PerformLayout();
+			this.statusStrip1.ResumeLayout(false);
+			this.statusStrip1.PerformLayout();
 			this.ResumeLayout(false);
 			this.PerformLayout();
 
@@ -137,13 +143,11 @@
 
 		private System.Windows.Forms.MenuStrip menuStrip1;
 		private System.Windows.Forms.ToolStripMenuItem fileToolStripMenuItem;
-		private System.Windows.Forms.ToolStripMenuItem runToolStripMenuItem;
-		private System.Windows.Forms.ListView listView1;
-		private System.Windows.Forms.ColumnHeader columnHeader1;
-		private System.Windows.Forms.ColumnHeader columnHeader2;
-		private System.Windows.Forms.ColumnHeader columnHeader3;
-		private System.Windows.Forms.Panel panel1;
-		private System.Windows.Forms.ToolStripMenuItem logToolStripMenuItem;
+		private System.Windows.Forms.ToolStripMenuItem openToolStripMenuItem;
+		private System.Windows.Forms.StatusStrip statusStrip1;
+		private System.Windows.Forms.ToolStripStatusLabel labTip;
+		private System.Windows.Forms.ToolStripProgressBar progress1;
+		private System.Windows.Forms.ToolStripProgressBar progress2;
+		internal WebKit.WebKitBrowser webKitBrowser1;
 	}
 }
-

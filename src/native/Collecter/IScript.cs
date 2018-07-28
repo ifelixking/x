@@ -8,6 +8,8 @@ namespace Collecter
 {
 	interface IScript
 	{
-		void Run();
+		void Run(bool reset);
+		string GetProgressString();
+		void ResetProgress();
 	}
 }

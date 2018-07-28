@@ -7,6 +7,7 @@ using System.Data.Common;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
@@ -20,6 +21,8 @@ namespace Collecter
 		private static DbConnection m_conn;
 		private static Dictionary<String, long> m_dicTag = new Dictionary<string, long>();
 		internal static FormMain m_formMain;
+		private static Random m_random;
+
 
 		public class Art
 		{
@@ -33,6 +36,7 @@ namespace Collecter
 
 		public static void Init()
 		{
+			m_random = new Random(DateTime.Now.Millisecond);
 			string connStr = "server=localhost;user=root;database=x;port=3306;password=000000";
 			m_conn = new MySqlConnection(connStr);
 			m_conn.Open();
@@ -47,35 +51,35 @@ namespace Collecter
 		}
 
 		// 获取
-		public static T Fetch<T>(string url, string script, WebKitBrowser wkb = null)
+		public static T Fetch<T>(string url, string script)
 		{
-			var wkbTemp = wkb;
-			if (wkbTemp == null) { wkbTemp = new WebKitBrowser(); m_formMain.InvisibleContainer.Controls.Add(wkbTemp); }
+			var wkb = m_formMain.webKitBrowser1;
 
 			// navigate to url
-			if (wkbTemp.Url == null || wkbTemp.Url.ToString() != url) {
-				wkbTemp.Navigate("about:blank");
-				var oldTag = wkbTemp.Tag; wkbTemp.Tag = 1;
-				wkbTemp.DocumentCompleted += wkb_DocumentCompleted;
-				wkbTemp.Navigate(url);
+			if (wkb.Url == null || wkb.Url.ToString() != url) {
+				var oldTag = wkb.Tag; wkb.Tag = 1;
+				// wkb.DocumentCompleted += wkb_DocumentCompleted;
+				wkb.Navigated += Wkb_Navigated;
+				wkb.Navigate(url);
 				{
 					DateTime start = DateTime.Now;
-					while (wkbTemp.Tag != null) {
+					while (wkb.Tag != null) {
 						if ((DateTime.Now - start).TotalSeconds > 30) {
-							wkbTemp.Navigate(url);
+							wkb.Navigate(url);
 							// wkbTemp.Reload();
 							start = DateTime.Now;
 						}
 						Application.DoEvents();
 					}
 				}
-				wkbTemp.DocumentCompleted -= wkb_DocumentCompleted;
-				wkbTemp.Tag = oldTag;
+				// wkb.DocumentCompleted -= wkb_DocumentCompleted;
+				wkb.Navigated -= Wkb_Navigated;
+				wkb.Tag = oldTag;
 
 				// 注入 jquery
 				for (;;) {
 					try {
-						wkbTemp.StringByEvaluatingJavaScriptFromString("(function(){var _x_script = document.createElement('script'); _x_script.src='https://cdn.bootcss.com/jquery/3.3.1/jquery.min.js'; document.body.appendChild(_x_script);})()");
+						wkb.StringByEvaluatingJavaScriptFromString("(function(){var _x_script = document.createElement('script'); _x_script.src='https://cdn.bootcss.com/jquery/3.3.1/jquery.min.js'; document.body.appendChild(_x_script);})()");
 						break;
 					} catch (Exception ex) { Core.Log(ex.ToString()); }
 					Thread.Sleep(1000);
@@ -87,20 +91,22 @@ namespace Collecter
 			string result = null;
 			for (;;) {
 				try {
-					result = wkbTemp.StringByEvaluatingJavaScriptFromString(script);
+					result = wkb.StringByEvaluatingJavaScriptFromString(script);
 					break;
 				} catch (Exception ex) { Core.Log(ex.ToString()); }
 				Thread.Sleep(1000);
 				Application.DoEvents();
 			}
 
-			//
-			if (wkb == null) {
-				wkbTemp.Parent.Controls.Remove(wkbTemp);
-				wkbTemp.Dispose();
-			}
-
 			return JsonConvert.DeserializeObject<T>(result);
+		}
+
+		// 随机等待
+		public static void WaitRandom()
+		{
+			var secs = m_random.Next(3, 10);    // 等待 3 到 10 秒
+			DateTime t = DateTime.Now.AddSeconds(secs);
+			while (DateTime.Now < t) { Application.DoEvents(); Thread.Sleep(500); }
 		}
 
 		// 收集
@@ -180,7 +186,18 @@ namespace Collecter
 			wkb.Tag = null;
 		}
 
+		private static void Wkb_Navigated(object sender, WebBrowserNavigatedEventArgs e)
+		{
+			var wkb = sender as WebKitBrowser;
+			wkb.Tag = null;
+		}
 
+	}
+
+	static class Utils
+	{
+		[DllImport("kernel32.dll")]
+		public static extern int TerminateProcess(IntPtr hProcess, uint uExitCode);
 	}
 }
 
