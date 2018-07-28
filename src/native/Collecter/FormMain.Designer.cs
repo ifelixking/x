@@ -60,7 +60,8 @@
 			// openToolStripMenuItem
 			// 
 			this.openToolStripMenuItem.Name = "openToolStripMenuItem";
-			this.openToolStripMenuItem.Size = new System.Drawing.Size(117, 22);
+			this.openToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.O)));
+			this.openToolStripMenuItem.Size = new System.Drawing.Size(164, 22);
 			this.openToolStripMenuItem.Text = "&Open...";
 			this.openToolStripMenuItem.Click += new System.EventHandler(this.openToolStripMenuItem_Click);
 			// 
@@ -126,7 +127,7 @@
 			this.MainMenuStrip = this.menuStrip1;
 			this.Name = "FormMain";
 			this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
-			this.Text = "FormMain";
+			this.Text = "Collecter";
 			this.FormClosed += new System.Windows.Forms.FormClosedEventHandler(this.FormMain_FormClosed);
 			this.Load += new System.EventHandler(this.FormMain_Load);
 			this.Shown += new System.EventHandler(this.FormMain_Shown);

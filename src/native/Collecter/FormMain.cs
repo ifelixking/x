@@ -37,6 +37,7 @@ namespace Collecter
 			OpenScriptDialog dlg = new OpenScriptDialog();
 			if (dlg.ShowDialog() != DialogResult.OK) { return; }
 			m_script = dlg.SelectedScript;
+			this.Text = string.Format("Collecter - {0}", m_script);
 			m_script.Run(true);
 		}
 
