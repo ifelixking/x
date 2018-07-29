@@ -44,6 +44,7 @@
       <HintPath>..\..\..\..\open-webkit-sharp\Binary\OpenWebKitSharp.dll</HintPath>
     </Reference>
     <Reference Include="System" />
+    <Reference Include="System.configuration" />
     <Reference Include="System.Core" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
@@ -75,6 +76,7 @@
     </Compile>
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Scripts\fanhome.cs" />
     <Compile Include="Scripts\thz.cs" />
     <Compile Include="Scripts\xp1024.cs" />
     <Compile Include="Utils.cs" />

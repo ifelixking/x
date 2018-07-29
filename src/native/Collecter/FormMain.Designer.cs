@@ -31,12 +31,15 @@
 			this.fileToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			this.openToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			this.statusStrip1 = new System.Windows.Forms.StatusStrip();
-			this.progress1 = new System.Windows.Forms.ToolStripProgressBar();
-			this.labTip2 = new System.Windows.Forms.ToolStripStatusLabel();
-			this.progress2 = new System.Windows.Forms.ToolStripProgressBar();
-			this.webKitBrowser1 = new WebKit.WebKitBrowser();
 			this.labTip1 = new System.Windows.Forms.ToolStripStatusLabel();
+			this.progress1 = new System.Windows.Forms.ToolStripProgressBar();
 			this.toolStripStatusLabel1 = new System.Windows.Forms.ToolStripStatusLabel();
+			this.progress2 = new System.Windows.Forms.ToolStripProgressBar();
+			this.labTip2 = new System.Windows.Forms.ToolStripStatusLabel();
+			this.webKitBrowser1 = new WebKit.WebKitBrowser();
+			this.editToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+			this.reloadToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+			this.consoleToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			this.menuStrip1.SuspendLayout();
 			this.statusStrip1.SuspendLayout();
 			this.SuspendLayout();
@@ -44,7 +47,8 @@
 			// menuStrip1
 			// 
 			this.menuStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.fileToolStripMenuItem});
+            this.fileToolStripMenuItem,
+            this.editToolStripMenuItem});
 			this.menuStrip1.Location = new System.Drawing.Point(0, 0);
 			this.menuStrip1.Name = "menuStrip1";
 			this.menuStrip1.Size = new System.Drawing.Size(624, 25);
@@ -83,10 +87,27 @@
 			this.statusStrip1.TabIndex = 1;
 			this.statusStrip1.Text = "statusStrip1";
 			// 
+			// labTip1
+			// 
+			this.labTip1.Name = "labTip1";
+			this.labTip1.Size = new System.Drawing.Size(15, 17);
+			this.labTip1.Text = "0";
+			// 
 			// progress1
 			// 
 			this.progress1.Name = "progress1";
 			this.progress1.Size = new System.Drawing.Size(100, 16);
+			// 
+			// toolStripStatusLabel1
+			// 
+			this.toolStripStatusLabel1.Name = "toolStripStatusLabel1";
+			this.toolStripStatusLabel1.Size = new System.Drawing.Size(11, 17);
+			this.toolStripStatusLabel1.Text = "|";
+			// 
+			// progress2
+			// 
+			this.progress2.Name = "progress2";
+			this.progress2.Size = new System.Drawing.Size(100, 16);
 			// 
 			// labTip2
 			// 
@@ -98,11 +119,6 @@
 			this.labTip2.Text = "about:blank";
 			this.labTip2.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
 			this.labTip2.DoubleClick += new System.EventHandler(this.labTip_DoubleClick);
-			// 
-			// progress2
-			// 
-			this.progress2.Name = "progress2";
-			this.progress2.Size = new System.Drawing.Size(100, 16);
 			// 
 			// webKitBrowser1
 			// 
@@ -122,17 +138,28 @@
 			this.webKitBrowser1.Navigated += new System.Windows.Forms.WebBrowserNavigatedEventHandler(this.webKitBrowser1_Navigated);
 			this.webKitBrowser1.Navigating += new WebKit.WebKitBrowserNavigatingEventHandler(this.webKitBrowser1_Navigating);
 			// 
-			// labTip1
+			// editToolStripMenuItem
 			// 
-			this.labTip1.Name = "labTip1";
-			this.labTip1.Size = new System.Drawing.Size(15, 17);
-			this.labTip1.Text = "0";
+			this.editToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.reloadToolStripMenuItem,
+            this.consoleToolStripMenuItem});
+			this.editToolStripMenuItem.Name = "editToolStripMenuItem";
+			this.editToolStripMenuItem.Size = new System.Drawing.Size(42, 21);
+			this.editToolStripMenuItem.Text = "&Edit";
 			// 
-			// toolStripStatusLabel1
+			// reloadToolStripMenuItem
 			// 
-			this.toolStripStatusLabel1.Name = "toolStripStatusLabel1";
-			this.toolStripStatusLabel1.Size = new System.Drawing.Size(11, 17);
-			this.toolStripStatusLabel1.Text = "|";
+			this.reloadToolStripMenuItem.Name = "reloadToolStripMenuItem";
+			this.reloadToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+			this.reloadToolStripMenuItem.Text = "&Reload";
+			this.reloadToolStripMenuItem.Click += new System.EventHandler(this.reloadToolStripMenuItem_Click);
+			// 
+			// consoleToolStripMenuItem
+			// 
+			this.consoleToolStripMenuItem.Name = "consoleToolStripMenuItem";
+			this.consoleToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+			this.consoleToolStripMenuItem.Text = "&Console";
+			this.consoleToolStripMenuItem.Click += new System.EventHandler(this.consoleToolStripMenuItem_Click);
 			// 
 			// FormMain
 			// 
@@ -170,5 +197,8 @@
 		internal WebKit.WebKitBrowser webKitBrowser1;
 		private System.Windows.Forms.ToolStripStatusLabel labTip1;
 		private System.Windows.Forms.ToolStripStatusLabel toolStripStatusLabel1;
+		private System.Windows.Forms.ToolStripMenuItem editToolStripMenuItem;
+		private System.Windows.Forms.ToolStripMenuItem reloadToolStripMenuItem;
+		private System.Windows.Forms.ToolStripMenuItem consoleToolStripMenuItem;
 	}
 }

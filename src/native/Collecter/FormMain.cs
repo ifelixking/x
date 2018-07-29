@@ -80,5 +80,15 @@ namespace Collecter
 		{
 			MessageBox.Show(labTip2.Text);
 		}
+
+		private void reloadToolStripMenuItem_Click(object sender, EventArgs e)
+		{
+			webKitBrowser1.Reload();
+		}
+
+		private void consoleToolStripMenuItem_Click(object sender, EventArgs e)
+		{
+			webKitBrowser1.ShowInspector();
+		}
 	}
 }

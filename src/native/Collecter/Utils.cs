@@ -3,6 +3,7 @@ using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
+using System.Configuration;
 using System.Data.Common;
 using System.Diagnostics;
 using System.IO;
@@ -37,7 +38,7 @@ namespace Collecter
 		public static void Init()
 		{
 			m_random = new Random(DateTime.Now.Millisecond);
-			string connStr = "server=localhost;user=root;database=x;port=3306;password=000000;sslmode=none;CharSet=utf8";
+			string connStr = ConfigurationManager.AppSettings["ConnectionString"];
 			m_conn = new MySqlConnection(connStr);
 			m_conn.Open();
 			m_dicTag = getAllTag();
@@ -145,6 +146,35 @@ namespace Collecter
 			}
 		}
 
+		public class Actor_Fanhome
+		{
+			public string name;
+			public string pic;
+			public int count;
+			public string text;
+		}
+
+		public static void CollectActor_Fanhome(IEnumerable<Actor_Fanhome> items)
+		{
+			using (var trans = m_conn.BeginTransaction()) {
+				using (var cmd = m_conn.CreateCommand()) using (var cmd2 = m_conn.CreateCommand()) {
+					cmd.Transaction = trans;
+
+					cmd.CommandText = "INSERT INTO actor_fanhome(name, pic, count, text) VALUES(@name, @pic, @count, @text)";
+					var pName = cmd.CreateParameter(); pName.ParameterName = "@name"; cmd.Parameters.Add(pName);
+					var pPic = cmd.CreateParameter(); pPic.ParameterName = "@pic"; cmd.Parameters.Add(pPic);
+					var pCount = cmd.CreateParameter(); pCount.ParameterName = "@count"; cmd.Parameters.Add(pCount);
+					var pText = cmd.CreateParameter(); pText.ParameterName = "@text"; cmd.Parameters.Add(pText);
+
+					foreach (var item in items) {
+						pName.Value = item.name; pPic.Value = item.pic; pCount.Value = item.count; pText.Value = item.text;
+						cmd.ExecuteNonQuery();
+					}
+				}
+				trans.Commit();
+			}
+		}
+
 		// 进度
 		public delegate void ProgressHandler(object sender, string info, int prograss);
 		public static void SetPrograss(object sender, string info, int prograss)
@@ -160,6 +190,9 @@ namespace Collecter
 			string filename = string.Format("log-{0}.txt", Process.GetCurrentProcess().Id);
 			File.AppendAllText(filename, string.Format("{0} {1}\r\n", DateTime.Now, msg));
 		}
+
+		// ============
+
 
 		// ================================================================================================================
 		private static Dictionary<String, long> getAllTag()
