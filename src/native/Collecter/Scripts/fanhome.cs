@@ -135,7 +135,7 @@ namespace Collecter.Scripts
 					detail.count = lastPageItemCount.Value + detail.pageCount * m_pageSize;
 				}
 
-				items.Add(new Core.Actor_Fanhome() { count = detail.count, name = detail.name, pic = detail.image, text = detail.image });
+				items.Add(new Core.Actor_Fanhome() { count = detail.count, name = detail.name, pic = detail.image, text = detail.text });
 			}
 
 			Core.CollectActor_Fanhome(items);
