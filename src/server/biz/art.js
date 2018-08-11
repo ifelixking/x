@@ -1,5 +1,5 @@
 var router = require('express').Router();
-const query = require('../data')
+const { query } = require('../data')
 const elasticsearch = require('elasticsearch')
 const esClient = new elasticsearch.Client({ host: '192.168.31.187:9200', log: 'trace' });
 

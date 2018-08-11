@@ -3,7 +3,7 @@ const path = require('path')
 
 module.exports = {
 	entry: {
-		index: './src/web/index.js',
+		index: './src/web/main/index.js',
 		admin: './src/web/admin/index.js'
 	},
 	output: {
@@ -20,13 +20,13 @@ module.exports = {
 			filename: 'index.html',
 			chunks: ['index'],
 			title: 'Welcom to x site',
-			template: 'src/web/index.tpl.html'
+			template: 'src/web/res/index.tpl.html'
 		}),
 		new HtmlWebpackPlugin({
 			filename: 'admin.html',
 			chunks: ['admin'],
 			title: 'Admin console',
-			template: 'src/web/index.tpl.html'
+			template: 'src/web/res/index.tpl.html'
 		})
 	],
 	devServer: {
@@ -45,7 +45,7 @@ module.exports = {
 				use: {
 					loader: 'babel-loader',
 					options: {
-						presets: ['@babel/preset-react']
+						presets: ['@babel/preset-react', ["@babel/preset-env", { "targets": { "esmodules": true } }]],
 					}
 				}
 			},

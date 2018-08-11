@@ -1,5 +1,5 @@
 var router = require('express').Router();
-const query = require('../data')
+const { query } = require('../data')
 
 router.get('/', function(req, res){
 	// 	res.send("actor get");

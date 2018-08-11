@@ -1,8 +1,8 @@
 var router = require('express').Router();
-const query = require('../data')
+const { query } = require('../data')
 
 router.get('/', function (req, res) {
-	query(`SELECT * FROM actor`, (err, result, fields) => {
+	query('SELECT * FROM actor order by `order1`,`order2`', (err, result, fields) => {
 		if (err) { console.log(err) }
 		res.send(JSON.stringify({ items: result }));
 	})

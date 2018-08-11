@@ -1,55 +1,14 @@
 import React from 'react'
-import API from './api'
-import Styles from './style.css'
-import { ArtList } from './home'
-
-export class ActorPage extends React.Component {
-	constructor(props) {
-		super(props)
-		this.state = {
-			items: []
-		}
-	}
-
-	componentWillMount() {
-		debugger;
-		API.getActor().then((res) => {
-			res.json().then((data) => {
-				this.setState({ items: data.items })
-			})
-		})
-	}
-
-	render() {
-		let items = this.state.items.map((i) => <ActorItem key={i.id} data={i} />)
-		return (
-			<div style={{ padding: '0px 80px' }}>{items}</div>
-		)
-	}
-}
-
-class ActorItem extends React.Component {
-	constructor(props) {
-		super(props)
-	}
-
-	render() {
-		return (
-			<a className={[Styles.actor_item, Styles.shadow].join(' ')} href={`/actor/${this.props.data.id}`} target={'_blank'}>
-				<div><img style={{ width: '125px', height: '125px' }} src={this.props.data.image} /></div>
-				{this.props.data.name}
-			</a>
-		)
-	}
-}
-
+import API from '../common/api'
+import Styles from '../res/style.css'
+import { ArtList } from '../common/ArtList'
 
 export class ActorDetail extends React.Component {
 	constructor(props) {
 		super(props)
 		this.state = {
-			actor:{},
-			artList: []			
+			actor: {},
+			artList: []
 		}
 	}
 

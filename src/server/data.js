@@ -1,4 +1,4 @@
-var mysql  = require('mysql')
+var mysql  = require('C:/Users/felix/AppData/Local/Microsoft/TypeScript/2.9/node_modules/@types/mysql')
 
 var pool = mysql.createPool({
 	host: 'localhost',
@@ -26,4 +26,18 @@ var query = function(sql, options, callback){
 	})
 }
 
-module.exports = query;
+var log = function(remoteIP, action, callback){
+	const sql = 'insert into access(ip, action, `time`) values(?,?,now())'
+	pool.getConnection(function(err, conn){
+		if (err){
+			callback && callback(err, null, null)
+		}else{
+			conn.query(sql, [remoteIP, action], function(err, results){
+				conn.release();
+				callback && callback(err, results);
+			})
+		}
+	})
+}
+
+module.exports = { query, log };

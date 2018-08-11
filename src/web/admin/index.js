@@ -1,7 +1,7 @@
 import React from 'react'
 import ReactDOM from 'react-dom'
 import { BrowserRouter, Route } from 'react-router-dom'
-import Nav from '../common/nav'
+import Nav from '../common/Nav'
 import Snipe from './snipe'
 import User from './user'
 

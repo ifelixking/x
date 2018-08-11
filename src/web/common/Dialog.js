@@ -1,6 +1,6 @@
 import React from 'react'
-import IconClose from '../css/close.svg'
-import Styles from '../style.css'
+import IconClose from '../res/close.svg'
+import Styles from '../res/style.css'
 
 class Dialog extends React.Component {
 	constructor(props) {
@@ -17,7 +17,7 @@ class Dialog extends React.Component {
 
 	render() {
 		const css_frame = { width: '100%', height: '100%', position: 'fixed', left: '0px', top: '0px', padding: '50px 100px', boxSizing: 'border-box' }
-		const css_bg = { width: '100%', height: '100%', position: 'fixed', left: '0px', top: '0px', backgroundColor: '#777', filter: 'alpha(Opacity=80)', '-moz-opacity': '0.80', opacity: '0.80', zIndex: '-1' }
+		const css_bg = { width: '100%', height: '100%', position: 'fixed', left: '0px', top: '0px', backgroundColor: '#777', filter: 'alpha(Opacity=80)', 'MozOpacity': '0.80', opacity: '0.80', zIndex: '-1' }
 		let css_div = { backgroundColor: '#333', border: '3px solid #F50', boxSizing: 'border-box', padding: '100px 32px 32px 32px' };
 		let css_caption = { position: 'fixed', fontSize: '32px', textAlign: 'center', color: '#fff', left: '0px', width: '100%' }
 		let css_btnClose = { position: 'fixed' }
@@ -46,6 +46,3 @@ class Dialog extends React.Component {
 }
 
 export default Dialog
-
-
-// ,
