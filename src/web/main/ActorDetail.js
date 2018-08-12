@@ -3,7 +3,7 @@ import API from '../common/api'
 import Styles from '../res/style.css'
 import { ArtList } from '../common/ArtList'
 
-export class ActorDetail extends React.Component {
+export default class ActorDetail extends React.Component {
 	constructor(props) {
 		super(props)
 		this.state = {

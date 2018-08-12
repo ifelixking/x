@@ -5,6 +5,7 @@ import Img_404 from '../res/404.png'
 import Styles from '../res/style.css'
 import IconLeft from '../res/left.svg'
 import IconRight from '../res/right.svg'
+import utils from '../common/utils'
 
 export class ArtList extends React.Component {
 	constructor(props) {
@@ -62,7 +63,7 @@ export class ArtList extends React.Component {
 class ArtItem extends React.Component {
 	constructor(props) {
 		super(props)
-		this.ref_img = React.createRef();
+	this.ref_img = React.createRef();
 	}
 
 	componentWillMount() {
@@ -91,7 +92,7 @@ class ArtItem extends React.Component {
 			links.push(<a key='more' style={css_link} href="javascript:;" onClick={() => this.props.onMoreDownloadClick(downloads)}>更多下载...</a>)
 		}
 		links.push(<a key="img" href='javascript:;' onClick={() => this.props.onImageClick(imgs)}>{`[${imgs.length}图] `}</a>)
-		let date = this.props.data.date && dateFormat(new Date(this.props.data.date), 'yyyy-mm-dd');
+		let date = utils.toDateString(this.props.data.date)
 		links.push(<span key="date" style={{ float: 'right' }}>{date && date.toString()}</span>)
 
 		return (

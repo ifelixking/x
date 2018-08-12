@@ -8,8 +8,10 @@ import thunk from 'redux-thunk'
 import Nav from '../common/Nav'
 import Home from './home'
 import ActorPage from './actor'
-import { ActorDetail } from './ActorDetail'
-import { InfoPage } from './info'
+import ActorDetail from './ActorDetail'
+import InfoPage from './info'
+import InfoPub from './InfoPub'
+import InfoDetail from './InfoDetail'
 
 
 const App = () => (
@@ -26,13 +28,15 @@ const App = () => (
         <Route path="/" exact component={Home.Component} />
         <Route path="/actor" exact children={({ match }) => (<ActorPage.Component visible={match && match.isExact} />)} />
         <Route path="/actor/:id" exact component={ActorDetail} />
-        <Route path="/info" exact component={InfoPage} />        
+        <Route path="/info" exact component={InfoPage.Component} />
+        <Route path="/info/:id" exact component={InfoDetail} />
+        <Route path="/info/pub" exact component={InfoPub} />
       </main>
     </div>
   </BrowserRouter>
 )
 
-let store = createStore(combineReducers({ home: Home.Reducers, actor: ActorPage.Reducers }), applyMiddleware(thunk))
+let store = createStore(combineReducers({ home: Home.Reducers, actor: ActorPage.Reducers, info: InfoPage.Reducers }), applyMiddleware(thunk))
 
 ReactDOM.render((
   <Provider store={store}>

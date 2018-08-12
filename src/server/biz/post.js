@@ -1,5 +1,6 @@
 var router = require('express').Router();
 const { query } = require('../data')
+const pageSize = 20
 
 // 发帖
 router.post('/', function (req, res) {
@@ -15,13 +16,21 @@ router.post('/', function (req, res) {
 
 // 贴子列表
 router.get('/', function (req, res) {
-	let pageSize = req.query.pageSize || 20; if (pageSize > 100) { pageSize = 100 }
-	let page = req.query.pageSize || 0
+	let page = req.query.page || 0
+	const sql_orderby_limit = ` ORDER BY post.id desc LIMIT ${page * pageSize}, ${pageSize} `;
 	query(`select post.id, post.title, post.time, post.lastReplyUser, post.lastReplyTime, post.creator as creatorID, user.ip, post.hasAttachment 
-		from post left join user on post.creator=user.id where type=0`, function (err, result) {
+		from post left join user on post.creator=user.id where type=0 ${sql_orderby_limit}`, function (err, result) {
 			if (err) { res.send(err); return }
-			res.send(result)
+			res.send(JSON.stringify({ page, pageSize, items: result }));
 		})
+})
+
+// 帖子页数
+router.get('/pageCount', function (req, res) {
+	let sql = 'select count(*) as recordCount from post where type=0'
+	query(sql, [], (err, result, fields) => {
+		res.send(JSON.stringify({ pageCount: Math.ceil(result[0]['recordCount'] / pageSize) }));
+	})
 })
 
 // 回复
@@ -43,17 +52,27 @@ router.post('/reply', function (req, res) {
 
 // 帖子详情, 一级回复列表
 router.get('/:id', function (req, res) {
+	let page = req.query.page || 0
+	const sql_orderby_limit = ` ORDER BY post.id LIMIT ${page * pageSize}, ${pageSize} `;
 	query(`select post.id, post.title, post.content, post.time, post.creator as creatorID, user.ip, post.attachment 
-		from post left join user on post.creator=user.id where post.id=${req.params.id} or post.parentID=${req.params.id} order by post.id`, function (err, result) {
+		from post left join user on post.creator=user.id where post.id=${req.params.id} or post.parentID=${req.params.id} ${sql_orderby_limit}`, function (err, result) {
 			if (err) { res.send(err); return }
-			res.send(result)
+			res.send(JSON.stringify({ page, pageSize, items: result }));
 		})
+})
+
+// 帖子详情, 一级回复列表 页数
+router.get('/:id/pageCount', function (req, res) {
+	let sql = `select count(*) as recordCount from post where post.id=${req.params.id} or post.parentID=${req.params.id}`
+	query(sql, [], (err, result, fields) => {
+		res.send(JSON.stringify({ pageCount: Math.ceil(result[0]['recordCount'] / pageSize) }));
+	})
 })
 
 // 回复列表
 router.get('/reply/:id', function (req, res) {
 	query(`select post.id, post.title, post.content, post.time, post.creator as creatorID, user.ip, post.attachment 
-		from post left join user on post.creator=user.id where post.parentID=${req.params.id} order by post.id`, function (err, result) {
+		from post left join user on post.creator=user.id where post.parentID=${req.params.id} order by post.id desc limit 50`, function (err, result) {
 			if (err) { res.send(err); return }
 			res.send(result)
 		})
@@ -76,10 +95,10 @@ function getOrCreateUserByIP(ip, forPost, callback) {
 			let sql, params
 			if (forPost) {
 				sql = 'insert user(ip, lastPostTime, postCount) values(?,now(),?)'
-				params = [clientIP, 1]
+				params = [ip, 1]
 			} else {
 				sql = 'insert user(ip) values(?)'
-				params = [clientIP]
+				params = [ip]
 			}
 			query(sql, params, function (err, result) {
 				if (err) { res.send(err); return }

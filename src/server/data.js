@@ -1,4 +1,4 @@
-var mysql  = require('C:/Users/felix/AppData/Local/Microsoft/TypeScript/2.9/node_modules/@types/mysql')
+var mysql  = require('mysql')
 
 var pool = mysql.createPool({
 	host: 'localhost',

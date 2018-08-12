@@ -49,7 +49,6 @@ class Home extends React.Component {
 			</div>
 		)
 	}
-
 }
 
 class Tag extends React.Component {
@@ -81,7 +80,7 @@ const Module = {
 	Actions: {
 		fetchTag: () => {
 			return dispatch => {
-				API.getTag().then((res) => {
+				API.getTagList().then((res) => {
 					res.json().then((data) => {
 						dispatch({ type: 'FLUSH_TAG_LIST', tags: data.items })
 						let theTag = data.items.find((i) => i.name == decodeURI('%e6%97%a5%e6%9c%ac'))
@@ -110,7 +109,7 @@ const Module = {
 						})
 					})
 				} else {
-					API.getArt(page, tagID).then((res) => {
+					API.getArtList(page, tagID).then((res) => {
 						res.json().then((data) => {
 							dispatch({ type: 'FLUSH_ART_LIST', artData: { artList: data.items, currentPage: data.page, currentTagID: tagID, currentKeyword: null } })
 						})
