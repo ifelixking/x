@@ -58,7 +58,7 @@ class InfoPage extends React.Component {
 			<div ref={this.ref_this} style={{ padding: '0px 80px' }}>
 				<div>
 					<div style={{ margin: '16px 0px', float: 'left' }}><Page current={this.props.currentPage} count={this.props.totalPageCount} onPageTo={this.onPageTo} /></div>
-					<a style={css_pub} href='/info/pub'>匿名发布</a>
+					<a style={css_pub} href='/infopub'>匿名发布</a>
 				</div>
 				<table border={1} bordercolor={'#a0c6e5'} className={'infopage_table'}>
 					<thead><tr><th width={'20px'}>&nbsp;</th><th>标题</th><th width={'150px'}>时间</th><th width={'150px'}>回复</th></tr></thead>
@@ -66,7 +66,7 @@ class InfoPage extends React.Component {
 				</table>
 				<div>
 					<div style={{ margin: '16px 0px', float: 'left' }}><Page current={this.props.currentPage} count={this.props.totalPageCount} onPageTo={this.onPageTo} /></div>
-					<a style={css_pub} href='/info/pub' target='_blank'>匿名发布</a>
+					<a style={css_pub} href='/infopub' target='_blank'>匿名发布</a>
 				</div>
 			</div>
 		)

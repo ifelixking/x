@@ -2,13 +2,15 @@ import React from 'react'
 import API from '../common/api'
 import utils from '../common/utils'
 import Page from '../common/Page'
+import Editor from 'wangeditor'
+import emotions from '../common/emotions'
 
 export default class InfoDetail extends React.Component {
 	constructor(props) {
 		super(props)
 		this.onPage = this.onPage.bind(this)
 		this.onReply = this.onReply.bind(this)
-		this.ref_reply = React.createRef()
+		this.ref_editor = React.createRef()
 		this.state = {
 			items: [],
 			currentPage: null,
@@ -26,6 +28,13 @@ export default class InfoDetail extends React.Component {
 		})
 	}
 
+	componentDidMount(){
+		let editor = new Editor(this.ref_editor.current)
+		editor.customConfig.onchange = html => { this.reply_content = html }
+		editor.customConfig.emotions = emotions
+		editor.create()
+	}
+
 	onPage(page) {
 		const postID = this.props.match.params.id
 		API.getPost(postID, page).then(res => {
@@ -36,7 +45,8 @@ export default class InfoDetail extends React.Component {
 	}
 
 	onReply(){
-		const content = this.ref_reply.current.value
+		const xss = require('xss');
+		const content = xss(this.reply_content)
 		const hostID = this.props.match.params.id
 		const parentID = hostID
 		API.reply(hostID, parentID, content).then(res=>{
@@ -47,11 +57,11 @@ export default class InfoDetail extends React.Component {
 	}
 
 	render() {
-		let items = this.state.items.map((a) => {
+		let items = this.state.items.map((a) => {			
 			return (
 				<div key={a.id}>
 					{utils.toDateTimeString(a.time)}<br />
-					{a.content}
+					<div dangerouslySetInnerHTML={{ __html: a.content }} />
 				</div>
 			)
 		})
@@ -62,7 +72,7 @@ export default class InfoDetail extends React.Component {
 				<div>{items}</div>
 				<div style={{ margin: '16px 0px' }}><Page current={this.state.currentPage} count={this.state.pageCount} onPageTo={this.onPageTo} /></div>
 				<div>
-					<textarea ref={this.ref_reply} />
+					<div ref={this.ref_editor} />
 					<a href={'javascript:;'} onClick={this.onReply}>回复</a>
 				</div>
 			</div>

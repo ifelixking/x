@@ -30,7 +30,7 @@ const App = () => (
         <Route path="/actor/:id" exact component={ActorDetail} />
         <Route path="/info" exact component={InfoPage.Component} />
         <Route path="/info/:id" exact component={InfoDetail} />
-        <Route path="/info/pub" exact component={InfoPub} />
+        <Route path="/infopub" exact component={InfoPub} />
       </main>
     </div>
   </BrowserRouter>
