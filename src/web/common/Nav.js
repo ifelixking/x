@@ -4,9 +4,11 @@ import { NavLink } from 'react-router-dom'
 const sty_main = {
 	backgroundColor: 'black',
 	color: 'white',
-	height: '80px',
 	paddingLeft: '200px',
-	borderBottom: '3px solid #F50'
+	borderBottom: '3px solid #F50',
+	zIndex: '1',
+	position: 'absolute',
+	width: '100%',
 };
 
 const sty_link = {
@@ -17,7 +19,7 @@ const sty_link = {
 	height: '38px',
 	fontSize: '24px',
 	padding: '12px',
-	marginTop:'20px'
+	marginTop: '20px'
 };
 
 const sty_link_active = {
@@ -35,8 +37,7 @@ export default class Nav extends React.Component {
 			return (<NavLink exact={true} key={item.text} activeStyle={sty_link_active} style={sty_link} to={item.href}>{item.text}</NavLink>)
 		})
 		return (
-			<div style={sty_main}>
-				{links}</div>
+			<div style={sty_main}>{links}</div>
 		)
 	}
 }

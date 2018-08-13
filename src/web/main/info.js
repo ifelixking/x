@@ -4,6 +4,8 @@ import { connect } from 'react-redux'
 import API from '../common/api'
 import utils from '../common/utils'
 import Page from '../common/Page'
+import Styles from '../res/style.css'
+import IconLocation from '../res/location.svg'
 
 class InfoPage extends React.Component {
 	constructor(props) {
@@ -25,16 +27,28 @@ class InfoPage extends React.Component {
 				border-collapse:collapse;
 				margin-top:16px;
 			}
-			.infopage_table thead tr tH {
-				padding:4px;
-
+			.infopage_table thead tr {
+				border-bottom: 1px solid #e8e8e8;
+			}
+			.infopage_table thead tr th {
+				text-align:left;
+				padding:16px;
+				background-color: rgb(250, 250, 250);
 			}
 			.infopage_table tbody tr td {
-				text-align:center;
-				padding:4px;
+				padding:16px;
 			}
-			.infopage_table tbody tr td:nth-child(2) {
-				text-align:left
+			.infopage_table tbody tr td a {
+				text-decoration:none;
+				color: #1890ff;
+			}
+			.infopage_table tbody tr {
+				border-bottom: 1px solid #e8e8e8;
+				-webkit-transition: all .3s;
+				transition: all .3s;
+			}
+			.infopage_table tbody tr:hover {
+				background: #e6f7ff;
 			}
 		`, 'STYLE_INFOPAGE', this.ref_this.current.ownerDocument)
 	}
@@ -50,24 +64,23 @@ class InfoPage extends React.Component {
 	render() {
 		let items = this.props.items && this.props.items.map((a, i) => {
 			return (
-				<tr key={a.id}><td>{i + 1}</td><td><a href={`/info/${a.id}`} target='_blank'>{a.title}</a></td><td>{utils.toDateTimeString(a.time)}</td><td>{utils.toDateTimeString(a.lastReplyTime)}</td></tr>
+				<tr key={a.id}><td>
+					<a href={`/info/${a.id}`} target='_blank'>{a.title}</a>
+				</td><td>{utils.toDateTimeString(a.time)}</td><td>{utils.toDateTimeString(a.lastReplyTime)}</td></tr>
 			)
 		})
-		const css_pub = { margin: '16px 0px', float: 'right', width: '100px', height: '32px', lineHeight: '32px', border: '1px solid red', textAlign: 'center' }
+		const css_area = { fontSize: '14px', textDecoration: 'none' }
 		return (
 			<div ref={this.ref_this} style={{ padding: '0px 80px' }}>
-				<div>
-					<div style={{ margin: '16px 0px', float: 'left' }}><Page current={this.props.currentPage} count={this.props.totalPageCount} onPageTo={this.onPageTo} /></div>
-					<a style={css_pub} href='/infopub'>匿名发布</a>
+				<div style={{ padding: '24px 0px 8px 0px' }}>
+					<a style={css_area} href='/infopub'><IconLocation style={{ verticalAlign: 'middle' }} />北京</a>
+					<a className={[Styles.btn, Styles.btn_primary].join(' ')} style={{ float: 'right' }} target="_blank" href='/infopub'>匿名发布</a>
 				</div>
-				<table border={1} bordercolor={'#a0c6e5'} className={'infopage_table'}>
-					<thead><tr><th width={'20px'}>&nbsp;</th><th>标题</th><th width={'150px'}>时间</th><th width={'150px'}>回复</th></tr></thead>
+				<table className={'infopage_table'}>
+					<thead><tr><th>标题</th><th width={'150px'}>时间</th><th width={'150px'}>回复</th></tr></thead>
 					<tbody>{items}</tbody>
 				</table>
-				<div>
-					<div style={{ margin: '16px 0px', float: 'left' }}><Page current={this.props.currentPage} count={this.props.totalPageCount} onPageTo={this.onPageTo} /></div>
-					<a style={css_pub} href='/infopub' target='_blank'>匿名发布</a>
-				</div>
+				<div style={{ margin: '16px 0px' }}><Page current={this.props.currentPage} count={this.props.totalPageCount} onPageTo={this.onPageTo} /></div>
 			</div>
 		)
 	}

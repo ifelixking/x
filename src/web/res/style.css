@@ -18,7 +18,7 @@
 
 .shadow{
 	border: 1px solid #eee; 
-	box-shadow: 0px 0px 2px #fff;	
+	box-shadow: 0px 0px 2px #fff;
 }
 .shadow:hover{
 	border: 1px solid #dfdfdf;
@@ -68,3 +68,24 @@
 	text-align: center;
 }
 
+.btn{
+	text-decoration:none;
+	line-height: 32px;
+	display: inline-block;
+	cursor: pointer;
+	border: 1px solid transparent;
+	white-space: nowrap;
+	padding: 0 15px;
+	font-size: 14px;
+	border-radius: 4px;
+	height: 32px;
+	color: rgba(0, 0, 0, 0.65);
+	background-color: #fff;
+	border-color: #d9d9d9;
+}
+
+.btn_primary {
+    color: #fff;
+    background-color: #1890ff;
+	border-color: #1890ff;
+}

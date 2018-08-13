@@ -32,8 +32,10 @@ class Page extends React.Component {
 		const css_href = {
 			border: '1px solid #ddd',
 			backgroundColor: '#f5f5f5', marginRight: '5px', padding: '0px 14px', height: '36px', lineHeight: '36px',
-			display: 'block', float: 'left', textAlign: 'center', fontSize: '14px', textDecorationLine: 'none', color: '#333'
+			display: 'block', float: 'left', textAlign: 'center', fontSize: '14px', textDecorationLine: 'none', color: '#333',
+			borderRadius:'3px'
 		}
+		const css_disabled = { color: '#ccc', cursor: 'not-allowed' }
 		const css_current = { borderColor: '#fff', backgroundColor: '#fff' }
 		let current = parseInt(this.props.current); if (current >= this.props.count) { current = this.props.count - 1; } if (current <= 0) { current = 0 }
 
@@ -64,9 +66,9 @@ class Page extends React.Component {
 		return (
 			<div style={{ display: 'inline-block' }}>
 				<span>
-					<a onClick={this.onPagePrevClick} style={css_href} key='-1' href="javascript:;">上一页</a>
+					<a onClick={this.onPagePrevClick} style={current <= 0 ? Object.assign({}, css_href, css_disabled) : css_href} key='-1' href="javascript:;">上一页</a>
 					{items}
-					<a onClick={this.onPageNextClick} style={css_href} key='+1' href="javascript:;">下一页</a>
+					<a onClick={this.onPageNextClick} style={current >= (this.props.count - 1) ? Object.assign({}, css_href, css_disabled) : css_href} key='+1' href="javascript:;">下一页</a>
 				</span>
 			</div>
 		)

@@ -13,10 +13,9 @@ import InfoPage from './info'
 import InfoPub from './InfoPub'
 import InfoDetail from './InfoDetail'
 
-
 const App = () => (
   <BrowserRouter>
-    <div className="primary-layout">
+    <div>
       <header>
         <Nav items={[
           { text: '主页', href: '/' },
@@ -24,14 +23,16 @@ const App = () => (
           { text: '信息', href: '/info' },
         ]} />
       </header>
-      <main>
-        <Route path="/" exact component={Home.Component} />
-        <Route path="/actor" exact children={({ match }) => (<ActorPage.Component visible={match && match.isExact} />)} />
-        <Route path="/actor/:id" exact component={ActorDetail} />
-        <Route path="/info" exact component={InfoPage.Component} />
-        <Route path="/info/:id" exact component={InfoDetail} />
-        <Route path="/infopub" exact component={InfoPub} />
-      </main>
+      <div style={{ position: 'absolute', height: '100%', width:'100%', boxSizing: 'border-box', top: '0px', paddingTop: '85px' }}>
+        <div style={{ height: '100%', overflow: 'auto' }}>
+          <Route path="/" exact component={Home.Component} />
+          <Route path="/actor" exact children={({ match }) => (<ActorPage.Component visible={match && match.isExact} />)} />
+          <Route path="/actor/:id" exact component={ActorDetail} />
+          <Route path="/info" exact component={InfoPage.Component} />
+          <Route path="/info/:id" exact component={InfoDetail} />
+          <Route path="/infopub" exact component={InfoPub} />
+        </div>
+      </div>
     </div>
   </BrowserRouter>
 )
