@@ -5,7 +5,7 @@ export default {
 		return str && dateFormat(new Date(str), 'yyyy-mm-dd');
 	},
 	toDateTimeString: (str) => {
-		return str && dateFormat(new Date(str), 'yyyy-mm-dd hh:MM:ss');
+		return str && dateFormat(new Date(str), 'yyyy-mm-dd hh:MM');
 	},
 	injectCSS: (styleString, id = null, doc = null) => {
 		doc = doc || document;

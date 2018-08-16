@@ -77,7 +77,7 @@ class InfoPage extends React.Component {
 					<a className={[Styles.btn, Styles.btn_primary].join(' ')} style={{ float: 'right' }} target="_blank" href='/infopub'>匿名发布</a>
 				</div>
 				<table className={'infopage_table'}>
-					<thead><tr><th>标题</th><th width={'150px'}>时间</th><th width={'150px'}>回复</th></tr></thead>
+					<thead><tr><th>标题</th><th width={'120px'}>时间</th><th width={'120px'}>回复</th></tr></thead>
 					<tbody>{items}</tbody>
 				</table>
 				<div style={{ margin: '16px 0px' }}><Page current={this.props.currentPage} count={this.props.totalPageCount} onPageTo={this.onPageTo} /></div>
