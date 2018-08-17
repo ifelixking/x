@@ -5,7 +5,7 @@ import API from '../common/api'
 import utils from '../common/utils'
 import Page from '../common/Page'
 import Styles from '../res/style.css'
-import IconLocation from '../res/location.svg'
+import Location from '../common/Location'
 
 class InfoPage extends React.Component {
 	constructor(props) {
@@ -73,8 +73,8 @@ class InfoPage extends React.Component {
 		return (
 			<div ref={this.ref_this} style={{ padding: '0px 80px' }}>
 				<div style={{ padding: '24px 0px 8px 0px' }}>
-					<a style={css_area} href='/infopub'><IconLocation style={{ verticalAlign: 'middle' }} />北京</a>
-					<a className={[Styles.btn, Styles.btn_primary].join(' ')} style={{ float: 'right' }} target="_blank" href='/infopub'>匿名发布</a>
+					<Location />
+					<a className={[Styles.btn, Styles.btn_primary].join(' ')} style={{ float: 'right' }} target="_blank" href='/infopub'>发布信息</a>
 				</div>
 				<table className={'infopage_table'}>
 					<thead><tr><th>标题</th><th width={'120px'}>时间</th><th width={'120px'}>回复</th></tr></thead>

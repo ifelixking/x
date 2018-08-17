@@ -1,5 +1,6 @@
 const HtmlWebpackPlugin = require('html-webpack-plugin')
 const path = require('path')
+const UglifyJsPlugin = require('uglifyjs-webpack-plugin')
 
 module.exports = {
 	entry: {
@@ -27,8 +28,28 @@ module.exports = {
 			chunks: ['admin'],
 			title: 'Admin console',
 			template: 'src/web/res/index.tpl.html'
-		})
+		}),		
 	],
+	optimization: {
+		minimizer: [
+			new UglifyJsPlugin({
+				// minify(file, sourceMap) {
+				// 	const uglifyJsOptions = {
+				// 		output: { comments: false }
+				// 	};
+
+				// 	if (sourceMap) {
+				// 		uglifyJsOptions.sourceMap = {
+				// 			content: sourceMap,
+				// 		};
+				// 	}
+
+				// 	return require('uglify-js').minify(file, uglifyJsOptions);
+				// },
+				sourceMap: true
+			})
+		]
+	},
 	devServer: {
 		port: 8080,
 		proxy: {

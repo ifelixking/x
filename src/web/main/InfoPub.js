@@ -3,6 +3,7 @@ import API from '../common/api'
 import Editor from 'wangeditor'
 import emotions from '../common/emotions'
 import Styles from '../res/style.css'
+import Location from '../common/Location'
 
 export default class InfoPub extends React.Component {
 	constructor(props) {
@@ -35,7 +36,10 @@ export default class InfoPub extends React.Component {
 	render() {
 		return (
 			<div className={Styles.form} style={{ padding: '24px 80px' }}>
-				<div>匿名发布</div>
+				<div>
+					<Location />
+					<span style={{fontSize:'14px'}}>&nbsp;>&nbsp;发布信息</span>
+				</div>
 				<div>
 					<input className={Styles.input} ref={this.ref_txtTitle} placeholder='标题' type='text' />
 				</div>
