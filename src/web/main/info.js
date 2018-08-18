@@ -12,11 +12,7 @@ class InfoPage extends React.Component {
 		super(props)
 		this.ref_this = React.createRef();
 		this.onPageTo = this.onPageTo.bind(this)
-	}
-
-	componentWillMount() {
-		this.props.items || this.props.fetchList(0)
-		this.props.totalPageCount || this.props.getPageCount()
+		this.onAreaChange = this.onAreaChange.bind(this)
 	}
 
 	componentDidMount() {
@@ -58,29 +54,47 @@ class InfoPage extends React.Component {
 	}
 
 	onPageTo(page) {
-		this.props.fetchList(page)
+		this.props.fetchList(page, this.areaID)
+	}
+
+	onAreaChange(areaID) {
+		this.areaID = areaID
+		this.props.fetchList(0, areaID)
+		this.props.getPageCount(areaID)
 	}
 
 	render() {
-		let items = this.props.items && this.props.items.map((a, i) => {
-			return (
-				<tr key={a.id}><td>
-					<a href={`/info/${a.id}`} target='_blank'>{a.title}</a>
-				</td><td>{utils.toDateTimeString(a.time)}</td><td>{utils.toDateTimeString(a.lastReplyTime)}</td></tr>
+		let content
+		if (this.props.items && this.props.items.length) {
+			let items = this.props.items.map((a, i) => {
+				return (
+					<tr key={a.id}><td>
+						<a href={`/info/${a.id}`} target='_blank'>{a.title}</a>
+					</td><td>{utils.toDateTimeString(a.time)}</td><td>{utils.toDateTimeString(a.lastReplyTime)}</td></tr>
+				)
+			})
+			content = (
+				<div>
+					<table className={'infopage_table'}>
+						<thead><tr><th>标题</th><th width={'120px'}>时间</th><th width={'120px'}>回复</th></tr></thead>
+						<tbody>{items}</tbody>
+					</table>
+					<div style={{ margin: '16px 0px' }}><Page current={this.props.currentPage} count={this.props.totalPageCount} onPageTo={this.onPageTo} /></div>
+				</div>
 			)
-		})
-		const css_area = { fontSize: '14px', textDecoration: 'none' }
+		} else {
+			content = <p style={{ textAlign: 'center',color:'#333', margin:'48px' }}>该地区还没有信息, 欢迎&nbsp;<a href="/infopub" target='_blank'>发布</a></p>
+		}
+
+
 		return (
 			<div ref={this.ref_this} style={{ padding: '0px 80px' }}>
-				<div style={{ padding: '24px 0px 8px 0px' }}>
-					<Location />
-					<a className={[Styles.btn, Styles.btn_primary].join(' ')} style={{ float: 'right' }} target="_blank" href='/infopub'>发布信息</a>
+				<div style={{ position:'relative', padding: '24px 0px 8px 0px' }}>
+					<Location onAreaChange={this.onAreaChange} />
+					<a style={{position:'absolute', top:'18px', right:'0px'}} className={[Styles.btn, Styles.btn_primary].join(' ')} target="_blank" href='/infopub'>发布信息</a>
 				</div>
-				<table className={'infopage_table'}>
-					<thead><tr><th>标题</th><th width={'120px'}>时间</th><th width={'120px'}>回复</th></tr></thead>
-					<tbody>{items}</tbody>
-				</table>
-				<div style={{ margin: '16px 0px' }}><Page current={this.props.currentPage} count={this.props.totalPageCount} onPageTo={this.onPageTo} /></div>
+
+				{content}
 			</div>
 		)
 	}
@@ -94,23 +108,23 @@ const Module = {
 			totalPageCount: state.info.postListPageCount
 		}),
 		dispatch => ({
-			fetchList: (page) => { dispatch(Module.Actions.fetchList(page)) },
-			getPageCount: () => { dispatch(Module.Actions.fetchListPageCount()) }
+			fetchList: (page, areaID) => { dispatch(Module.Actions.fetchList(page, areaID)) },
+			getPageCount: (areaID) => { dispatch(Module.Actions.fetchListPageCount(areaID)) }
 		})
 	)(InfoPage),
 	Actions: {
-		fetchList(page) {
+		fetchList(page, areaID) {
 			return dispatch => {
-				API.getPostList(page).then((res) => {
+				API.getPostList(page, areaID).then((res) => {
 					res.json().then((data) => {
 						dispatch({ type: 'FLUSH_POST_LIST', postList: data })
 					})
 				})
 			}
 		},
-		fetchListPageCount() {
+		fetchListPageCount(areaID) {
 			return dispatch => {
-				API.getPostListPageCount().then((res) => {
+				API.getPostListPageCount(areaID).then((res) => {
 					res.json().then((data) => {
 						dispatch({ type: 'FLUSH_POST_LIST_PAGE_COUNT', pageCount: data.pageCount })
 					})

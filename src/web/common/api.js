@@ -30,24 +30,24 @@ const API = {
 		return fetch(url);
 	},
 
-	getPostList: (page = 0) => {
-		let url = `/api/post?page=${page}`
+	getPostList: (page = 0, areaID = 0) => {
+		let url = `/api/post?page=${page}&area=${areaID}`
 		return fetch(url)
 	},
 
-	getPostListPageCount: () => {
-		const url = '/api/post/pageCount'
+	getPostListPageCount: (areaID = 0) => {
+		const url = `/api/post/pageCount?&area=${areaID}`
 		return fetch(url)
 	},
 
-	createPost: (title, content, attachment) => {
+	createPost: (title, content, attachment, areaID) => {
 		const url = '/api/post'
 		return fetch(url, {
 			headers: {
 				'Content-Type': 'application/json; charset=utf-8'
 			},
 			method: 'POST', body: JSON.stringify({
-				title, content, attachment, hasAttachment: !!attachment
+				title, content, attachment, hasAttachment: !!attachment, area:areaID
 			})
 		})
 	},

@@ -5,8 +5,8 @@ const pageSize = 20
 // 发帖
 router.post('/', function (req, res) {
 	getOrCreateUserByIP(req.client.remoteAddress, true, function (creator) {
-		query('insert into post(title, content, creator, time, attachment, hasAttachment) values(?,?,?,now(),?,?)',
-			[req.body.title, req.body.content, creator, req.body.attachment, req.body.hasAttachment], function (err, result) {
+		query('insert into post(title, content, creator, time, attachment, hasAttachment, area) values(?,?,?,now(),?,?,?)',
+			[req.body.title, req.body.content, creator, req.body.attachment, req.body.hasAttachment, req.body.area], function (err, result) {
 				if (err) { res.send(err); return }
 				const postID = result.insertId
 				res.send({ successed: true, postID })
@@ -17,9 +17,10 @@ router.post('/', function (req, res) {
 // 贴子列表
 router.get('/', function (req, res) {
 	let page = req.query.page || 0
+	let area = req.query.area || 0
 	const sql_orderby_limit = ` ORDER BY post.id desc LIMIT ${page * pageSize}, ${pageSize} `;
 	query(`select post.id, post.title, post.time, post.lastReplyUser, post.lastReplyTime, post.creator as creatorID, user.ip, post.hasAttachment 
-		from post left join user on post.creator=user.id where type=0 ${sql_orderby_limit}`, function (err, result) {
+		from post left join user on post.creator=user.id where type=0 and area=${area} ${sql_orderby_limit}`, function (err, result) {
 			if (err) { res.send(err); return }
 			res.send(JSON.stringify({ page, pageSize, items: result }));
 		})
@@ -27,7 +28,8 @@ router.get('/', function (req, res) {
 
 // 帖子页数
 router.get('/pageCount', function (req, res) {
-	let sql = 'select count(*) as recordCount from post where type=0'
+	let area = req.query.area || 0
+	let sql = `select count(*) as recordCount from post where type=0 and area=${area}`
 	query(sql, [], (err, result, fields) => {
 		res.send(JSON.stringify({ pageCount: Math.ceil(result[0]['recordCount'] / pageSize) }));
 	})

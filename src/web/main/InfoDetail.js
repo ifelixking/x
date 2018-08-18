@@ -34,6 +34,28 @@ export default class InfoDetail extends React.Component {
 		let editor = new Editor(this.ref_editor.current)
 		editor.customConfig.onchange = html => { this.reply_content = html }
 		editor.customConfig.emotions = emotions
+		editor.customConfig.zIndex = 0
+		editor.customConfig.menus = [
+			'head',  // 标题
+			'bold',  // 粗体
+			'fontSize',  // 字号
+			'fontName',  // 字体
+			'italic',  // 斜体
+			'underline',  // 下划线
+			'strikeThrough',  // 删除线
+			'foreColor',  // 文字颜色
+			'backColor',  // 背景颜色
+			'link',  // 插入链接
+			'list',  // 列表
+			'justify',  // 对齐方式
+			'quote',  // 引用
+			'emoticon',  // 表情
+			'image',  // 插入图片
+			'table',  // 表格
+			'video',  // 插入视频
+			'undo',  // 撤销
+			'redo'  // 重复
+		]
 		editor.create()
 	}
 
@@ -51,8 +73,7 @@ export default class InfoDetail extends React.Component {
 	}
 
 	onReply() {
-		const xss = require('xss');
-		const content = xss(this.reply_content)
+		const content = utils.xssFilter(this.reply_content)
 		const hostID = this.props.match.params.id
 		const parentID = hostID
 		API.reply(hostID, parentID, content).then(res => {
@@ -71,21 +92,19 @@ export default class InfoDetail extends React.Component {
 			}
 			return (
 				<div style={the_css_item} key={a.id}>
-					<div style={{ textAlign: 'right' }}><span class={Styles.time}>{utils.toDateTimeString(a.time)}</span></div>
+					<div style={{ textAlign: 'right' }}><span className={Styles.time}>{utils.toDateTimeString(a.time)}</span></div>
 					<div dangerouslySetInnerHTML={{ __html: a.content }} />
 				</div>
 			)
 		})
 		const css_title = { width: '100%', textOverflow: 'ellipsis', whiteSpace: 'nowrap', overflow: 'hidden', fontSize: '24px', fontWeight: 'bold', margin: '24px 0px' }
-		// let post = ()
-		// post = post && (<div>{post}</div>)
 		return (
 			<div style={{ padding: '0px 80px' }}>
 				<div className={Styles.form}>
 					<div style={css_title}>{this.state.title}</div>
 					<div>{items}</div>
 					<div style={{ marginTop: '32px' }}><Page current={this.state.currentPage} count={this.state.pageCount} onPageTo={this.onPageTo} /></div>
-					<div><div className={Styles.editor} ref={this.ref_editor} /></div>
+					<div style={{borderTop:'1px solid #eee',paddingTop:'24px'}}><div className={Styles.editor} ref={this.ref_editor} /></div>
 					<div><a className={[Styles.btn, Styles.btn_primary].join(' ')} href={'javascript:;'} onClick={this.onReply}>回复</a></div>
 				</div>
 			</div>
