@@ -1,4 +1,10 @@
 const API = {
+	getArtListRecent: (tag = null) => {
+		let url = `/api/art/recent`;
+		if (tag != null) { url = `${url}?tag=${tag}` }
+		return fetch(url);
+	},
+
 	getArtList: (page = 0, tag = null) => {
 		let url = `/api/art?page=${page}`;
 		if (tag != null) { url = `${url}&tag=${tag}` }
@@ -47,7 +53,7 @@ const API = {
 				'Content-Type': 'application/json; charset=utf-8'
 			},
 			method: 'POST', body: JSON.stringify({
-				title, content, attachment, hasAttachment: !!attachment, area:areaID
+				title, content, attachment, hasAttachment: !!attachment, area: areaID
 			})
 		})
 	},

@@ -8,14 +8,13 @@ const pageSize = 50
 router.get('/', function (req, res) {
 	let page = req.query.page; if (typeof page == 'undefined') { page = 0 }
 	const tagID = req.query.tag;
-	const sql_orderby_limit = ` ORDER BY page.date desc LIMIT ${page * pageSize}, ${pageSize} `;
+	const sql_orderby_limit = ` ORDER BY art.date desc LIMIT ${page * pageSize}, ${pageSize} `;
 	let params = [];
 	let sql;
 	if (typeof tagID == 'undefined') {
-		sql = `SELECT art.id, art.text, art.downloads, art.images, page.date FROM art LEFT JOIN page ON art.pageID = page.id ${sql_orderby_limit}`
+		sql = `SELECT art.id, art.text, art.downloads, art.images, art.date FROM art ${sql_orderby_limit}`
 	} else {
-		sql = `SELECT art.id, art.text, art.downloads, art.images, page.date FROM art 
-			LEFT JOIN page 			ON art.pageID = page.id 
+		sql = `SELECT art.id, art.text, art.downloads, art.images, art.date FROM art 
 			LEFT JOIN rel_art_tag 	ON art.id = rel_art_tag.artID
 			WHERE rel_art_tag.tagID = ?
 			${sql_orderby_limit}`
@@ -51,13 +50,34 @@ router.get('/search', function (req, res) {
 	esClient.search({
 		index: 'x',
 		type: 'art',
-		body: { "query": { "bool": { "must": [{ "term": { "text": k } }] } }, "from": page*pageSize, "size": pageSize, }
+		body: { "query": { "bool": { "must": [{ "term": { "text": k } }] } }, "from": page * pageSize, "size": pageSize, }
 	}).then(function (resp) {
-		var items = Array.from(resp.hits.hits, i=>i._source); 
+		var items = Array.from(resp.hits.hits, i => i._source);
 		res.send(JSON.stringify({ page, pageSize, items, pageCount: Math.ceil(resp.hits.total / pageSize), tookTime: resp.took }));
 	}, function (err) {
 		console.trace(err.message);
 	});
+})
+
+router.get('/recent', function (req, res) {
+	const tagID = req.query.tag;
+	const sql_orderby_limit = ` ORDER BY art.date desc LIMIT 100 `;
+	let params = [];
+	let sql;
+	const sql_cond_date = 'art.date > DATE_ADD((select date from art ORDER BY date DESC limit 1) ,INTERVAL -7 day)';
+	if (typeof tagID == 'undefined') {
+		sql = `SELECT art.id, art.text, art.downloads, art.images, art.date FROM art where ${sql_cond_date} ${sql_orderby_limit}`
+	} else {
+		sql = `SELECT art.id, art.text, art.downloads, art.images, art.date FROM art 
+			LEFT JOIN rel_art_tag 	ON art.id = rel_art_tag.artID
+			WHERE ${sql_cond_date} AND rel_art_tag.tagID = ?
+			${sql_orderby_limit}`
+		params.push(tagID);
+	}
+	query(sql, params, (err, result, fields) => {
+		if (err) { console.log(err) }
+		res.send(JSON.stringify({ items: result }));
+	})
 })
 
 module.exports = router;

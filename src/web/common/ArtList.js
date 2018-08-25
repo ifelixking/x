@@ -6,30 +6,44 @@ import Styles from '../res/style.css'
 import IconLeft from '../res/left.svg'
 import IconRight from '../res/right.svg'
 import utils from '../common/utils'
+import Modal from '../common/Modal'
 
 export class ArtList extends React.Component {
 	constructor(props) {
 		super(props)
 		this.onArtImageClick = this.onArtImageClick.bind(this)
-		this.onArtMoreDownloadClick = this.onArtMoreDownloadClick.bind(this)
 		this.onItemClick = this.onItemClick.bind(this)
+		this.refMain = React.createRef()
 
 		this.state = {
 			dlgImageGallery: false,
 			dlgImageGallery_images: [],
-			dlgMoreDownload: false,
 			dlgMoreDownload_data: [],
 		}
 
 		this.m_lastActiveItem = null;
 	}
 
-	onArtImageClick(images) {
-		this.setState({ dlgImageGallery: true, dlgImageGallery_images: images })
+	componentDidMount() {
+		utils.injectCSS(`
+			._CSS_ARTLIST_download{
+				
+				text-decoration: none;
+			}
+			._CSS_ARTLIST_download:hover{
+				color: #ff8400;
+				text-decoration: underline;
+			}
+		`, '_CSS_ARTLIST', this.refMain.current.ownerDocument)
 	}
 
-	onArtMoreDownloadClick(downloads) {
-		this.setState({ dlgMoreDownload: true, dlgMoreDownload_data: downloads })
+	componentWillUnmount() {
+		this.refMain.current.ownerDocument.getElementById('_CSS_ARTLIST').remove()
+	}
+
+	onArtImageClick(images, downloads) {
+		// images.map(a=>a.remove())
+		this.setState({ dlgImageGallery: true, dlgImageGallery_images: images, dlgMoreDownload_data: downloads })
 	}
 
 	onItemClick(e) {
@@ -44,17 +58,25 @@ export class ArtList extends React.Component {
 	}
 
 	render() {
-		let items = this.props.items.map(a => { return <ArtItem key={a.id} data={a} onImageClick={this.onArtImageClick} onMoreDownloadClick={this.onArtMoreDownloadClick} onClick={this.onItemClick} /> });
-		let dlg = null;
-		if (this.state.dlgImageGallery) {
-			dlg = <DialogImageGallery images={this.state.dlgImageGallery_images} onBtnCloseClick={() => { this.setState({ dlgImageGallery: false }) }} />
-		} else if (this.state.dlgMoreDownload) {
-			dlg = <DialogMoreDownload downloads={this.state.dlgMoreDownload_data} onBtnCloseClick={() => { this.setState({ dlgMoreDownload: false }) }} />
-		}
+		let items = this.props.items.map(a => { return <ArtItem key={a.id} data={a} onImageClick={this.onArtImageClick} onClick={this.onItemClick} /> });
+		let images = this.state.dlgImageGallery && this.state.dlgImageGallery_images.map((a, i) => <img src={a} key={i} onError={(e) => e.target.src = Img_404} />)
+		let downloads = this.state.dlgImageGallery && this.state.dlgMoreDownload_data.map((a, i) => <a style={{ display: 'block' }} target='_blank' href={a} key={i} >{a}</a>)
+		// let dlg = null;
+		// if (this.state.dlgImageGallery) {
+		// 	// dlg = <DialogImageGallery images={this.state.dlgImageGallery_images} onBtnCloseClick={() => { this.setState({ dlgImageGallery: false }) }} />
+		// 	// dlg = 
+		// } else if (this.state.dlgMoreDownload) {
+		// 	dlg = <DialogMoreDownload downloads={this.state.dlgMoreDownload_data} onBtnCloseClick={() => { this.setState({ dlgMoreDownload: false }) }} />
+		// }
 		return (
-			<div>
+			<div ref={this.refMain}>
 				<div style={{}}>{items}</div>
-				{dlg}
+				<Modal fullSize={true} showButtons={false} title={'下载'} visible={this.state.dlgImageGallery} onCancel={() => this.setState({ dlgImageGallery: false })} >
+					<div style={{ padding: '16px', boxSizing: 'border-box', overflow: 'auto', width: '100%', height: '100%' }}>
+						<div style={{ margin: '16px 0px 32px 0px', }}>{downloads}</div>
+						{images}
+					</div>
+				</Modal>
 			</div>
 		)
 	}
@@ -63,98 +85,48 @@ export class ArtList extends React.Component {
 class ArtItem extends React.Component {
 	constructor(props) {
 		super(props)
-	this.ref_img = React.createRef();
+		this.ref_img = React.createRef();
 	}
 
-	componentWillMount() {
-		// return;
-		var imgs = JSON.parse(this.props.data.images)
-		if (imgs.length == 0) { return }
-		let img = new Image(); img.src = imgs[0]
-		img.onload = function () { this.ref_img.current && (this.ref_img.current.style.backgroundImage = 'url(' + imgs[0] + ')') }.bind(this)
-		img.onerror = img.onabort = function () { this.ref_img.current && (this.ref_img.current.style.backgroundImage = 'url(' + Img_404 + ')') }.bind(this)
-	}
+	// componentWillMount() {
+	// 	// let imgs; try { imgs = JSON.parse(this.props.data.images) } catch (ex) { console.log(this.props.data); console.log(ex); }
+	// 	// if (!imgs || imgs.length == 0) { return }
+	// 	// let img = new Image(); img.src = imgs[0]
+	// 	// img.onload = function () { this.ref_img.current && (this.ref_img.current.style.backgroundImage = 'url(' + imgs[0] + ')') }.bind(this)
+	// 	// img.onerror = img.onabort = function () { this.ref_img.current && (this.ref_img.current.style.backgroundImage = 'url(' + Img_404 + ')') }.bind(this)
+	// }
 
 	render() {
-		const css_content = { height: '47px', overflow: 'hidden', marginTop: '8px' };
+		const css_content = { height: '47px', overflow: 'hidden', marginTop: '8px', cursor: 'default' };
 		const css_link = { marginRight: '8px' }
 		const content = this.props.data.text;
 
-		let imgUrl = './waiting.png';
-		var imgs = JSON.parse(this.props.data.images);
-		if (imgs.length > 0) { imgUrl = imgs[0] }
-		imgUrl = Img_waiting;
-		let css_div_img = { width: '220px', height: '220px', background: '#fff url(' + imgUrl + ') no-repeat center', backgroundSize: '100% auto', cursor: 'pointer' }
+		// let imgUrl = Img_waiting;
+		// let css_div_img = { width: '220px', height: '220px', background: '#fff url(' + imgUrl + ') no-repeat center', backgroundSize: '100% auto', cursor: 'pointer' }
+		let css_div_img = { maxWidth: '220px', maxHeight: '220px', cursor: 'pointer' }
 
-		var downloads = JSON.parse(this.props.data.downloads);
-		let links = [<a key='download' style={css_link} title={downloads[0].text} target='_blank' href={downloads[0].href}>下载</a>]
+		let downloads = JSON.parse(this.props.data.downloads);
+		let imgs; try { imgs = JSON.parse(this.props.data.images) } catch (ex) { console.log(this.props.data); console.log(ex); } imgs = imgs || []
+
+		let links = [<a key='download' className={'_CSS_ARTLIST_download'} style={css_link} target='_blank' href={downloads[0]}>下载</a>]
 		if (downloads.length > 1) {
-			links.push(<a key='more' style={css_link} href="javascript:;" onClick={() => this.props.onMoreDownloadClick(downloads)}>更多下载...</a>)
+			links.push(<a key='more' className={'_CSS_ARTLIST_download'} style={css_link} href="javascript:;" onClick={() => this.props.onImageClick(imgs, downloads)}>更多下载...</a>)
 		}
-		links.push(<a key="img" href='javascript:;' onClick={() => this.props.onImageClick(imgs)}>{`[${imgs.length}图] `}</a>)
+
+		// let hiddenImages = imgs.map((a,i) => <img key={i} style={{ display: 'none' }} src='a' />)
+		links.push(<a key="img" href='javascript:;' onClick={() => this.props.onImageClick(imgs, downloads)}>{`[${imgs.length}图] `}</a>)
 		let date = utils.toDateString(this.props.data.date)
 		links.push(<span key="date" style={{ float: 'right' }}>{date && date.toString()}</span>)
 
 		return (
-			<div className={[Styles.art_item, Styles.shadow].join(' ')} onClick={this.props.onClick}>
-				<div ref={this.ref_img} style={css_div_img} onClick={() => this.props.onImageClick(imgs)}></div>
-				<p title={content} style={css_content}>{content}</p>
-				<p style={{ marginTop: '8px' }}>{links}</p>
-			</div>
-		)
-	}
-}
-
-class DialogImageGallery extends React.Component {
-	constructor(props) {
-		super(props)
-		this.state = { imgIndex: 0 }
-		this.onClickArrow = this.onClickArrow.bind(this)
-	}
-
-	onClickArrow(inc) {
-		if (this.props.images && this.props.images.length > 0) {
-			let idx = this.state.imgIndex + inc; if (idx < 0) { idx = this.props.images.length - 1; }
-			idx %= this.props.images.length
-			this.setState({ imgIndex: idx })
-		}
-	}
-
-	render() {
-		const css_img = { width: 'auto', margin: '8px auto' }
-		var imgs = this.props.images.map((item) => (<img style={css_img} src={item} />))
-		return (
-			<Dialog onBtnCloseClick={this.props.onBtnCloseClick} caption={`${this.state.imgIndex + 1} / ${imgs.length}`}>
-				<table style={{ width: '100%', height: '100%' }}>
-					<tbody>
-						<tr><td className={Styles.btn_arrow} onClick={() => this.onClickArrow(-1)}><IconLeft /></td>
-							<td>
-								<div style={{ overflow: 'auto', height: '100%', textAlign: 'center' }}>
-									{imgs[this.state.imgIndex]}
-								</div>
-							</td>
-							<td className={Styles.btn_arrow} onClick={() => this.onClickArrow(1)}><IconRight /></td></tr>
-					</tbody>
-				</table>
-			</Dialog>
-		)
-	}
-}
-
-class DialogMoreDownload extends React.Component {
-	constructor(props) {
-		super(props);
-	}
-
-	render() {
-		const css_link = { fontSize: '12px' }
-		let links = this.props.downloads.map(item => (<p><a style={css_link} title={item.text} target='_blank' href={item.href}>{item.text}</a></p>))
-		return (
-			<Dialog onBtnCloseClick={this.props.onBtnCloseClick} caption={'下载'} size={'small'}>
-				<div style={{ padding: '4px', backgroundColor: '#fff', height: '100%', boxSizing: 'border-box', overflow: 'auto' }}>
-					{links}
+			<div className={[Styles.art_item, Styles.shadow].join(' ')} onClick={this.props.onClick} style={{ textAlign: 'center' }}>
+				{/* <div ref={this.ref_img} style={css_div_img} onClick={() => this.props.onImageClick(imgs)}></div> */}
+				<img style={css_div_img} src={imgs && imgs.length ? imgs[0] : Img_404} onError={(e) => e.target.src = Img_404} onClick={() => this.props.onImageClick(imgs, downloads)} />
+				<div style={{ textAlign: 'left' }}>
+					<p title={content} style={css_content}>{content}</p>
+					<p style={{ marginTop: '8px' }}>{links}</p>
 				</div>
-			</Dialog>
+			</div>
 		)
 	}
 }

@@ -36,13 +36,15 @@ export default class Modal extends React.Component {
 		let css_bg = { position: 'absolute', top: '0px', left: '0px', width: '100%', height: '100%', transition: 'background-color 0.3s', textAlign: 'center' }
 		let ele
 		if (this.props.visible) {
-			css_bg.backgroundColor = 'rgb(0,0,0,0.5)'; css_bg.zIndex = 999999
-			const css_frame = { position: 'relative', marginTop: '100px', width: '800px', height: '600px', backgroundColor: '#fff', borderRadius: '4px', display: 'inline-block' }
+			css_bg.backgroundColor = 'rgb(0,0,0,0.5)'; css_bg.zIndex = 999999			
+			const width = this.props.fullSize ? 'calc(100% - 200px)' : '800px'
+			const height = this.props.fullSize ? 'calc(100% - 200px)' : '600px'
+			const css_frame = { position: 'relative', boxSize:"border-box", marginTop: '100px', width, height, backgroundColor: '#fff', borderRadius: '4px', display: 'inline-block' }
 			const css_content = { position: 'absolute', top: '0px', left: '0px', height: '100%', width: '100%', boxSizing: 'border-box', padding: `58px 0px ${this.props.showButtons ? '64px' : '4px'} 0px` }
 			ele = (
 				<div style={css_frame}>
 					<div style={{ position: 'absolute', top: '0px', right: '0px', padding: '16px', cursor: 'pointer', zIndex: '1000000' }} onClick={this.props.onCancel} ><IconClose style={{ fill: '#aaa' }} /></div>
-					<div style={{ padding: '16px', textAlign: 'left', borderBottom: '1px solid rgb(232, 232, 232)', fontSize: '16px', fontWeight: 'bold' }} >{this.props.title}</div>
+					<div style={{ height: '25px', padding: '16px', textAlign: 'left', borderBottom: '1px solid rgb(232, 232, 232)', fontSize: '16px', fontWeight: 'bold' }} >{this.props.title}</div>
 					<div style={css_content}>{this.props.children}</div>
 					{this.props.showButtons &&
 						<div style={{ position: 'absolute', padding: '16px', textAlign: 'right', boxSizing: 'border-box', bottom: '0px', borderTop: '1px solid rgb(232, 232, 232)', width: '100%' }}>
@@ -67,9 +69,10 @@ export default class Modal extends React.Component {
 }
 
 Modal.propTypes = {
-	title: PropTypes.element.isRequired,
+	title: PropTypes.node.isRequired,
 	visible: PropTypes.bool.isRequired,
 	onCancel: PropTypes.func.isRequired,
 	onOK: PropTypes.func,
 	showButtons: PropTypes.bool,
+	fullSize: PropTypes.bool,
 }

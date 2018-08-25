@@ -6,7 +6,7 @@ import Styles from '../res/style.css'
 import { connect } from 'react-redux';
 import { combineReducers } from 'redux';
 
-class Home extends React.Component {
+class Resource extends React.Component {
 	constructor(props) {
 		super(props)
 		this.onPageTo = this.onPageTo.bind(this)
@@ -76,7 +76,7 @@ const Module = {
 				fetchArt: (page, tagID, keyword) => { dispatch(Module.Actions.fetchArt(page, tagID, keyword)) }
 			}
 		}
-	)(Home),
+	)(Resource),
 	Actions: {
 		fetchTag: () => {
 			return dispatch => {
