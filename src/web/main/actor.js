@@ -3,6 +3,7 @@ import API from '../common/api'
 import Styles from '../res/style.css'
 import { connect } from 'react-redux';
 import { combineReducers } from 'redux';
+import Config from '../common/config'
 
 class ActorPage extends React.Component {
 	constructor(props) {
@@ -30,7 +31,7 @@ class ActorItem extends React.Component {
 	render() {
 		return (
 			<a className={[Styles.actor_item, Styles.shadow].join(' ')} href={`/actor/${this.props.data.id}`} target={'_blank'}>
-				<div><img style={{ width: '125px', height: '125px' }} src={this.props.data.image} /></div>
+				<div><img style={{ width: '125px', height: '125px' }} src={`${Config.ActorImageBasePath}${this.props.data.image}`} /></div>
 				{this.props.data.name}
 			</a>
 		)

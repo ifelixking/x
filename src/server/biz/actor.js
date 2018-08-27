@@ -9,9 +9,9 @@ router.get('/', function (req, res) {
 })
 
 router.get('/:id/art', function (req, res) {
-	query(`SELECT art.id, art.text, art.downloads, art.images, page.date FROM art 
+	query(`SELECT art.id, art.text, art.downloads, art.images, art.date FROM art 
 		RIGHT JOIN rel_actor_art ON art.id=rel_actor_art.artID
-		LEFT JOIN page on art.pageID=page.id where rel_actor_art.actorID=${req.params.id}`, (err, result, fields) => {
+		where rel_actor_art.actorID=${req.params.id}`, (err, result, fields) => {
 		if (err) { console.log(err) }
 		res.send(JSON.stringify({ items: result }));
 	})

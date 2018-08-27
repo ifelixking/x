@@ -1,6 +1,7 @@
 const HtmlWebpackPlugin = require('html-webpack-plugin')
 const path = require('path')
 const UglifyJsPlugin = require('uglifyjs-webpack-plugin')
+const CopyWebpackPlugin = require('copy-webpack-plugin')
 
 module.exports = {
 	entry: {
@@ -28,7 +29,8 @@ module.exports = {
 			chunks: ['admin'],
 			title: 'Admin console',
 			template: 'src/web/res/index.tpl.html'
-		}),		
+		}),
+		new CopyWebpackPlugin([{ from: './src/web/static' }])
 	],
 	optimization: {
 		minimizer: [
@@ -53,7 +55,7 @@ module.exports = {
 	devServer: {
 		port: 8080,
 		proxy: {
-			'/api': "http://localhost"
+			'/api': "http://localhost",
 		},
 		historyApiFallback: true,	// 让dev-server 支持 route, 即始终指向 index.html
 	},
