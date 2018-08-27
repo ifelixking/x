@@ -12,7 +12,7 @@ import ActorDetail from './ActorDetail'
 import InfoPage from './info'
 import InfoPub from './InfoPub'
 import InfoDetail from './InfoDetail'
-import News from './news'
+import Recent from './recent'
 
 const App = () => (
   <BrowserRouter>
@@ -27,7 +27,7 @@ const App = () => (
       </header>
       <div style={{ position: 'absolute', height: '100%', width:'100%', boxSizing: 'border-box', top: '0px', paddingTop: '85px' }}>
         <div style={{ height: '100%', overflow: 'auto' }}>
-          <Route path="/" exact component={News} />
+          <Route path="/" exact component={Recent} />
           <Route path="/resource" exact component={Resource.Component} />
           <Route path="/actor" exact children={({ match }) => (<ActorPage.Component visible={match && match.isExact} />)} />
           <Route path="/actor/:id" exact component={ActorDetail} />

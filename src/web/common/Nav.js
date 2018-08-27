@@ -18,8 +18,8 @@ const sty_link = {
 	marginRight: '24px',
 	height: '38px',
 	fontSize: '24px',
-	padding: '12px',
-	marginTop: '20px'
+	padding: '12px 24px',
+	marginTop: '20px',
 };
 
 const sty_link_active = {

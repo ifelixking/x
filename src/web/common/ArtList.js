@@ -1,10 +1,6 @@
 import React from 'react'
-import Dialog from '../common/Dialog'
-import Img_waiting from '../res/waiting.png'
 import Img_404 from '../res/404.png'
 import Styles from '../res/style.css'
-import IconLeft from '../res/left.svg'
-import IconRight from '../res/right.svg'
 import utils from '../common/utils'
 import Modal from '../common/Modal'
 
@@ -12,13 +8,13 @@ export class ArtList extends React.Component {
 	constructor(props) {
 		super(props)
 		this.onArtImageClick = this.onArtImageClick.bind(this)
-		this.onItemClick = this.onItemClick.bind(this)
+		this.onItemSelected = this.onItemSelected.bind(this)
 		this.refMain = React.createRef()
 
 		this.state = {
-			dlgImageGallery: false,
-			dlgImageGallery_images: [],
-			dlgMoreDownload_data: [],
+			showDlg: false,
+			dlgImages: [],
+			dlgDownloads: [],
 		}
 
 		this.m_lastActiveItem = null;
@@ -42,11 +38,10 @@ export class ArtList extends React.Component {
 	}
 
 	onArtImageClick(images, downloads) {
-		// images.map(a=>a.remove())
-		this.setState({ dlgImageGallery: true, dlgImageGallery_images: images, dlgMoreDownload_data: downloads })
+		this.setState({ showDlg: true, dlgImages: images, dlgDownloads: downloads })
 	}
 
-	onItemClick(e) {
+	onItemSelected(e) {
 		if (this.m_lastActiveItem == e.currentTarget) { return; }
 		if (this.m_lastActiveItem) {
 			this.m_lastActiveItem.removeAttribute('active')
@@ -58,23 +53,36 @@ export class ArtList extends React.Component {
 	}
 
 	render() {
-		let items = this.props.items.map(a => { return <ArtItem key={a.id} data={a} onImageClick={this.onArtImageClick} onClick={this.onItemClick} /> });
-		let images = this.state.dlgImageGallery && this.state.dlgImageGallery_images.map((a, i) => <img src={a} key={i} onError={(e) => e.target.src = Img_404} />)
-		let downloads = this.state.dlgImageGallery && this.state.dlgMoreDownload_data.map((a, i) => <a style={{ display: 'block' }} target='_blank' href={a} key={i} >{a}</a>)
-		// let dlg = null;
-		// if (this.state.dlgImageGallery) {
-		// 	// dlg = <DialogImageGallery images={this.state.dlgImageGallery_images} onBtnCloseClick={() => { this.setState({ dlgImageGallery: false }) }} />
-		// 	// dlg = 
-		// } else if (this.state.dlgMoreDownload) {
-		// 	dlg = <DialogMoreDownload downloads={this.state.dlgMoreDownload_data} onBtnCloseClick={() => { this.setState({ dlgMoreDownload: false }) }} />
-		// }
+		let items
+		if (this.props.groupByDate) {
+			let groups = []
+			this.props.items.forEach(a => {
+				const comp = <ArtItem key={a.id} data={a} onImageClick={this.onArtImageClick} onClick={this.onItemSelected} />
+				if (!groups.length || groups[groups.length - 1].date != a.date) { groups.push({ date: a.date, items: [comp] }) } else { groups[groups.length - 1].items.push(comp) }
+			});
+			items = groups.map(a => {
+				return (
+					<div key={a.date}>
+						<div style={{}}>
+							<span style={{ display: 'inline-block', color: '#666', width: '88px', textAlign: 'center', fontWeight: 'bold' }}>{utils.toDateString(a.date)}</span>
+							<hr size={1} color={'#aaa'} style={{ float: 'right', display: 'inline-block', color: '#333', width: 'calc(100% - 92px)', marginTop: '11px', color: '#aaa' }} />
+						</div>
+						<div style={{ paddingLeft: '80px' }}>{a.items}</div>
+					</div>
+				)
+			})
+		} else {
+			items = this.props.items.map(a => (<ArtItem key={a.id} data={a} onImageClick={this.onArtImageClick} onClick={this.onItemSelected} />))
+		}
+
+		let dlgImages = this.state.showDlg && this.state.dlgImages.map((a, i) => <img src={a} key={i} onError={(e) => e.target.src = Img_404} />)
+		let dlgDownloads = this.state.showDlg && this.state.dlgDownloads.map((a, i) => <a style={{ display: 'block' }} target='_blank' href={a} key={i} >{a}</a>)
 		return (
 			<div ref={this.refMain}>
 				<div style={{}}>{items}</div>
-				<Modal fullSize={true} showButtons={false} title={'下载'} visible={this.state.dlgImageGallery} onCancel={() => this.setState({ dlgImageGallery: false })} >
+				<Modal fullSize={true} showButtons={false} title={'下载'} visible={this.state.showDlg} onCancel={() => this.setState({ showDlg: false })} >
 					<div style={{ padding: '16px', boxSizing: 'border-box', overflow: 'auto', width: '100%', height: '100%' }}>
-						<div style={{ margin: '16px 0px 32px 0px', }}>{downloads}</div>
-						{images}
+						<div style={{ margin: '16px 0px 32px 0px', }}>{dlgDownloads}</div>{dlgImages}
 					</div>
 				</Modal>
 			</div>

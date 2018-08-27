@@ -2,7 +2,14 @@ import dateFormat from 'dateformat'
 
 export default {
 	toDateString: (str) => {
-		return str && dateFormat(new Date(str), 'yyyy-mm-dd');
+		if (!str) { return '' }
+		const date = new Date(str)
+		if ((new Date()).getFullYear() == date) {
+			return dateFormat(new Date(str), 'yyyy-mm-dd');
+		} else {
+			return dateFormat(new Date(str), 'mm月dd日');
+		}
+
 	},
 	toDateTimeString: (str) => {
 		return str && dateFormat(new Date(str), 'yyyy-mm-dd hh:MM');
