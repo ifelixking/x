@@ -26,12 +26,17 @@ class ActorPage extends React.Component {
 class ActorItem extends React.Component {
 	constructor(props) {
 		super(props)
+		this.onImageError = this.onImageError.bind(this)
+	}
+
+	onImageError(e){
+		e.target.src = `${Config.ActorImageBasePath}${this.props.data.image}`
 	}
 
 	render() {
 		return (
 			<a className={[Styles.actor_item, Styles.shadow].join(' ')} href={`/actor/${this.props.data.id}`} target={'_blank'}>
-				<div><img style={{ width: '125px', height: '125px' }} src={`${Config.ActorImageBasePath}${this.props.data.image}`} /></div>
+				<div><img style={{ width: '125px', height: '125px' }} src={`${this.props.data.oriImage}`} onError={this.onImageError} /></div>
 				{this.props.data.name}
 			</a>
 		)

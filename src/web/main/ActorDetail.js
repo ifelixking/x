@@ -7,6 +7,7 @@ import Config from '../common/config'
 export default class ActorDetail extends React.Component {
 	constructor(props) {
 		super(props)
+		this.onImageError = this.onImageError.bind(this)
 		this.state = {
 			actor: {},
 			artList: []
@@ -26,12 +27,16 @@ export default class ActorDetail extends React.Component {
 		})
 	}
 
+	onImageError(e) {
+		e.target.src = `${Config.ActorImageBasePath}${this.state.actor.image}`
+	}
+
 	render() {
 		return (
 			<div style={{ padding: '0px 80px' }}>
 				<div style={{ height: '180px', borderBottom: '1px solid #eee' }}>
 					<div className={[Styles.actor_item, Styles.shadow].join(' ')} style={{ margin: '20px 0px' }}>
-						<img style={{ width: '125px', height: '125px' }} src={`${Config.ActorImageBasePath}${this.state.actor.image}`} />
+						<img style={{ width: '125px', height: '125px' }} src={this.state.actor.oriImage} onError={this.onImageError} />
 					</div>
 					<div style={{ display: 'inline-block', border: '0px solid red', position: 'absolute', top: '108px', left: '260px', fontSize: '24px' }}>{this.state.actor.name}</div>
 				</div>

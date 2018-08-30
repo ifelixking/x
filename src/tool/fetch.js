@@ -27,7 +27,7 @@ pool.getConnection((err, conn) => {
 		let filename = path.basename(a.image);
 		let stream = fs.createWriteStream(path.join(dirPath, filename));
 		request(a.image).pipe(stream).on("close", function (err) {
-			conn.query('insert into actor2(name, image, order1) values(?,?,?)', [a.name, filename, i], (err) => {
+			conn.query('insert into actor(name, image, order1, oriImage) values(?,?,?,?)', [a.name, filename, i, a.image], (err) => {
 				console.log(`${i} - ${a.name} [OK]`);
 				callback()
 			})
