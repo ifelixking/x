@@ -8,8 +8,9 @@
 			"type": "node",
 			"request": "launch",
 			"name": "启动程序",
-//			"program": "${workspaceFolder}\\src\\server\\main.js"
-			"program": "${workspaceFolder}\\src\\tool\\fetch.js"
+			"program": "${workspaceFolder}\\src\\server\\main.js"
+//			"program": "${workspaceFolder}\\src\\tool\\fetch.js"
+//			"program": "${workspaceFolder}\\src\\tool\\test.js"
 		}
 	]
 }

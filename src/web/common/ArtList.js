@@ -58,7 +58,7 @@ export class ArtList extends React.Component {
 			let groups = []
 			this.props.items.forEach(a => {
 				const comp = <ArtItem key={a.id} data={a} onImageClick={this.onArtImageClick} onClick={this.onItemSelected} />
-				if (!groups.length || groups[groups.length - 1].date != a.date) { groups.push({ date: a.date, items: [comp] }) } else { groups[groups.length - 1].items.push(comp) }
+				if (!groups.length || utils.toDateString(groups[groups.length - 1].date) != utils.toDateString(a.date)) { groups.push({ date: a.date, items: [comp] }) } else { groups[groups.length - 1].items.push(comp) }
 			});
 			items = groups.map(a => {
 				return (

@@ -57,7 +57,13 @@ module.exports = {
 		proxy: {
 			'/api': "http://localhost",
 		},
-		historyApiFallback: true,	// 让dev-server 支持 route, 即始终指向 index.html
+		// historyApiFallback: true,	// 让dev-server 支持 route, 即始终指向 index.html
+		historyApiFallback: {
+			index: '/index.html',
+			rewrites: [
+				{ from: /^\/admin/, to: '/admin.html' }
+			],
+		},
 	},
 	module: {
 		rules: [

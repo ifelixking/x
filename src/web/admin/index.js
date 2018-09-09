@@ -9,14 +9,16 @@ const PrimaryLayout = () => (
   <div className="primary-layout">
     <header>
       <Nav items={[
-        {text:'Snipe',href:'/admin/snipe'},
-        {text:'User',href:'/admin/user'}
-        ]} />
+        { text: 'Snipe', href: '/admin/snipe' },
+        { text: 'User', href: '/admin/user' }
+      ]} />
     </header>
-    <main>
-      <Route path="/admin/snipe" exact component={Snipe} />
-      <Route path="/admin/user" component={User} />
-    </main>
+    <div style={{ position: 'absolute', height: '100%', width: '100%', boxSizing: 'border-box', top: '0px', paddingTop: '85px' }}>
+      <div style={{ height: '100%', overflow: 'auto' }}>
+        <Route path="/admin/snipe" component={Snipe} />
+        <Route path="/admin/user" component={User} />
+      </div>
+    </div>
   </div>
 )
 

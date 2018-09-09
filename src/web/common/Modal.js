@@ -49,7 +49,7 @@ export default class Modal extends React.Component {
 					{this.props.showButtons &&
 						<div style={{ position: 'absolute', padding: '16px', textAlign: 'right', boxSizing: 'border-box', bottom: '0px', borderTop: '1px solid rgb(232, 232, 232)', width: '100%' }}>
 							<button className={Styles.btn} onClick={this.props.onCancel}>取消</button>
-							<button style={{ marginLeft: '8px' }} className={[Styles.btn, Styles.btn_primary].join(' ')} onClick={this.onOK}>确定</button>
+							<button style={{ marginLeft: '8px' }} className={[Styles.btn, Styles.btn_primary].join(' ')} onClick={this.props.onOK}>确定</button>
 						</div>}
 				</div>
 			)

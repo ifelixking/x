@@ -1,4 +1,5 @@
 var mysql  = require('mysql')
+const { promisify } = require("es6-promisify");
 
 var pool = mysql.createPool({
 	host: 'localhost',
@@ -40,4 +41,4 @@ var log = function(remoteIP, action, callback){
 	})
 }
 
-module.exports = { query, log };
+module.exports = { query, log, queryP: promisify(query) };

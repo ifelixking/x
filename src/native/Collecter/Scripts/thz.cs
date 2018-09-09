@@ -8,67 +8,52 @@ using System.Threading.Tasks;
 
 namespace Collecter.Scripts
 {
-	class Class11 : IScript
+	class thz_亚洲有码 : IScript
 	{
 		private Policy11 m_policy;
-		public Class11()
+		public thz_亚洲有码()
 		{
 			m_policy = new Policy11(
 				this,
-				"http://thz4.com/forum-220-1.html",
+				"http://thz6.com/forum-220-1.html",
 				new string[] { "亚洲有码" }
 			);
 		}
-
-		public override string ToString()
-		{
-			return "thz.com - 亚洲有碼原創";
-		}
-
+		
 		public void Run(bool reset) { m_policy.Run(reset); }
 		public string GetProgressString() { return m_policy.GetProgressString(); }
 		public void ResetProgress() { m_policy.ResetProgress(); }
 	}
 
-	class Class12 : IScript
+	class thz_亚洲无码 : IScript
 	{
 		private Policy11 m_policy;
-		public Class12()
+		public thz_亚洲无码()
 		{
 			m_policy = new Policy11(
 				this,
-				"http://thz4.com/forum-181-1.html",
+				"http://thz6.com/forum-181-1.html",
 				new string[] { "亚洲无码" }
 			);
 		}
-
-		public override string ToString()
-		{
-			return "thz.com - 亚洲無碼原創";
-		}
-
+		
 		public void Run(bool reset) { m_policy.Run(reset); }
 		public string GetProgressString() { return m_policy.GetProgressString(); }
 		public void ResetProgress() { m_policy.ResetProgress(); }
 	}
 
-	class Class13 : IScript
+	class thz_欧美无码 : IScript
 	{
 		private Policy11 m_policy;
-		public Class13()
+		public thz_欧美无码()
 		{
 			m_policy = new Policy11(
 				this,
-				"http://thz4.com/forum-182-1.html",
+				"http://thz6.com/forum-182-1.html",
 				new string[] { "欧美无码" }
 			);
 		}
-
-		public override string ToString()
-		{
-			return "thz.com - 欧美無碼";
-		}
-
+		
 		public void Run(bool reset) { m_policy.Run(reset); }
 		public string GetProgressString() { return m_policy.GetProgressString(); }
 		public void ResetProgress() { m_policy.ResetProgress(); }

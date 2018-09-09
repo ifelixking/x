@@ -21,6 +21,7 @@ namespace Collecter
 	{
 		private static DbConnection m_conn;
 		private static Dictionary<String, long> m_dicTag = new Dictionary<string, long>();
+		private static Dictionary<String, long> m_dicActor = new Dictionary<string, long>();
 		internal static FormMain m_formMain;
 		private static Random m_random;
 
@@ -42,6 +43,7 @@ namespace Collecter
 			m_conn = new MySqlConnection(connStr);
 			m_conn.Open();
 			m_dicTag = getAllTag();
+			m_dicActor = initDicActor();
 		}
 
 		public static void Destroy()
@@ -114,7 +116,7 @@ namespace Collecter
 		public static void CollectArt(IEnumerable<Art> arts)
 		{
 			using (var trans = m_conn.BeginTransaction()) {
-				using (var cmd = m_conn.CreateCommand()) using (var cmd2 = m_conn.CreateCommand()) {
+				using (var cmd = m_conn.CreateCommand()) using (var cmd2 = m_conn.CreateCommand()) using (var cmd3 = m_conn.CreateCommand()) {
 					cmd.Transaction = trans;
 
 					cmd.CommandText = "INSERT INTO art(text, downloads, images, date, source) VALUES(@text, @downloads, @images, @date, @source)";
@@ -128,17 +130,30 @@ namespace Collecter
 					var pArtID = cmd2.CreateParameter(); pArtID.ParameterName = "@artID"; cmd2.Parameters.Add(pArtID);
 					var pTagID = cmd2.CreateParameter(); pTagID.ParameterName = "@tagID"; cmd2.Parameters.Add(pTagID);
 
+					cmd3.CommandText = "INSERT INTO rel_actor_art(actorID, artID) VALUES(@actorID, artID)";
+					var pActorID = cmd3.CreateParameter(); pActorID.ParameterName = "@actorID"; cmd3.Parameters.Add(pActorID);
+					var pArtID2 = cmd3.CreateParameter(); pArtID2.ParameterName = "@artID"; cmd3.Parameters.Add(pArtID2);
+
 					foreach (var art in arts) {
 						pText.Value = art.text; pDownloads.Value = art.downloads; pImages.Value = art.images; pDate.Value = art.date; pSource.Value = art.source;
 						// insert art
 						cmd.ExecuteNonQuery();
 						var artID = ((MySqlCommand)cmd).LastInsertedId;
 						pArtID.Value = artID;
+						pArtID2.Value = artID;
 						// insert rel_art_tag
 						foreach (var tag in art.tags) {
 							var tagID = m_dicTag[tag];
 							pTagID.Value = tagID;
 							cmd2.ExecuteNonQuery();
+						}
+						// inesrt rel_actor_art
+						var text = art.text.ToLower();
+						foreach(var mw in m_dicActor){
+							if (text.Contains(mw.Key)){
+								pActorID.Value = mw.Value;
+								cmd3.ExecuteNonQuery();
+							}
 						}
 					}
 				}
@@ -193,7 +208,6 @@ namespace Collecter
 
 		// ============
 
-
 		// ================================================================================================================
 		private static Dictionary<String, long> getAllTag()
 		{
@@ -223,6 +237,32 @@ namespace Collecter
 		{
 			var wkb = sender as WebKitBrowser;
 			wkb.Tag = null;
+		}
+
+		private static Dictionary<String, long> initDicActor()
+		{
+			Dictionary<String, long> result = new Dictionary<string, long>();
+			using (var comm = m_conn.CreateCommand()) {
+				comm.CommandText = "SELECT id, name, matchWords FROM actor";
+				using (var reader = comm.ExecuteReader()) {
+					var idxID = reader.GetOrdinal("id");
+					var idxName = reader.GetOrdinal("name");
+					var idxMW = reader.GetOrdinal("matchWords");
+					while (reader.Read()) {
+						var id = reader.GetInt64(idxID);
+						var name = reader.GetString(idxName);
+						var mw = reader.IsDBNull(idxMW) ? null : reader.GetString(idxMW);
+						result[name] = id;
+						if (!string.IsNullOrWhiteSpace(mw)) {
+							var wList = mw.Split(new char[] { ';' }, StringSplitOptions.RemoveEmptyEntries);
+							foreach (var w in wList) {
+								result[w.ToLower()] = id;
+							}
+						}
+					}
+				}
+			}
+			return result;
 		}
 
 	}
