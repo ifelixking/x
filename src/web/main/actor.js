@@ -29,7 +29,7 @@ class ActorItem extends React.Component {
 		this.onImageError = this.onImageError.bind(this)
 	}
 
-	onImageError(e){
+	onImageError(e) {
 		e.target.src = `${Config.ActorImageBasePath}${this.props.data.image}`
 	}
 

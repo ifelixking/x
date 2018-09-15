@@ -41,8 +41,11 @@ export default class ActorDetail extends React.Component {
 	}
 
 	onDlgOK() {
-		alert(this.state.dlgText)
-		this.setState({ dlg: false });
+		const matchWords = this.state.dlgText ? this.state.dlgText.replace(/\n/g, ';') : ''
+		const actorID = this.props.match.params.id
+		API.setActor(actorID, matchWords).then(result=>{
+			this.setState({ dlg: false });
+		})		
 	}
 
 	render() {
@@ -54,7 +57,10 @@ export default class ActorDetail extends React.Component {
 					</div>
 					<div style={{ display: 'inline-block', border: '0px solid red', position: 'absolute', top: '108px', left: '260px', fontSize: '24px' }}>
 						<p>{this.state.actor.name}</p>
-						<p onClick={this.onMatchWordsClick}>{this.state.actor.matchWords && this.state.actor.matchWords.replace(/;/g, '、')}</p>
+						<p>
+							{this.state.actor.matchWords && this.state.actor.matchWords.replace(/;/g, '、')}
+							<button onClick={this.onMatchWordsClick}>编辑</button>
+						</p>
 					</div>
 				</div>
 				<ArtList items={this.state.artList} />

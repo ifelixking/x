@@ -1,6 +1,6 @@
-import dateFormat from 'dateformat'
+const dateFormat = require('dateformat')
 
-export default {
+module.exports = {
 	toDateString: (str) => {
 		if (!str) { return '' }
 		const date = new Date(str)
@@ -56,5 +56,11 @@ export default {
 				iframe: ['src', 'height', 'width', 'frameborder', 'allowfullscreen']
 			}
 		})
+	},
+	arrayDiff(arr0, arr1) {
+		let result = { news: [], deletes: [] }
+		arr0.forEach(a => (arr1.indexOf(a) == -1) && result.deletes.push(a))
+		arr1.forEach(a => (arr0.indexOf(a) == -1) && result.news.push(a))
+		return result
 	}
 }

@@ -130,7 +130,7 @@ namespace Collecter
 					var pArtID = cmd2.CreateParameter(); pArtID.ParameterName = "@artID"; cmd2.Parameters.Add(pArtID);
 					var pTagID = cmd2.CreateParameter(); pTagID.ParameterName = "@tagID"; cmd2.Parameters.Add(pTagID);
 
-					cmd3.CommandText = "INSERT INTO rel_actor_art(actorID, artID) VALUES(@actorID, artID)";
+					cmd3.CommandText = "INSERT INTO rel_actor_art(actorID, artID) VALUES(@actorID, @artID)";
 					var pActorID = cmd3.CreateParameter(); pActorID.ParameterName = "@actorID"; cmd3.Parameters.Add(pActorID);
 					var pArtID2 = cmd3.CreateParameter(); pArtID2.ParameterName = "@artID"; cmd3.Parameters.Add(pArtID2);
 

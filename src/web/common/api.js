@@ -78,7 +78,24 @@ const API = {
 				hostID, parentID, content, attachment, hasAttachment: !!attachment
 			})
 		})
-	}
+	},
+
+	setActor: (actorID, matchWords) => {
+		const url = `/api/actor/${actorID}`
+		return fetch(url, {
+			headers: { 'Content-Type': 'application/json; charset=utf-8' }, method: 'PUT',
+			body: JSON.stringify({
+				matchWords
+			})
+		})
+	},
+
+	buildRelActorArt: ()=>{
+		const url = `/api/actor/buildRel`
+		return fetch(url, {
+			headers: { 'Content-Type': 'application/json; charset=utf-8' }, method: 'POST',
+		})
+	},
 }
 
 export default API;
