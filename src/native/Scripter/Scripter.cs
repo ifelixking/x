@@ -84,6 +84,12 @@ namespace Scripter
 			public Attribute[] attrs { get; set; }
 		}
 
+		public class SelectItem
+		{
+			public Attribute[] attrs { get; set; }
+			public SelectItem[] subItems { get; set; }
+		}
+
 		public static SelectElement[] Select(WebKit.WebKitBrowser wkb, CaptureElement [] selector) {
 			var param = JsonConvert.SerializeObject(selector);
 			var resultJson = wkb.GetScriptManager.CallFunction("_x_select", new object[] { param });

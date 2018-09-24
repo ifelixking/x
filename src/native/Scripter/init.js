@@ -8,46 +8,60 @@
 
 	var scriptJQuery = document.createElement('script'); scriptJQuery.src = 'https://cdn.bootcss.com/jquery/3.3.1/jquery.min.js'; document.body.appendChild(scriptJQuery);
 
-	//var eleLastHover, eleLastBgColor;
-	//window.document.addEventListener("mouseover", function (e) {
-	//	if (e.target != eleLastHover) {
-	//		if (eleLastHover) {
-	//			eleLastHover.style.backgroundColor = eleLastBgColor
-	//		}
-	//		eleLastHover = e.target
-	//		eleLastBgColor = eleLastHover.style.backgroundColor
-	//		eleLastHover.style.backgroundColor = '#A0C5E8'
-	//	}
-	//}, true)
-
-	// 	window.document.addEventListener("click", , true)
-
 	window._x_select = function (selector) {
+		debugger;
 		try {
-			debugger;
 			var ceList = JSON.parse(selector)
 
-			var selectors = [];
-			for (var itor = ceList[0]; itor != null; itor = itor.children && itor.children.length ? itor = itor.children[0] : null) {
-				selectors.push(itor.tagName)
+			var func = function (nodes, query) {
+				if (!nodes || !nodes.length) { return }
+				if (nodes.length == 1) {
+					var node = nodes[0]
+					query.strJQuery += node.tagName + ' '
+					if (node.children && node.children.length) {
+						func(node.children, query)
+					}
+					if (node.output || !node.children || !node.children.length) {
+						query.node = node
+					}
+				} else {
+					nodes.forEach(function (node) {
+						var subQuery = { strJQuery: node.tagName, subs: [] }
+						if (node.output || !node.children || !node.children.length) {
+							subQuery.node = node
+						}
+						func(node.children, subQuery)
+						query.subs.push(subQuery)
+					})
+				}
 			}
-			var queryString = selectors.join(' ')
+			var query = { strJQuery: '', subs: [] }; func(ceList, query)
 
-			var result = []
+			var func2 = function (q, parentItems) {
+				var items = q.strJQuery == '' ? $(document) : $(q.strJQuery)
+				items.each(function () {
+					var selectItem = {}, ele = this
+					if (q.node) {
+						selectItem.attrs = []
+						if (q.node.config.col_content) {
+							selectItem.attrs.push({ name: 'content', value: ele.innerText })
+						}
+						q.node.config.attrs.forEach(function (i) {
+							var attrName = q.node.attributes[i].name
+							selectItem.attrs.push({ name: attrName, value: ele.attributes[attrName] })
+						})
+					}
+					parentItems.push(selectItem)
+					if (q.subs.length) {
+						selectItem.subItems = []
+						q.subs.forEach(function (subQuery) {
+							func2(subQuery, selectItem.subItems)
+						})
+					}
+				})
+			}
+			var result = []; func2(query, result)
 
-			$(queryString).each(function () {
-				var obj = { attrs: [] }, ele = this;
-				obj.attrs.push({ name: 'innerText', value: ele['innerText'] })
-				//selector.props.forEach(function (b) {
-				//	debugger;
-				//	obj.attrs.push({ name: b, value: ele[b] })
-				//})
-				//selector.attrs.forEach(function (b) {
-				//	debugger;
-				//	obj.attrs.push({ name: b, value: ele.attributes[b] })
-				//})
-				result.push(obj);
-			})
 			return JSON.stringify(result);
 		} catch (ex) {
 			console.log(ex)
