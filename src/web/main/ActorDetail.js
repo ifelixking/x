@@ -45,7 +45,7 @@ export default class ActorDetail extends React.Component {
 		const actorID = this.props.match.params.id
 		API.setActor(actorID, matchWords).then(result=>{
 			this.setState({ dlg: false });
-		})		
+		})
 	}
 
 	render() {
@@ -66,7 +66,7 @@ export default class ActorDetail extends React.Component {
 				<ArtList items={this.state.artList} />
 				<Modal title='Match Words' visible={this.state.dlg} onCancel={() => { this.setState({ dlg: false }) }} onOK={this.onDlgOK} showButtons={true} fullSize={false}>
 					<div style={{ padding: '16px', boxSizing: 'border-box', width: '100%', height: '100%' }}>
-						<textarea style={{ width: '100%', height: '100%' }} value={this.state.dlgText} onChange={(e) => { this.setState({ dlgText: e.target.value }) }} />
+						<textarea style={{ width: '100%', height: '100%' }} value={this.state.dlgText || ''} onChange={(e) => { this.setState({ dlgText: e.target.value }) }} />
 					</div>
 				</Modal>
 			</div>

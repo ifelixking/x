@@ -54,7 +54,7 @@
 	font-size: 12px;
 	box-sizing: border-box;
 	font-family: tahoma arial, "Microsoft YaHei", "Hiragino Sans GB", sans-serif;
-	cursor: pointer;
+	/* cursor: pointer; */
 }
 
 .actor_item{
@@ -126,4 +126,13 @@
 	background-color: #f2f4f5;
 	border-radius: 4px;
 	padding:4px;
+}
+
+.txt_search{
+	font-size: 26px;
+	padding: 4px;
+	width: 560px;
+	border-radius: 3px;
+	padding-right: 32px;
+	border: 1px solid #aaa;
 }

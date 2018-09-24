@@ -28,7 +28,7 @@ export default class Menu extends React.Component {
 	}
 
 	render() {
-		let items = this.props.items.map((a) => (<li active={a.id == this.props.selected ? 'active' : undefined} key={a.id} onClick={() => this.props.onSelectChange(a)}>{a.name}</li>))
+		let items = this.props.items && this.props.items.map((a) => (<li active={a.id == this.props.selected ? 'active' : undefined} key={a.id} onClick={() => this.props.onSelectChange(a)}>{a.name}</li>))
 		return (
 			<ul style={{display:this.props.items && this.props.items.length ? 'inline-block' : 'none'}} className={'menu'} ref={this.refMain}>
 				{items}

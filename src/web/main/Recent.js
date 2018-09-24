@@ -8,14 +8,14 @@ export default class Recent extends React.Component {
 		super(props)
 		this.onMenuChange = this.onMenuChange.bind(this)
 		this.state = {
-			menuItems: [],
+			menuItems: null,
 			currentMenuItem: null,
 			artList: []
 		}
 	}
 
 	componentWillMount() {
-		API.getTagList().then(res => {
+		this.state.menuItems || API.getTagList().then(res => {
 			res.json().then(data => {
 				this.setState({ menuItems: data.items, currentMenuItem: data.items.length && data.items[0].id })
 				this.onMenuChange(data.items[0])

@@ -4,10 +4,16 @@ const co = require('co')
 const utils = require('../../web/common/utils')
 
 router.get('/', function (req, res) {
-	query('SELECT * FROM actor order by `order1`,`order2` limit 0,100', (err, result, fields) => {
+	query('SELECT * FROM actor order by order1, order2 limit 0,100', (err, result, fields) => {
 		if (err) { console.log(err) }
 		res.send(JSON.stringify({ items: result }));
 	})
+})
+
+router.get('/search', function (req, res) {
+	const kw = req.query.keyword
+	const sql = `SELECT * FROM actor WHERE name LIKE '%${kw}%' OR matchWords LIKE '%${kw}%' order by order1, order2 limit 0,100`
+	queryP(sql).then(result => res.send(JSON.stringify({ items: result })))
 })
 
 router.get('/:id/art', function (req, res) {
@@ -29,9 +35,11 @@ router.get('/:id', function (req, res) {
 
 // 修改 actor
 router.put('/:id', function (req, res) {
-	queryP('update actor set matchWords=? where id=?', [req.body.matchWords, req.params.id]).then((result) => {
+	const actorID = req.params.id
+	const matchWords = req.body.matchWords
+	queryP('update actor set matchWords=? where id=?', [matchWords, actorID]).then((result) => {
 		// 执行匹配
-		if (typeof req.body.matchWords !== 'undefined') {
+		if (typeof matchWords !== 'undefined') {
 			return queryP(`select * from actor where id=${actorID}`).then(result => {
 				if (result.length) {
 					return doActorMatchP(result[0])

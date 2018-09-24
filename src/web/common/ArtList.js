@@ -15,6 +15,7 @@ export class ArtList extends React.Component {
 			showDlg: false,
 			dlgImages: [],
 			dlgDownloads: [],
+			dlgText: '',
 		}
 
 		this.m_lastActiveItem = null;
@@ -37,8 +38,8 @@ export class ArtList extends React.Component {
 		this.refMain.current.ownerDocument.getElementById('_CSS_ARTLIST').remove()
 	}
 
-	onArtImageClick(images, downloads) {
-		this.setState({ showDlg: true, dlgImages: images, dlgDownloads: downloads })
+	onArtImageClick(images, downloads, text) {
+		this.setState({ showDlg: true, dlgImages: images, dlgDownloads: downloads, dlgText: text })
 	}
 
 	onItemSelected(e) {
@@ -82,7 +83,9 @@ export class ArtList extends React.Component {
 				<div style={{}}>{items}</div>
 				<Modal fullSize={true} showButtons={false} title={'下载'} visible={this.state.showDlg} onCancel={() => this.setState({ showDlg: false })} >
 					<div style={{ padding: '16px', boxSizing: 'border-box', overflow: 'auto', width: '100%', height: '100%' }}>
-						<div style={{ margin: '16px 0px 32px 0px', }}>{dlgDownloads}</div>{dlgImages}
+						<p style={{ textAlign: 'left', fontSize: '12px', border: '1px solid #ddd', padding: '8px', backgroundColor: '#efefef' }}>{this.state.dlgText}</p>
+						<p style={{ textAlign: 'left', margin: '0px 0px 16px 0px', padding: '16px 0px', borderBottom: '1px solid #ddd' }}>{dlgDownloads}</p>
+						{dlgImages}
 					</div>
 				</Modal>
 			</div>
@@ -107,6 +110,7 @@ class ArtItem extends React.Component {
 	render() {
 		const css_content = { height: '47px', overflow: 'hidden', marginTop: '8px', cursor: 'default' };
 		const css_link = { marginRight: '8px' }
+		const css_actor = { marginRight: '8px', display: 'inline-block', borderRadius: '3px', backgroundColor: '#555', color: '#fff', padding: '2px 5px', textDecoration: 'none' }
 		const content = this.props.data.text;
 
 		// let imgUrl = Img_waiting;
@@ -116,22 +120,29 @@ class ArtItem extends React.Component {
 		let downloads = JSON.parse(this.props.data.downloads);
 		let imgs; try { imgs = JSON.parse(this.props.data.images) } catch (ex) { console.log(this.props.data); console.log(ex); } imgs = imgs || []
 
-		let links = [<a key='download' className={'_CSS_ARTLIST_download'} style={css_link} target='_blank' href={downloads[0]}>下载</a>]
-		if (downloads.length > 1) {
-			links.push(<a key='more' className={'_CSS_ARTLIST_download'} style={css_link} href="javascript:;" onClick={() => this.props.onImageClick(imgs, downloads)}>更多下载...</a>)
+		let links = []
+		if (downloads.length == 1) {
+			links.push(<a key='download' className={'_CSS_ARTLIST_download'} style={css_link} target='_blank' href={downloads[0]}>下载</a>)
+		} else if (downloads.length > 1) {
+			links.push(<a key='more' className={'_CSS_ARTLIST_download'} style={css_link} href="javascript:;" onClick={() => this.props.onImageClick(imgs, downloads, this.props.data.text)}>下载...</a>)
 		}
-
-		// let hiddenImages = imgs.map((a,i) => <img key={i} style={{ display: 'none' }} src='a' />)
-		links.push(<a key="img" href='javascript:;' onClick={() => this.props.onImageClick(imgs, downloads)}>{`[${imgs.length}图] `}</a>)
+		links.push(<a key="img" href='javascript:;' onClick={() => this.props.onImageClick(imgs, downloads, this.props.data.text)}>{`[${imgs.length}图] `}</a>)
 		let date = utils.toDateString(this.props.data.date)
-		links.push(<span key="date" style={{ float: 'right' }}>{date && date.toString()}</span>)
+		links.push(<span key="date" style={{ float: 'right', fontWeight: 'bold', color: '#777' }}>{date && date.toString()}</span>)
+
+		let actors = []
+		if (this.props.data.actors) {
+			this.props.data.actors.split(';').map(a => { let tmp = a.split(','); return tmp.length == 2 && { id: tmp[0], name: tmp[1] } }).forEach(a => {
+				actors.push(<a key={a.id} style={css_actor} href={`/actor/${a.id}`} target='_blank'>{a.name}</a>)
+			})
+		}
+		actors.length && (actors = (<p style={{ marginTop: '6px' }}>{actors}</p>))
 
 		return (
 			<div className={[Styles.art_item, Styles.shadow].join(' ')} onClick={this.props.onClick} style={{ textAlign: 'center' }}>
-				{/* <div ref={this.ref_img} style={css_div_img} onClick={() => this.props.onImageClick(imgs)}></div> */}
-				<img style={css_div_img} src={imgs && imgs.length ? imgs[0] : Img_404} onError={(e) => e.target.src = Img_404} onClick={() => this.props.onImageClick(imgs, downloads)} />
+				<img style={css_div_img} src={imgs && imgs.length ? imgs[0] : Img_404} onError={(e) => e.target.src = Img_404} onClick={() => this.props.onImageClick(imgs, downloads, this.props.data.text)} />
 				<div style={{ textAlign: 'left' }}>
-					<p title={content} style={css_content}>{content}</p>
+					<p title={content} style={css_content}>{content}</p>{actors}
 					<p style={{ marginTop: '8px' }}>{links}</p>
 				</div>
 			</div>

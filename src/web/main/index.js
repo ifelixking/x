@@ -29,7 +29,8 @@ const App = () => (
         <div style={{ height: '100%', overflow: 'auto' }}>
           <Route path="/" exact component={Recent} />
           <Route path="/resource" exact component={Resource.Component} />
-          <Route path="/actor" exact children={({ match }) => (<ActorPage.Component visible={match && match.isExact} />)} />
+          {/* <Route path="/actor" exact children={({ match }) => (<ActorPage.Component visible={match && match.isExact} />)} /> */}
+          <Route path="/actor" exact component={ActorPage.Component} />
           <Route path="/actor/:id" exact component={ActorDetail} />
           <Route path="/info" exact component={InfoPage.Component} />
           <Route path="/info/:id" exact component={InfoDetail} />

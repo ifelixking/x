@@ -83,7 +83,7 @@ const Module = {
 				API.getTagList().then((res) => {
 					res.json().then((data) => {
 						dispatch({ type: 'FLUSH_TAG_LIST', tags: data.items })
-						let theTag = data.items.find((i) => i.name == '日本无码')
+						let theTag = data.items.find((i) => i.name == decodeURI('%e6%97%a5%e6%9c%ac%e6%9c%89%e7%a0%81'))
 						dispatch(Module.Actions.changeTag(theTag && theTag.id))
 						dispatch(Module.Actions.fetchArt(0, theTag && theTag.id, null))
 					})

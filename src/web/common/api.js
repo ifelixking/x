@@ -31,8 +31,13 @@ const API = {
 		return fetch(url);
 	},
 
+	getActors: (kw) => {
+		let url = kw ? `/api/actor/search?keyword=${kw}` : `/api/actor`;
+		return fetch(url);
+	},
+
 	getActor: (actorID) => {
-		let url = typeof actorID == 'undefined' ? `/api/actor` : `/api/actor/${actorID}`;
+		let url = `/api/actor/${actorID}`;
 		return fetch(url);
 	},
 
