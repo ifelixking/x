@@ -13,11 +13,19 @@
 		try {
 			var ceList = JSON.parse(selector)
 
+			var getItemStrJQuery = function(node){
+				var result = ''
+				node.config.tag && (result += node.tagName)
+				result += node.config.classes.map(function (a) { return '.' + node.classNames[a] }).join('')
+				return result;
+			}
+
 			var func = function (nodes, query) {
 				if (!nodes || !nodes.length) { return }
 				if (nodes.length == 1) {
 					var node = nodes[0]
-					query.strJQuery += node.tagName + ' '
+					query.strJQuery && (query.strJQuery += '>')
+					query.strJQuery += getItemStrJQuery(node)
 					if (node.children && node.children.length) {
 						func(node.children, query)
 					}
@@ -26,7 +34,7 @@
 					}
 				} else {
 					nodes.forEach(function (node) {
-						var subQuery = { strJQuery: node.tagName, subs: [] }
+						var subQuery = { strJQuery: getItemStrJQuery(node), subs: [] }
 						if (node.output || !node.children || !node.children.length) {
 							subQuery.node = node
 						}
@@ -37,30 +45,35 @@
 			}
 			var query = { strJQuery: '', subs: [] }; func(ceList, query)
 
-			var func2 = function (q, parentItems) {
-				var items = q.strJQuery == '' ? $(document) : $(q.strJQuery)
-				items.each(function () {
-					var selectItem = {}, ele = this
+			var func2 = function (q, parentItems, parent) {
+				var items
+				if (parent) {
+					items = parent.find(q.strJQuery)
+				} else {
+					items = q.strJQuery == '' ? $(document) : $(q.strJQuery)
+				}
+				items.each(function (idx) {
+					var selectItem = { text: q.strJQuery + '[' + idx + ']' }, ele = this
 					if (q.node) {
 						selectItem.attrs = []
 						if (q.node.config.col_content) {
-							selectItem.attrs.push({ name: 'content', value: ele.innerText })
+							selectItem.attrs.push({ name: 'content', value: encodeURI(ele.innerText) })
 						}
 						q.node.config.attrs.forEach(function (i) {
 							var attrName = q.node.attributes[i].name
-							selectItem.attrs.push({ name: attrName, value: ele.attributes[attrName] })
+							selectItem.attrs.push({ name: attrName, value: encodeURI(ele.attributes[attrName]) })
 						})
 					}
 					parentItems.push(selectItem)
 					if (q.subs.length) {
 						selectItem.subItems = []
 						q.subs.forEach(function (subQuery) {
-							func2(subQuery, selectItem.subItems)
+							func2(subQuery, selectItem.subItems, $(ele))
 						})
 					}
 				})
 			}
-			var result = []; func2(query, result)
+			var result = []; func2(query, result, null)
 
 			return JSON.stringify(result);
 		} catch (ex) {
@@ -129,7 +142,7 @@
 		var eleToNode = function (ele) {
 			var node = {
 				tagName: ele.tagName,
-				innerText: ele.innerText,
+				innerText: encodeURI(ele.innerText),
 				classNames: ele.className.split(' '),
 				attributes: [],
 				children: [],
@@ -140,7 +153,7 @@
 				node.isLast = node.index == (ele.parentElement.children.length - 1)
 			}
 			if (ele.attributes) for (var i = 0; i < ele.attributes.length; ++i) {
-				node.attributes.push({ name: ele.attributes[i].name, value: ele.attributes[i].value })
+				node.attributes.push({ name: ele.attributes[i].name, value: encodeURI(ele.attributes[i].value) })
 			}
 			return node
 		}

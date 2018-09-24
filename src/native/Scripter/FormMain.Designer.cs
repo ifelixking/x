@@ -36,6 +36,10 @@
 			this.forwardToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			this.stopToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			this.inspectorToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+			this.captureToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+			this.startToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+			this.finishToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+			this.cancelToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			this.statusStrip1 = new System.Windows.Forms.StatusStrip();
 			this.label1 = new System.Windows.Forms.ToolStripStatusLabel();
 			this.splitContainer1 = new System.Windows.Forms.SplitContainer();
@@ -58,11 +62,17 @@
 			this.ckb_tag = new System.Windows.Forms.CheckBox();
 			this.txt_tag = new System.Windows.Forms.TextBox();
 			this.tabPage2 = new System.Windows.Forms.TabPage();
+			this.tabControl2 = new System.Windows.Forms.TabControl();
+			this.tabPage3 = new System.Windows.Forms.TabPage();
 			this.listView1 = new System.Windows.Forms.ListView();
-			this.captureToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-			this.startToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-			this.finishToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-			this.cancelToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+			this.tabPage4 = new System.Windows.Forms.TabPage();
+			this.splitContainer4 = new System.Windows.Forms.SplitContainer();
+			this.treeView1 = new System.Windows.Forms.TreeView();
+			this.listView2 = new System.Windows.Forms.ListView();
+			this.columnHeader1 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+			this.columnHeader2 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+			this.toolStripMenuItem1 = new System.Windows.Forms.ToolStripSeparator();
+			this.copySelectStringToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			this.menuStrip1.SuspendLayout();
 			this.statusStrip1.SuspendLayout();
 			((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
@@ -80,6 +90,13 @@
 			this.splitContainer3.SuspendLayout();
 			this.groupBox2.SuspendLayout();
 			this.groupBox1.SuspendLayout();
+			this.tabControl2.SuspendLayout();
+			this.tabPage3.SuspendLayout();
+			this.tabPage4.SuspendLayout();
+			((System.ComponentModel.ISupportInitialize)(this.splitContainer4)).BeginInit();
+			this.splitContainer4.Panel1.SuspendLayout();
+			this.splitContainer4.Panel2.SuspendLayout();
+			this.splitContainer4.SuspendLayout();
 			this.SuspendLayout();
 			// 
 			// menuStrip1
@@ -161,6 +178,42 @@
 			this.inspectorToolStripMenuItem.Text = "Inspector";
 			this.inspectorToolStripMenuItem.Click += new System.EventHandler(this.inspectorToolStripMenuItem_Click);
 			// 
+			// captureToolStripMenuItem
+			// 
+			this.captureToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.startToolStripMenuItem,
+            this.finishToolStripMenuItem,
+            this.cancelToolStripMenuItem,
+            this.toolStripMenuItem1,
+            this.copySelectStringToolStripMenuItem});
+			this.captureToolStripMenuItem.Name = "captureToolStripMenuItem";
+			this.captureToolStripMenuItem.Size = new System.Drawing.Size(66, 21);
+			this.captureToolStripMenuItem.Text = "Capture";
+			// 
+			// startToolStripMenuItem
+			// 
+			this.startToolStripMenuItem.Name = "startToolStripMenuItem";
+			this.startToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.P)));
+			this.startToolStripMenuItem.Size = new System.Drawing.Size(182, 22);
+			this.startToolStripMenuItem.Text = "Start";
+			this.startToolStripMenuItem.Click += new System.EventHandler(this.startToolStripMenuItem_Click);
+			// 
+			// finishToolStripMenuItem
+			// 
+			this.finishToolStripMenuItem.Name = "finishToolStripMenuItem";
+			this.finishToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.L)));
+			this.finishToolStripMenuItem.Size = new System.Drawing.Size(182, 22);
+			this.finishToolStripMenuItem.Text = "Finish";
+			this.finishToolStripMenuItem.Click += new System.EventHandler(this.finishToolStripMenuItem_Click);
+			// 
+			// cancelToolStripMenuItem
+			// 
+			this.cancelToolStripMenuItem.Name = "cancelToolStripMenuItem";
+			this.cancelToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.O)));
+			this.cancelToolStripMenuItem.Size = new System.Drawing.Size(182, 22);
+			this.cancelToolStripMenuItem.Text = "Cancel";
+			this.cancelToolStripMenuItem.Click += new System.EventHandler(this.cancelToolStripMenuItem_Click);
+			// 
 			// statusStrip1
 			// 
 			this.statusStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
@@ -204,7 +257,7 @@
 			// 
 			// splitContainer2.Panel2
 			// 
-			this.splitContainer2.Panel2.Controls.Add(this.listView1);
+			this.splitContainer2.Panel2.Controls.Add(this.tabControl2);
 			this.splitContainer2.Size = new System.Drawing.Size(609, 811);
 			this.splitContainer2.SplitterDistance = 284;
 			this.splitContainer2.TabIndex = 0;
@@ -421,50 +474,109 @@
 			this.tabPage2.Text = "tabPage2";
 			this.tabPage2.UseVisualStyleBackColor = true;
 			// 
+			// tabControl2
+			// 
+			this.tabControl2.Controls.Add(this.tabPage3);
+			this.tabControl2.Controls.Add(this.tabPage4);
+			this.tabControl2.Dock = System.Windows.Forms.DockStyle.Fill;
+			this.tabControl2.Location = new System.Drawing.Point(0, 0);
+			this.tabControl2.Name = "tabControl2";
+			this.tabControl2.SelectedIndex = 0;
+			this.tabControl2.Size = new System.Drawing.Size(609, 523);
+			this.tabControl2.TabIndex = 1;
+			// 
+			// tabPage3
+			// 
+			this.tabPage3.Controls.Add(this.listView1);
+			this.tabPage3.Location = new System.Drawing.Point(4, 22);
+			this.tabPage3.Name = "tabPage3";
+			this.tabPage3.Padding = new System.Windows.Forms.Padding(3);
+			this.tabPage3.Size = new System.Drawing.Size(601, 497);
+			this.tabPage3.TabIndex = 0;
+			this.tabPage3.Text = "Table";
+			this.tabPage3.UseVisualStyleBackColor = true;
+			// 
 			// listView1
 			// 
 			this.listView1.Dock = System.Windows.Forms.DockStyle.Fill;
 			this.listView1.FullRowSelect = true;
-			this.listView1.Location = new System.Drawing.Point(0, 0);
+			this.listView1.Location = new System.Drawing.Point(3, 3);
 			this.listView1.Name = "listView1";
-			this.listView1.Size = new System.Drawing.Size(609, 523);
+			this.listView1.Size = new System.Drawing.Size(595, 491);
 			this.listView1.TabIndex = 0;
 			this.listView1.UseCompatibleStateImageBehavior = false;
 			this.listView1.View = System.Windows.Forms.View.Details;
 			// 
-			// captureToolStripMenuItem
+			// tabPage4
 			// 
-			this.captureToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.startToolStripMenuItem,
-            this.finishToolStripMenuItem,
-            this.cancelToolStripMenuItem});
-			this.captureToolStripMenuItem.Name = "captureToolStripMenuItem";
-			this.captureToolStripMenuItem.Size = new System.Drawing.Size(66, 21);
-			this.captureToolStripMenuItem.Text = "Capture";
+			this.tabPage4.Controls.Add(this.splitContainer4);
+			this.tabPage4.Location = new System.Drawing.Point(4, 22);
+			this.tabPage4.Name = "tabPage4";
+			this.tabPage4.Padding = new System.Windows.Forms.Padding(3);
+			this.tabPage4.Size = new System.Drawing.Size(601, 497);
+			this.tabPage4.TabIndex = 1;
+			this.tabPage4.Text = "Raw";
+			this.tabPage4.UseVisualStyleBackColor = true;
 			// 
-			// startToolStripMenuItem
+			// splitContainer4
 			// 
-			this.startToolStripMenuItem.Name = "startToolStripMenuItem";
-			this.startToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.P)));
-			this.startToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
-			this.startToolStripMenuItem.Text = "Start";
-			this.startToolStripMenuItem.Click += new System.EventHandler(this.startToolStripMenuItem_Click);
+			this.splitContainer4.Dock = System.Windows.Forms.DockStyle.Fill;
+			this.splitContainer4.Location = new System.Drawing.Point(3, 3);
+			this.splitContainer4.Name = "splitContainer4";
 			// 
-			// finishToolStripMenuItem
+			// splitContainer4.Panel1
 			// 
-			this.finishToolStripMenuItem.Name = "finishToolStripMenuItem";
-			this.finishToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.L)));
-			this.finishToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
-			this.finishToolStripMenuItem.Text = "Finish";
-			this.finishToolStripMenuItem.Click += new System.EventHandler(this.finishToolStripMenuItem_Click);
+			this.splitContainer4.Panel1.Controls.Add(this.treeView1);
 			// 
-			// cancelToolStripMenuItem
+			// splitContainer4.Panel2
 			// 
-			this.cancelToolStripMenuItem.Name = "cancelToolStripMenuItem";
-			this.cancelToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.O)));
-			this.cancelToolStripMenuItem.Size = new System.Drawing.Size(161, 22);
-			this.cancelToolStripMenuItem.Text = "Cancel";
-			this.cancelToolStripMenuItem.Click += new System.EventHandler(this.cancelToolStripMenuItem_Click);
+			this.splitContainer4.Panel2.Controls.Add(this.listView2);
+			this.splitContainer4.Size = new System.Drawing.Size(595, 491);
+			this.splitContainer4.SplitterDistance = 198;
+			this.splitContainer4.TabIndex = 1;
+			// 
+			// treeView1
+			// 
+			this.treeView1.Dock = System.Windows.Forms.DockStyle.Fill;
+			this.treeView1.Location = new System.Drawing.Point(0, 0);
+			this.treeView1.Name = "treeView1";
+			this.treeView1.Size = new System.Drawing.Size(198, 491);
+			this.treeView1.TabIndex = 0;
+			this.treeView1.AfterSelect += new System.Windows.Forms.TreeViewEventHandler(this.treeView1_AfterSelect);
+			// 
+			// listView2
+			// 
+			this.listView2.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
+            this.columnHeader1,
+            this.columnHeader2});
+			this.listView2.Dock = System.Windows.Forms.DockStyle.Fill;
+			this.listView2.FullRowSelect = true;
+			this.listView2.Location = new System.Drawing.Point(0, 0);
+			this.listView2.Name = "listView2";
+			this.listView2.Size = new System.Drawing.Size(393, 491);
+			this.listView2.TabIndex = 1;
+			this.listView2.UseCompatibleStateImageBehavior = false;
+			this.listView2.View = System.Windows.Forms.View.Details;
+			// 
+			// columnHeader1
+			// 
+			this.columnHeader1.Text = "name";
+			// 
+			// columnHeader2
+			// 
+			this.columnHeader2.Text = "value";
+			// 
+			// toolStripMenuItem1
+			// 
+			this.toolStripMenuItem1.Name = "toolStripMenuItem1";
+			this.toolStripMenuItem1.Size = new System.Drawing.Size(179, 6);
+			// 
+			// copySelectStringToolStripMenuItem
+			// 
+			this.copySelectStringToolStripMenuItem.Name = "copySelectStringToolStripMenuItem";
+			this.copySelectStringToolStripMenuItem.Size = new System.Drawing.Size(182, 22);
+			this.copySelectStringToolStripMenuItem.Text = "Copy Select String";
+			this.copySelectStringToolStripMenuItem.Click += new System.EventHandler(this.copySelectStringToolStripMenuItem_Click);
 			// 
 			// FormMain
 			// 
@@ -499,6 +611,13 @@
 			this.splitContainer3.ResumeLayout(false);
 			this.groupBox2.ResumeLayout(false);
 			this.groupBox1.ResumeLayout(false);
+			this.tabControl2.ResumeLayout(false);
+			this.tabPage3.ResumeLayout(false);
+			this.tabPage4.ResumeLayout(false);
+			this.splitContainer4.Panel1.ResumeLayout(false);
+			this.splitContainer4.Panel2.ResumeLayout(false);
+			((System.ComponentModel.ISupportInitialize)(this.splitContainer4)).EndInit();
+			this.splitContainer4.ResumeLayout(false);
 			this.ResumeLayout(false);
 			this.PerformLayout();
 
@@ -542,5 +661,15 @@
 		private System.Windows.Forms.ToolStripMenuItem startToolStripMenuItem;
 		private System.Windows.Forms.ToolStripMenuItem finishToolStripMenuItem;
 		private System.Windows.Forms.ToolStripMenuItem cancelToolStripMenuItem;
+		private System.Windows.Forms.TabControl tabControl2;
+		private System.Windows.Forms.TabPage tabPage3;
+		private System.Windows.Forms.TabPage tabPage4;
+		private System.Windows.Forms.SplitContainer splitContainer4;
+		private System.Windows.Forms.TreeView treeView1;
+		private System.Windows.Forms.ListView listView2;
+		private System.Windows.Forms.ColumnHeader columnHeader1;
+		private System.Windows.Forms.ColumnHeader columnHeader2;
+		private System.Windows.Forms.ToolStripSeparator toolStripMenuItem1;
+		private System.Windows.Forms.ToolStripMenuItem copySelectStringToolStripMenuItem;
 	}
 }

@@ -8,6 +8,7 @@ using System.Linq;
 using System.Security.Permissions;
 using System.Text;
 using System.Threading.Tasks;
+using System.Web;
 using System.Windows.Forms;
 
 namespace Scripter
@@ -33,7 +34,7 @@ namespace Scripter
 			m_browser.Navigated += M_browser_Navigated;
 			this.splitContainer1.Panel1.Controls.Add(m_browser);
 		}
-		
+
 		#region events
 		private void FormMain_Shown(object sender, EventArgs e) {
 			gotoToolStripMenuItem.PerformClick();
@@ -88,7 +89,7 @@ namespace Scripter
 
 		private void recBuildTree(TreeNodeCollection parentCollection, Scripter.CaptureElement[] eles) {
 			foreach (var ele in eles) {
-				var node = new TreeNode(ele.ToString()) { Tag = ele, Checked = true };
+				var node = new TreeNode(ele.ToString()) { Tag = ele, Checked = true }; node.Expand();
 				parentCollection.Add(node);
 				recBuildTree(node.Nodes, ele.children);
 			}
@@ -113,22 +114,6 @@ namespace Scripter
 		}
 
 		#region selector
-
-		//private Scripter.Selector getJQuerySelector() {
-		//	var items = new List<string>();
-		//	var node = treeViewCE.Nodes[0];
-		//	Scripter.CaptureElement ce;
-		//	for (;;) {
-		//		ce = node.Tag as Scripter.CaptureElement;
-		//		items.Add(ce.ToString());
-		//		if (node.Nodes.Count == 0) { break; }
-		//		node = node.Nodes[0];
-		//	}
-		//	var selector = new Scripter.Selector() { strJQuery = string.Join(" ", items) };
-		//	selector.props = ce.config.col_content ? new string[] { "innerText" } : new string[] { };
-		//	selector.attrs = ce.config.col_attrs.Select(a => ce.attributes[a].name).ToArray();
-		//	return selector;
-		//}
 
 		private void treeViewCE_AfterCheck(object sender, TreeViewEventArgs e) {
 			if (e.Node.Checked) { foreach (TreeNode c in e.Node.Nodes) { c.Checked = true; } }
@@ -158,24 +143,49 @@ namespace Scripter
 			flushResult();
 		}
 
-		private void flushResult() {
-			// var selector = getJQuerySelector();
-			var result = Scripter.Select(m_browser, m_ceList);
-			listView1.BeginUpdate(); listView1.Clear();
-			Dictionary<string, int> dic = new Dictionary<string, int>();
-			List<string> tmp = new List<string>();
-			foreach (var item in result) {
-				tmp.Clear(); tmp.AddRange(new string[dic.Count]);
-				foreach (var col in item.attrs) {
-					if (!dic.TryGetValue(col.name, out int idx)) {
-						idx = dic.Count; dic.Add(col.name, idx); tmp.Add(null);
-						listView1.Columns.Add(col.name);
-					}
-					tmp[idx] = col.value;
+		private void recFillRawTree(Scripter.SelectItem[] items, TreeNodeCollection nodes) {
+			foreach (var item in items) {
+				var node = new TreeNode(item.text) { Tag = item }; node.Expand();
+				if (item.subItems != null) {
+					recFillRawTree(item.subItems, node.Nodes);
 				}
-				listView1.Items.Add(new ListViewItem(tmp.ToArray()));
+				nodes.Add(node);
 			}
-			listView1.EndUpdate();
+		}
+		private void treeView1_AfterSelect(object sender, TreeViewEventArgs e) {
+			listView2.BeginUpdate(); listView2.Items.Clear();
+			if (treeView1.SelectedNode != null) {
+				var selectItem = treeView1.SelectedNode.Tag as Scripter.SelectItem;
+				if (selectItem.attrs != null && selectItem.attrs.Length > 0) {
+					listView2.Items.AddRange(selectItem.attrs.Select(a => new ListViewItem(new string[] { a.name, HttpUtility.UrlDecode(a.value) })).ToArray());
+					listView2.AutoResizeColumns(ColumnHeaderAutoResizeStyle.ColumnContent);
+				}
+			}
+			listView2.EndUpdate();
+		}
+		private void flushResult() {
+			var result = Scripter.Select(m_browser, m_ceList);
+
+			listView2.Items.Clear();
+			treeView1.BeginUpdate(); treeView1.Nodes.Clear();
+			recFillRawTree(result, treeView1.Nodes);
+			treeView1.EndUpdate();
+
+			//listView1.BeginUpdate(); listView1.Clear();
+			//Dictionary<string, int> dic = new Dictionary<string, int>();
+			//List<string> tmp = new List<string>();
+			//foreach (var item in result) {
+			//	tmp.Clear(); tmp.AddRange(new string[dic.Count]);
+			//	foreach (var col in item.attrs) {
+			//		if (!dic.TryGetValue(col.name, out int idx)) {
+			//			idx = dic.Count; dic.Add(col.name, idx); tmp.Add(null);
+			//			listView1.Columns.Add(col.name);
+			//		}
+			//		tmp[idx] = col.value;
+			//	}
+			//	listView1.Items.Add(new ListViewItem(tmp.ToArray()));
+			//}
+			//listView1.EndUpdate();
 		}
 
 		private void treeViewCE_AfterSelect(object sender, TreeViewEventArgs e) {
@@ -201,7 +211,7 @@ namespace Scripter
 
 			if (treeViewCE.SelectedNode != null) {
 				var item = treeViewCE.SelectedNode.Tag as Scripter.CaptureElement;
-				
+
 				ckb_tag.Checked = item.config.tag; txt_tag.Text = item.tagName;
 				for (var i = 0; i < item.classNames.Length; ++i) { var ckb = new CheckBox() { AutoSize = true, Text = item.classNames[i], Checked = item.config.classes.Contains(i) }; ckb.CheckedChanged += onCaptureSetting; ckbPanel_class.Controls.Add(ckb); }
 				ckb_index.Text = string.Format("i[{0}]", item.index != null ? item.index.ToString() : "-"); ckb_index.Enabled = item.index != null; ckb_index.Checked = item.index != null && item.config.index;
@@ -209,7 +219,7 @@ namespace Scripter
 				ckb_last.Enabled = item.isLast != null; ckb_first.Checked = ckb_first.Enabled && item.config.last;
 				ckb_odd.Enabled = item.index != null && item.index % 2 == 1; ckb_odd.Checked = ckb_odd.Enabled && item.config.odd;
 				ckb_even.Enabled = item.index != null && item.index % 2 == 0; ckb_even.Checked = ckb_even.Enabled && item.config.even;
-				ckb_content.Checked = item.config.content; txt_content.Text = item.innerText;
+				ckb_content.Checked = item.config.content; txt_content.Text = HttpUtility.UrlDecode(item.innerText);
 				for (var i = 0; i < item.attributes.Length; ++i) { var ckb = new CheckBox() { AutoSize = true, Text = item.attributes[i].ToString(), Checked = item.config.attrs.Contains(i) }; ckb.CheckedChanged += onCaptureSetting; ckbPanel_attrs.Controls.Add(ckb); }
 
 				splitContainer3.Panel2.Enabled = true;
@@ -250,6 +260,11 @@ namespace Scripter
 
 		private void cancelToolStripMenuItem_Click(object sender, EventArgs e) {
 			m_browser.GetScriptManager.CallFunction("_x_captureCancel", new object[] { });
+		}
+
+		private void copySelectStringToolStripMenuItem_Click(object sender, EventArgs e) {
+			string selectString = JsonConvert.SerializeObject(m_ceList);
+			Clipboard.SetText(selectString);
 		}
 	}
 }

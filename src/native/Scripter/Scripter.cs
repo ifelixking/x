@@ -68,7 +68,10 @@ namespace Scripter
 			public CaptureElementConfig config = new CaptureElementConfig() { tag = true, col_content = true };
 
 			public override string ToString() {
-				return tagName;
+				string result = string.Empty;
+				if (config.tag) { result += tagName; }
+				result += string.Join(string.Empty, config.classes.Select(a => "." + config.classes[a]));
+				return result;
 			}
 		}
 
@@ -79,21 +82,22 @@ namespace Scripter
 		//	public string[] attrs;
 		//}
 
-		public class SelectElement
-		{
-			public Attribute[] attrs { get; set; }
-		}
+		//public class SelectElement
+		//{
+		//	public Attribute[] attrs { get; set; }
+		//}
 
 		public class SelectItem
 		{
+			public string text { get; set; }
 			public Attribute[] attrs { get; set; }
 			public SelectItem[] subItems { get; set; }
 		}
 
-		public static SelectElement[] Select(WebKit.WebKitBrowser wkb, CaptureElement [] selector) {
+		public static SelectItem[] Select(WebKit.WebKitBrowser wkb, CaptureElement[] selector) {
 			var param = JsonConvert.SerializeObject(selector);
 			var resultJson = wkb.GetScriptManager.CallFunction("_x_select", new object[] { param });
-			var result = JsonConvert.DeserializeObject<SelectElement[]>(resultJson.ToString());
+			var result = JsonConvert.DeserializeObject<SelectItem[]>(resultJson.ToString());
 			return result;
 		}
 
