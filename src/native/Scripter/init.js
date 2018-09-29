@@ -16,7 +16,14 @@
 			var getItemStrJQuery = function(node){
 				var result = ''
 				node.config.tag && (result += node.tagName)
-				result += node.config.classes.map(function (a) { return '.' + node.classNames[a] }).join('')
+				result += node.config.classes.map(function (a) { return node.classNames[a] ? '.' + node.classNames[a] : '' }).join('')
+				node.config.index && (result += ':nth-child(' + (node.index + 1) + ')')
+				node.config.first && (result += ':first')
+				node.config.last && (result += ':last')
+				node.config.odd && (result += ':odd')
+				node.config.even && (result += ':even')
+				node.config.context && (result += ':contains("' + node.innerText + '")')
+				result += node.config.attrs.map(function (a) { return '[' + node.attributes[a].name + '="' + node.attributes[a].value + '"]' }).join('')
 				return result;
 			}
 
@@ -53,7 +60,7 @@
 					items = q.strJQuery == '' ? $(document) : $(q.strJQuery)
 				}
 				items.each(function (idx) {
-					var selectItem = { text: q.strJQuery + '[' + idx + ']' }, ele = this
+					var selectItem = { jq: q.strJQuery, idx: idx }, ele = this
 					if (q.node) {
 						selectItem.attrs = []
 						if (q.node.config.col_content) {
@@ -75,7 +82,7 @@
 			}
 			var result = []; func2(query, result, null)
 
-			return JSON.stringify(result);
+			return JSON.stringify({ query: query, data: result });
 		} catch (ex) {
 			console.log(ex)
 			return 'error:' + ex

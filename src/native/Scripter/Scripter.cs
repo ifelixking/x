@@ -89,15 +89,28 @@ namespace Scripter
 
 		public class SelectItem
 		{
-			public string text { get; set; }
+			public string jq { get; set; }
+			public int idx { get; set; }
 			public Attribute[] attrs { get; set; }
 			public SelectItem[] subItems { get; set; }
 		}
 
-		public static SelectItem[] Select(WebKit.WebKitBrowser wkb, CaptureElement[] selector) {
+		public class Query
+		{
+			public string strJQuery { get; set; }
+			public Query[] subs { get; set; }
+		}
+
+		public class SelectResult
+		{
+			public Query query { get; set; }
+			public SelectItem[] data { get; set; }
+		}
+
+		public static SelectResult Select(WebKit.WebKitBrowser wkb, CaptureElement[] selector) {
 			var param = JsonConvert.SerializeObject(selector);
 			var resultJson = wkb.GetScriptManager.CallFunction("_x_select", new object[] { param });
-			var result = JsonConvert.DeserializeObject<SelectItem[]>(resultJson.ToString());
+			var result = JsonConvert.DeserializeObject<SelectResult>(resultJson.ToString());
 			return result;
 		}
 

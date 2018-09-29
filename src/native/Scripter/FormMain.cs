@@ -101,6 +101,7 @@ namespace Scripter
 			recBuildTree(treeViewCE.Nodes, m_ceList);
 			treeViewCE.ExpandAll(); treeViewCE.EndUpdate();
 			treeViewCE_AfterSelect(null, null);
+			flushResult();
 		}
 
 		private void gotoToolStripMenuItem_Click(object sender, EventArgs e) {
@@ -143,12 +144,24 @@ namespace Scripter
 			flushResult();
 		}
 
-		private void recFillRawTree(Scripter.SelectItem[] items, TreeNodeCollection nodes) {
+		private void recFillRawTree(Scripter.SelectItem[] items, TreeNodeCollection nodes, string historyJQ, Dictionary<string, int> dicCol, ListView listView, List<string> tmp, bool topFlag = false) {
 			foreach (var item in items) {
-				var node = new TreeNode(item.text) { Tag = item }; node.Expand();
-				if (item.subItems != null) {
-					recFillRawTree(item.subItems, node.Nodes);
-				}
+				var node = new TreeNode(string.Format("{0} - {1}", item.jq, item.idx)) { Tag = item }; node.Expand();
+
+				var fullJQ = string.Format("{0} > {1}", historyJQ, item.jq);
+				if (topFlag) { tmp.Clear(); tmp.AddRange(new string[dicCol.Count]); }
+				if (item.subItems != null) { recFillRawTree(item.subItems, node.Nodes, fullJQ, dicCol, listView, tmp); }
+
+				if (item.attrs != null) foreach (var attr in item.attrs) {
+						var key = string.Format("{0} : {1}", fullJQ, attr.name);
+						if (!dicCol.TryGetValue(key, out int idx)) {
+							idx = dicCol.Count; dicCol.Add(key, idx); tmp.Add(null);
+							listView.Columns.Add(attr.name);
+						}
+						tmp[idx] = HttpUtility.UrlDecode(attr.value);
+					}
+
+				if (topFlag) { listView.Items.Add(new ListViewItem(tmp.ToArray())); }
 				nodes.Add(node);
 			}
 		}
@@ -163,29 +176,34 @@ namespace Scripter
 			}
 			listView2.EndUpdate();
 		}
+
+		private void recBuildQueryTree(Scripter.Query query, TreeNodeCollection nodes) {
+			var node = new TreeNode(query.strJQuery);
+			foreach (var sub in query.subs) {
+				recBuildQueryTree(sub, node.Nodes);
+			}
+			nodes.Add(node);
+		}
+
 		private void flushResult() {
 			var result = Scripter.Select(m_browser, m_ceList);
 
 			listView2.Items.Clear();
 			treeView1.BeginUpdate(); treeView1.Nodes.Clear();
-			recFillRawTree(result, treeView1.Nodes);
-			treeView1.EndUpdate();
 
-			//listView1.BeginUpdate(); listView1.Clear();
-			//Dictionary<string, int> dic = new Dictionary<string, int>();
-			//List<string> tmp = new List<string>();
-			//foreach (var item in result) {
-			//	tmp.Clear(); tmp.AddRange(new string[dic.Count]);
-			//	foreach (var col in item.attrs) {
-			//		if (!dic.TryGetValue(col.name, out int idx)) {
-			//			idx = dic.Count; dic.Add(col.name, idx); tmp.Add(null);
-			//			listView1.Columns.Add(col.name);
-			//		}
-			//		tmp[idx] = col.value;
-			//	}
-			//	listView1.Items.Add(new ListViewItem(tmp.ToArray()));
-			//}
-			//listView1.EndUpdate();
+			listView1.BeginUpdate(); listView1.Clear();
+			Dictionary<string, int> dic = new Dictionary<string, int>();
+			List<string> tmp = new List<string>();
+
+			recFillRawTree(result.data, treeView1.Nodes, string.Empty, dic, listView1, tmp, true);
+
+
+			treeView1.EndUpdate();
+			listView1.EndUpdate();
+
+			treeView_query.BeginUpdate(); treeView_query.Nodes.Clear();
+			recBuildQueryTree(result.query, treeView_query.Nodes);
+			treeView_query.EndUpdate();
 		}
 
 		private void treeViewCE_AfterSelect(object sender, TreeViewEventArgs e) {
@@ -265,6 +283,10 @@ namespace Scripter
 		private void copySelectStringToolStripMenuItem_Click(object sender, EventArgs e) {
 			string selectString = JsonConvert.SerializeObject(m_ceList);
 			Clipboard.SetText(selectString);
+		}
+
+		private void treeView_query_AfterSelect(object sender, TreeViewEventArgs e) {
+			txt_query.Text = e.Node.Text;
 		}
 	}
 }
