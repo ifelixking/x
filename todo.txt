@@ -1,4 +1,4 @@
--- item 加 时间
+﻿-- item 加 时间
 
 -- image list div 原始图片尺寸
 
@@ -45,4 +45,4 @@ image cancel
 	SQLite
 	nginx-lua lua-bytecode
 
-node Server 负载均衡
+node Server 负载均衡 
