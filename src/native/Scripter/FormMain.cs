@@ -144,24 +144,24 @@ namespace Scripter
 			flushResult();
 		}
 
-		private void recFillRawTree(Scripter.SelectItem[] items, TreeNodeCollection nodes, string historyJQ, Dictionary<string, int> dicCol, ListView listView, List<string> tmp, bool topFlag = false) {
+		private void recFillRawTree(Scripter.SelectItem[] items, TreeNodeCollection nodes, string historyJQ, Dictionary<string, int> dicCol, List<string> tmp, bool topFlag = false) {
 			foreach (var item in items) {
 				var node = new TreeNode(string.Format("{0} - {1}", item.jq, item.idx)) { Tag = item }; node.Expand();
 
 				var fullJQ = string.Format("{0} > {1}", historyJQ, item.jq);
 				if (topFlag) { tmp.Clear(); tmp.AddRange(new string[dicCol.Count]); }
-				if (item.subItems != null) { recFillRawTree(item.subItems, node.Nodes, fullJQ, dicCol, listView, tmp); }
+				if (item.subItems != null) { recFillRawTree(item.subItems, node.Nodes, fullJQ, dicCol, tmp); }
 
 				if (item.attrs != null) foreach (var attr in item.attrs) {
 						var key = string.Format("{0} : {1}", fullJQ, attr.name);
 						if (!dicCol.TryGetValue(key, out int idx)) {
 							idx = dicCol.Count; dicCol.Add(key, idx); tmp.Add(null);
-							listView.Columns.Add(attr.name);
+							listView1.Columns.Add(attr.name);
 						}
 						tmp[idx] = HttpUtility.UrlDecode(attr.value);
 					}
 
-				if (topFlag) { listView.Items.Add(new ListViewItem(tmp.ToArray())); }
+				if (topFlag) { listView1.Items.Add(new ListViewItem(tmp.ToArray())); }
 				nodes.Add(node);
 			}
 		}
@@ -195,10 +195,11 @@ namespace Scripter
 			Dictionary<string, int> dic = new Dictionary<string, int>();
 			List<string> tmp = new List<string>();
 
-			recFillRawTree(result.data, treeView1.Nodes, string.Empty, dic, listView1, tmp, true);
+			recFillRawTree(result.data, treeView1.Nodes, string.Empty, dic, tmp, true);
 
 
 			treeView1.EndUpdate();
+			if (listView1.Items.Count > 0) { listView1.AutoResizeColumns(ColumnHeaderAutoResizeStyle.ColumnContent); }
 			listView1.EndUpdate();
 
 			treeView_query.BeginUpdate(); treeView_query.Nodes.Clear();

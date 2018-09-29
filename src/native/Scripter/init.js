@@ -66,9 +66,9 @@
 						if (q.node.config.col_content) {
 							selectItem.attrs.push({ name: 'content', value: encodeURI(ele.innerText) })
 						}
-						q.node.config.attrs.forEach(function (i) {
+						q.node.config.col_attrs.forEach(function (i) {
 							var attrName = q.node.attributes[i].name
-							selectItem.attrs.push({ name: attrName, value: encodeURI(ele.attributes[attrName]) })
+							selectItem.attrs.push({ name: attrName, value: encodeURI(ele.attributes[attrName].value) })
 						})
 					}
 					parentItems.push(selectItem)

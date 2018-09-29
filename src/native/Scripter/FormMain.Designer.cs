@@ -63,7 +63,6 @@
 			this.ckb_index = new System.Windows.Forms.CheckBox();
 			this.ckb_tag = new System.Windows.Forms.CheckBox();
 			this.txt_tag = new System.Windows.Forms.TextBox();
-			this.tabPage2 = new System.Windows.Forms.TabPage();
 			this.tabControl2 = new System.Windows.Forms.TabControl();
 			this.tabPage3 = new System.Windows.Forms.TabPage();
 			this.listView1 = new System.Windows.Forms.ListView();
@@ -74,9 +73,10 @@
 			this.columnHeader1 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
 			this.columnHeader2 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
 			this.tabPage5 = new System.Windows.Forms.TabPage();
-			this.treeView_query = new System.Windows.Forms.TreeView();
 			this.splitContainer5 = new System.Windows.Forms.SplitContainer();
+			this.treeView_query = new System.Windows.Forms.TreeView();
 			this.txt_query = new System.Windows.Forms.TextBox();
+			this.splitter1 = new System.Windows.Forms.Splitter();
 			this.menuStrip1.SuspendLayout();
 			this.statusStrip1.SuspendLayout();
 			((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
@@ -286,7 +286,6 @@
 			// tabControl1
 			// 
 			this.tabControl1.Controls.Add(this.tabPage1);
-			this.tabControl1.Controls.Add(this.tabPage2);
 			this.tabControl1.Dock = System.Windows.Forms.DockStyle.Fill;
 			this.tabControl1.Location = new System.Drawing.Point(0, 0);
 			this.tabControl1.Name = "tabControl1";
@@ -302,7 +301,7 @@
 			this.tabPage1.Padding = new System.Windows.Forms.Padding(3);
 			this.tabPage1.Size = new System.Drawing.Size(601, 258);
 			this.tabPage1.TabIndex = 0;
-			this.tabPage1.Text = "tabPage1";
+			this.tabPage1.Text = "Capture";
 			this.tabPage1.UseVisualStyleBackColor = true;
 			// 
 			// splitContainer3
@@ -314,6 +313,7 @@
 			// 
 			// splitContainer3.Panel1
 			// 
+			this.splitContainer3.Panel1.Controls.Add(this.splitter1);
 			this.splitContainer3.Panel1.Controls.Add(this.ckbPanel_cols);
 			// 
 			// splitContainer3.Panel2
@@ -330,7 +330,7 @@
 			this.splitContainer3.Panel2.Controls.Add(this.ckb_tag);
 			this.splitContainer3.Panel2.Controls.Add(this.txt_tag);
 			this.splitContainer3.Size = new System.Drawing.Size(595, 252);
-			this.splitContainer3.SplitterDistance = 304;
+			this.splitContainer3.SplitterDistance = 305;
 			this.splitContainer3.TabIndex = 1;
 			// 
 			// ckbPanel_cols
@@ -338,9 +338,9 @@
 			this.ckbPanel_cols.AutoScroll = true;
 			this.ckbPanel_cols.BackColor = System.Drawing.Color.WhiteSmoke;
 			this.ckbPanel_cols.Dock = System.Windows.Forms.DockStyle.Bottom;
-			this.ckbPanel_cols.Location = new System.Drawing.Point(0, 173);
+			this.ckbPanel_cols.Location = new System.Drawing.Point(0, 204);
 			this.ckbPanel_cols.Name = "ckbPanel_cols";
-			this.ckbPanel_cols.Size = new System.Drawing.Size(304, 79);
+			this.ckbPanel_cols.Size = new System.Drawing.Size(305, 48);
 			this.ckbPanel_cols.TabIndex = 0;
 			this.ckbPanel_cols.Visible = false;
 			// 
@@ -351,7 +351,7 @@
 			this.groupBox2.Controls.Add(this.ckbPanel_attrs);
 			this.groupBox2.Location = new System.Drawing.Point(3, 145);
 			this.groupBox2.Name = "groupBox2";
-			this.groupBox2.Size = new System.Drawing.Size(279, 104);
+			this.groupBox2.Size = new System.Drawing.Size(278, 104);
 			this.groupBox2.TabIndex = 24;
 			this.groupBox2.TabStop = false;
 			this.groupBox2.Text = "Attributes";
@@ -362,7 +362,7 @@
 			this.ckbPanel_attrs.Dock = System.Windows.Forms.DockStyle.Fill;
 			this.ckbPanel_attrs.Location = new System.Drawing.Point(3, 17);
 			this.ckbPanel_attrs.Name = "ckbPanel_attrs";
-			this.ckbPanel_attrs.Size = new System.Drawing.Size(273, 84);
+			this.ckbPanel_attrs.Size = new System.Drawing.Size(272, 84);
 			this.ckbPanel_attrs.TabIndex = 0;
 			// 
 			// txt_content
@@ -373,7 +373,7 @@
 			this.txt_content.Location = new System.Drawing.Point(69, 121);
 			this.txt_content.Name = "txt_content";
 			this.txt_content.ReadOnly = true;
-			this.txt_content.Size = new System.Drawing.Size(213, 14);
+			this.txt_content.Size = new System.Drawing.Size(212, 14);
 			this.txt_content.TabIndex = 22;
 			// 
 			// ckb_content
@@ -394,7 +394,7 @@
 			this.groupBox1.Controls.Add(this.ckbPanel_class);
 			this.groupBox1.Location = new System.Drawing.Point(3, 30);
 			this.groupBox1.Name = "groupBox1";
-			this.groupBox1.Size = new System.Drawing.Size(279, 54);
+			this.groupBox1.Size = new System.Drawing.Size(278, 54);
 			this.groupBox1.TabIndex = 19;
 			this.groupBox1.TabStop = false;
 			this.groupBox1.Text = "class";
@@ -405,7 +405,7 @@
 			this.ckbPanel_class.Dock = System.Windows.Forms.DockStyle.Fill;
 			this.ckbPanel_class.Location = new System.Drawing.Point(3, 17);
 			this.ckbPanel_class.Name = "ckbPanel_class";
-			this.ckbPanel_class.Size = new System.Drawing.Size(273, 34);
+			this.ckbPanel_class.Size = new System.Drawing.Size(272, 34);
 			this.ckbPanel_class.TabIndex = 0;
 			// 
 			// ckb_odd
@@ -482,18 +482,8 @@
 			this.txt_tag.Location = new System.Drawing.Point(69, 6);
 			this.txt_tag.Name = "txt_tag";
 			this.txt_tag.ReadOnly = true;
-			this.txt_tag.Size = new System.Drawing.Size(213, 14);
+			this.txt_tag.Size = new System.Drawing.Size(212, 14);
 			this.txt_tag.TabIndex = 1;
-			// 
-			// tabPage2
-			// 
-			this.tabPage2.Location = new System.Drawing.Point(4, 22);
-			this.tabPage2.Name = "tabPage2";
-			this.tabPage2.Padding = new System.Windows.Forms.Padding(3);
-			this.tabPage2.Size = new System.Drawing.Size(601, 258);
-			this.tabPage2.TabIndex = 1;
-			this.tabPage2.Text = "tabPage2";
-			this.tabPage2.UseVisualStyleBackColor = true;
 			// 
 			// tabControl2
 			// 
@@ -554,7 +544,7 @@
 			// 
 			this.splitContainer4.Panel2.Controls.Add(this.listView2);
 			this.splitContainer4.Size = new System.Drawing.Size(595, 491);
-			this.splitContainer4.SplitterDistance = 198;
+			this.splitContainer4.SplitterDistance = 291;
 			this.splitContainer4.TabIndex = 1;
 			// 
 			// treeView1
@@ -562,7 +552,7 @@
 			this.treeView1.Dock = System.Windows.Forms.DockStyle.Fill;
 			this.treeView1.Location = new System.Drawing.Point(0, 0);
 			this.treeView1.Name = "treeView1";
-			this.treeView1.Size = new System.Drawing.Size(198, 491);
+			this.treeView1.Size = new System.Drawing.Size(291, 491);
 			this.treeView1.TabIndex = 0;
 			this.treeView1.AfterSelect += new System.Windows.Forms.TreeViewEventHandler(this.treeView1_AfterSelect);
 			// 
@@ -575,7 +565,7 @@
 			this.listView2.FullRowSelect = true;
 			this.listView2.Location = new System.Drawing.Point(0, 0);
 			this.listView2.Name = "listView2";
-			this.listView2.Size = new System.Drawing.Size(393, 491);
+			this.listView2.Size = new System.Drawing.Size(300, 491);
 			this.listView2.TabIndex = 1;
 			this.listView2.UseCompatibleStateImageBehavior = false;
 			this.listView2.View = System.Windows.Forms.View.Details;
@@ -599,16 +589,6 @@
 			this.tabPage5.Text = "Query";
 			this.tabPage5.UseVisualStyleBackColor = true;
 			// 
-			// treeView_query
-			// 
-			this.treeView_query.Dock = System.Windows.Forms.DockStyle.Fill;
-			this.treeView_query.HideSelection = false;
-			this.treeView_query.Location = new System.Drawing.Point(0, 0);
-			this.treeView_query.Name = "treeView_query";
-			this.treeView_query.Size = new System.Drawing.Size(595, 460);
-			this.treeView_query.TabIndex = 0;
-			this.treeView_query.AfterSelect += new System.Windows.Forms.TreeViewEventHandler(this.treeView_query_AfterSelect);
-			// 
 			// splitContainer5
 			// 
 			this.splitContainer5.Dock = System.Windows.Forms.DockStyle.Fill;
@@ -628,6 +608,16 @@
 			this.splitContainer5.SplitterDistance = 460;
 			this.splitContainer5.TabIndex = 1;
 			// 
+			// treeView_query
+			// 
+			this.treeView_query.Dock = System.Windows.Forms.DockStyle.Fill;
+			this.treeView_query.HideSelection = false;
+			this.treeView_query.Location = new System.Drawing.Point(0, 0);
+			this.treeView_query.Name = "treeView_query";
+			this.treeView_query.Size = new System.Drawing.Size(595, 460);
+			this.treeView_query.TabIndex = 0;
+			this.treeView_query.AfterSelect += new System.Windows.Forms.TreeViewEventHandler(this.treeView_query_AfterSelect);
+			// 
 			// txt_query
 			// 
 			this.txt_query.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
@@ -637,6 +627,15 @@
 			this.txt_query.ReadOnly = true;
 			this.txt_query.Size = new System.Drawing.Size(589, 21);
 			this.txt_query.TabIndex = 0;
+			// 
+			// splitter1
+			// 
+			this.splitter1.Dock = System.Windows.Forms.DockStyle.Bottom;
+			this.splitter1.Location = new System.Drawing.Point(0, 201);
+			this.splitter1.Name = "splitter1";
+			this.splitter1.Size = new System.Drawing.Size(305, 3);
+			this.splitter1.TabIndex = 1;
+			this.splitter1.TabStop = false;
 			// 
 			// FormMain
 			// 
@@ -706,7 +705,6 @@
 		private System.Windows.Forms.TabControl tabControl1;
 		private System.Windows.Forms.TabPage tabPage1;
 		private System.Windows.Forms.SplitContainer splitContainer3;
-		private System.Windows.Forms.TabPage tabPage2;
 		private System.Windows.Forms.ToolStripMenuItem inspectorToolStripMenuItem;
 		private System.Windows.Forms.TextBox txt_tag;
 		private System.Windows.Forms.CheckBox ckb_index;
@@ -741,5 +739,6 @@
 		private System.Windows.Forms.SplitContainer splitContainer5;
 		private System.Windows.Forms.TreeView treeView_query;
 		private System.Windows.Forms.TextBox txt_query;
+		private System.Windows.Forms.Splitter splitter1;
 	}
 }
