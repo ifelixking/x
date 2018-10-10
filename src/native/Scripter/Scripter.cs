@@ -12,12 +12,13 @@ namespace Scripter
 {
 	static class Scripter
 	{
-		public static void InjectInitializeScript(WebKit.WebKitBrowser wkb) {
-			if (wkb.Url == null) { return; }
+		public static void InjectInitializeScript(WebViewer.WebView wkb) {
+			// if (wkb.Url == null) { return; }
 			var stream = Assembly.GetExecutingAssembly().GetManifestResourceStream("Scripter.init.js");
 			using (var reader = new StreamReader(stream)) {
 				var text = reader.ReadToEnd();
-				wkb.StringByEvaluatingJavaScriptFromString(text);
+				// wkb.StringByEvaluatingJavaScriptFromString(text);
+				wkb.RunJavaScript(text, null);
 			}
 		}
 
@@ -107,11 +108,12 @@ namespace Scripter
 			public SelectItem[] data { get; set; }
 		}
 
-		public static SelectResult Select(WebKit.WebKitBrowser wkb, CaptureElement[] selector) {
+		public static SelectResult Select(WebViewer.WebView wkb, CaptureElement[] selector) {
 			var param = JsonConvert.SerializeObject(selector);
-			var resultJson = wkb.GetScriptManager.CallFunction("_x_select", new object[] { param });
-			var result = JsonConvert.DeserializeObject<SelectResult>(resultJson.ToString());
-			return result;
+			//var resultJson = wkb.GetScriptManager.CallFunction("_x_select", new object[] { param });
+			//var result = JsonConvert.DeserializeObject<SelectResult>(resultJson.ToString());
+			//return result;
+			return null;
 		}
 
 	}

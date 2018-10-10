@@ -15,7 +15,8 @@ namespace Scripter
 {
 	public partial class FormMain : Form
 	{
-		private WebKit.WebKitBrowser m_browser;
+		// private WebKit.WebKitBrowser m_browser;
+		private WebViewer.WebView m_browser;
 		private TreeView treeViewCE;
 		private Scripter.CaptureElement[] m_ceList;
 		public FormMain() {
@@ -27,11 +28,11 @@ namespace Scripter
 			treeViewCE.AfterSelect += treeViewCE_AfterSelect;
 			splitContainer3.Panel1.Controls.Add(treeViewCE); treeViewCE.BringToFront();
 
-			m_browser = new WebKit.WebKitBrowser() { Dock = DockStyle.Fill, AllowNewWindows = false };
-			m_browser.UserAgent = "Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/534+ (KHTML, like Gecko) Chrome/69.0.3497.100 Safari/537.36";
-			m_browser.DocumentCompleted += M_browser_DocumentCompleted;
-			m_browser.Navigating += M_browser_Navigating;
-			m_browser.Navigated += M_browser_Navigated;
+			m_browser = new WebViewer.WebView() { Dock = DockStyle.Fill };
+			//m_browser.UserAgent = "Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/534+ (KHTML, like Gecko) Chrome/69.0.3497.100 Safari/537.36";
+			// m_browser.DocumentCompleted += M_browser_DocumentCompleted;
+			// m_browser.Navigating += M_browser_Navigating;
+			// m_browser.Navigated += M_browser_Navigated;
 			this.splitContainer1.Panel1.Controls.Add(m_browser);
 		}
 
@@ -40,37 +41,37 @@ namespace Scripter
 			gotoToolStripMenuItem.PerformClick();
 		}
 
-		private void M_browser_Navigating(object sender, WebKit.WebKitBrowserNavigatingEventArgs e) {
-			label1.Text = "Navigating";
-			Application.DoEvents();
-		}
+		//private void M_browser_Navigating(object sender, WebKit.WebKitBrowserNavigatingEventArgs e) {
+		//	label1.Text = "Navigating";
+		//	Application.DoEvents();
+		//}
 
-		private void M_browser_Navigated(object sender, WebBrowserNavigatedEventArgs e) {
-			label1.Text = "Navigated";
-			Application.DoEvents();
-		}
+		//private void M_browser_Navigated(object sender, WebBrowserNavigatedEventArgs e) {
+		//	label1.Text = "Navigated";
+		//	Application.DoEvents();
+		//}
 
-		private void M_browser_DocumentCompleted(object sender, WebBrowserDocumentCompletedEventArgs e) {
-			Scripter.InjectInitializeScript(this.m_browser);
-			m_browser.GetScriptManager.ScriptObject = new JsExternObject(this);
-			label1.Text = "Completed";
-			Application.DoEvents();
-		}
+		//private void M_browser_DocumentCompleted(object sender, WebBrowserDocumentCompletedEventArgs e) {
+		//	Scripter.InjectInitializeScript(this.m_browser);
+		//	m_browser.GetScriptManager.ScriptObject = new JsExternObject(this);
+		//	label1.Text = "Completed";
+		//	Application.DoEvents();
+		//}
 
 		private void inspectorToolStripMenuItem_Click(object sender, EventArgs e) {
-			m_browser.ShowInspector();
+			// m_browser.ShowInspector();
 		}
 
 		private void backToolStripMenuItem_Click(object sender, EventArgs e) {
-			m_browser.GoBack();
+			// m_browser.GoBack();
 		}
 
 		private void forwardToolStripMenuItem_Click(object sender, EventArgs e) {
-			m_browser.GoForward();
+			// m_browser.GoForward();
 		}
 
 		private void stopToolStripMenuItem_Click(object sender, EventArgs e) {
-			m_browser.Stop();
+			// m_browser.Stop();
 		}
 
 		private void exitToolStripMenuItem_Click(object sender, EventArgs e) {
@@ -109,7 +110,7 @@ namespace Scripter
 			if (url != null) {
 				if (url.Length >= 4 && url.Substring(0, 4).ToLower() != "http") { url = "http://" + url; }
 				if (System.Uri.IsWellFormedUriString(url, UriKind.Absolute)) {
-					m_browser.Navigate(url);
+					m_browser.SetUrl(url);
 				}
 			}
 		}
@@ -270,15 +271,15 @@ namespace Scripter
 		#endregion
 
 		private void startToolStripMenuItem_Click(object sender, EventArgs e) {
-			m_browser.GetScriptManager.CallFunction("_x_captureStart", new object[] { });
+			// m_browser.GetScriptManager.CallFunction("_x_captureStart", new object[] { });
 		}
 
 		private void finishToolStripMenuItem_Click(object sender, EventArgs e) {
-			m_browser.GetScriptManager.CallFunction("_x_captureFinish", new object[] { });
+			// m_browser.GetScriptManager.CallFunction("_x_captureFinish", new object[] { });
 		}
 
 		private void cancelToolStripMenuItem_Click(object sender, EventArgs e) {
-			m_browser.GetScriptManager.CallFunction("_x_captureCancel", new object[] { });
+			// m_browser.GetScriptManager.CallFunction("_x_captureCancel", new object[] { });
 		}
 
 		private void copySelectStringToolStripMenuItem_Click(object sender, EventArgs e) {

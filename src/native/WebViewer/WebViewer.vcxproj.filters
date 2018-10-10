@@ -1,0 +1,41 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <ClCompile Include="GeneratedFiles\moc_WebView_Native.cpp">
+      <Filter>GeneratedFiles</Filter>
+    </ClCompile>
+    <ClCompile Include="stdafx.cpp">
+      <Filter>main</Filter>
+    </ClCompile>
+    <ClCompile Include="WebView.cpp">
+      <Filter>WebView</Filter>
+    </ClCompile>
+    <ClCompile Include="WebView_Native.cpp">
+      <Filter>WebView</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="WebView.h" >
+		<Filter>WebView</Filter>
+	</ClInclude>
+    <ClInclude Include="stdafx.h">
+      <Filter>main</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <Filter Include="GeneratedFiles">
+      <UniqueIdentifier>{ae2dd950-144c-47da-ac05-af92be9c3e11}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="main">
+      <UniqueIdentifier>{d92f5fe3-b10f-4b77-915d-f129255e4ccb}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="WebView">
+      <UniqueIdentifier>{f25cce07-0a19-4202-b265-b30bfbe4125e}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <CustomBuild Include="WebView_Native.h">
+      <Filter>WebView</Filter>
+    </CustomBuild>
+  </ItemGroup>
+</Project>
