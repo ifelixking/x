@@ -31,6 +31,8 @@ namespace WebViewer {
 
 		void SetUrl(System::String ^ url);
 		void RunJavaScript(System::String ^ script, ScriptResultHandler ^ handler);
+		void ShowDevTools();
+		void RunInit();
 
 	public:
 		event LoadFinishedHandler ^ LoadFinished;

@@ -69,6 +69,12 @@
     <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xml" />
   </ItemGroup>
+  <ItemGroup>
+    <None Include="qwebchannel.js" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Resource.resx" />
+  </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>15.0</VCProjectVersion>
     <ProjectGuid>{DC2E917F-23FF-46FB-8EF1-0413229A1785}</ProjectGuid>

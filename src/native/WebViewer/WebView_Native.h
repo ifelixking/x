@@ -26,6 +26,26 @@ namespace WebViewer {
 	private:
 		void * m_host;
 		QWebEngineView * m_view;
+		class JsContext * m_jsContext;
+		QWebChannel * m_webChannel;
+	};
+
+	class JsContext : public QObject
+	{
+		Q_OBJECT
+	public:
+		explicit JsContext(QObject *parent = nullptr) :QObject(parent) {}
+
+	signals:
+		void recvdMsg(const QString& msg);
+
+	public:
+		// 向页面发送消息
+		void sendMsg(QWebEnginePage* page, const QString& msg);
+
+		public slots:
+		// 接收到页面发送来的消息
+		void onMsg(const QString& msg);
 	};
 
 }

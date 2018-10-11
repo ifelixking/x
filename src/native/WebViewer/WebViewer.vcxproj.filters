@@ -15,9 +15,9 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="WebView.h" >
-		<Filter>WebView</Filter>
-	</ClInclude>
+    <ClInclude Include="WebView.h">
+      <Filter>WebView</Filter>
+    </ClInclude>
     <ClInclude Include="stdafx.h">
       <Filter>main</Filter>
     </ClInclude>
@@ -37,5 +37,13 @@
     <CustomBuild Include="WebView_Native.h">
       <Filter>WebView</Filter>
     </CustomBuild>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="qwebchannel.js">
+      <Filter>WebView</Filter>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Resource.resx" />
   </ItemGroup>
 </Project>

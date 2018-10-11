@@ -16,11 +16,14 @@ namespace WebViewer {
 		m_view = new QWebEngineView();
 		m_view->setWindowFlags(Qt::FramelessWindowHint);
 		m_view->setGeometry(0, 0, this->Width, this->Height);
+		m_view->setUrl(QUrl("about:blank"));
 		m_view->show();
 		HWND hwnd = (HWND)m_view->winId();
 		SetParent(hwnd, (HWND)this->Handle.ToPointer());
 
 		m_native = new WebView_Native(new gcroot<WebView ^>(this), m_view);
+
+		ShowDevTools();
 	}
 
 	WebView::~WebView()
@@ -52,7 +55,7 @@ namespace WebViewer {
 		page->runJavaScript(script, [cb](const QVariant &v) {
 			std::wstring msg = v.toString().toStdWString();
 			WebViewer::ScriptResultHandler ^ theHandler = *cb;
-			theHandler(gcnew System::String(msg.c_str()));
+			if (theHandler != nullptr) { theHandler(gcnew System::String(msg.c_str())); }
 			delete cb;
 		});
 	}
@@ -60,8 +63,21 @@ namespace WebViewer {
 	void WebView::RunJavaScript(System::String ^ script, ScriptResultHandler ^ handler) {
 		pin_ptr<const WCHAR> str1 = PtrToStringChars(script);
 		runJavaScript(m_view->page(), QString::fromStdWString(str1), handler);
+	}
 
-		
+	void WebView::ShowDevTools(){
+		QWebEngineView * pdev = new QWebEngineView();
+		pdev->setUrl(QUrl("about:blank"));
+		pdev->show();
+		m_view->page()->setDevToolsPage(pdev->page());
+	}
+
+	void WebView::RunInit(){
+		auto resourceAssembly = Reflection::Assembly::GetExecutingAssembly();
+		auto resourceName = resourceAssembly->GetName()->Name + ".Resource";
+		auto resourceManager = gcnew Resources::ResourceManager(resourceName, resourceAssembly);
+		auto initScript_1 = cli::safe_cast<String^>(resourceManager->GetObject("qwebchannel"));
+		RunJavaScript(initScript_1, nullptr);
 	}
 
 }
