@@ -66,7 +66,8 @@ namespace Scripter
 			public CaptureElement[] children { get; set; }
 
 			// 由 WinForm 端写入
-			public CaptureElementConfig config = new CaptureElementConfig() { tag = true, col_content = true };
+			// public CaptureElementConfig config = new CaptureElementConfig() { tag = true, first = true, col_content = true };
+			public CaptureElementConfig config { get; set; }
 
 			public override string ToString() {
 				string result = string.Empty;
@@ -108,14 +109,15 @@ namespace Scripter
 			public SelectItem[] data { get; set; }
 		}
 
-		public static SelectResult Select(WebViewer.WebView wkb, CaptureElement[] selector) {
-			var param = JsonConvert.SerializeObject(selector);
-			//var resultJson = wkb.GetScriptManager.CallFunction("_x_select", new object[] { param });
-			//var result = JsonConvert.DeserializeObject<SelectResult>(resultJson.ToString());
-			//return result;
-			return null;
-		}
+		public delegate void SelectResultHandler(SelectResult result);
 
+		public static void Select(WebViewer.WebView wkb, CaptureElement[] selector, SelectResultHandler handler) {
+			var param = JsonConvert.SerializeObject(selector);
+			wkb.RunJavaScript(string.Format("{0}({1})", "_x_select", param), new WebViewer.ScriptResultHandler((resultJson) => {
+				var result = JsonConvert.DeserializeObject<SelectResult>(resultJson.ToString());
+				handler(result);
+			}));
+		}
 	}
 
 

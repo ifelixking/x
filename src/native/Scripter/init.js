@@ -8,12 +8,12 @@
 
 	var scriptJQuery = document.createElement('script'); scriptJQuery.src = 'https://cdn.bootcss.com/jquery/3.3.1/jquery.min.js'; document.body.appendChild(scriptJQuery);
 
-	window._x_select = function (selector) {
+	window._x_select = function (ceList) {
 		debugger;
 		try {
-			var ceList = JSON.parse(selector)
+			// var ceList = JSON.parse(selector)
 
-			var getItemStrJQuery = function(node){
+			var getItemStrJQuery = function (node) {
 				var result = ''
 				node.config.tag && (result += node.tagName)
 				result += node.config.classes.map(function (a) { return node.classNames[a] ? '.' + node.classNames[a] : '' }).join('')
@@ -68,7 +68,7 @@
 						}
 						q.node.config.col_attrs.forEach(function (i) {
 							var attrName = q.node.attributes[i].name
-							selectItem.attrs.push({ name: attrName, value: encodeURI(ele.attributes[attrName].value) })
+							selectItem.attrs.push({ name: attrName, value: ele.attributes[attrName] ? encodeURI(ele.attributes[attrName].value) : null })
 						})
 					}
 					parentItems.push(selectItem)
@@ -100,37 +100,10 @@
 	}
 
 	var captureElement = function (e) {
-		//var processElement = function (ele) {
-		//	// debugger
-		//	var obj = {}
-		//	obj.tagName = ele.tagName
-		//	obj.innerText = ele.innerText
-		//	obj.classNames = ele.className.split(' ')
-
-		//	if (ele.parentElement) {
-		//		obj.index = Array.from(ele.parentElement.children).indexOf(ele)
-		//		obj.isLast = obj.index == (ele.parentElement.children.length - 1)
-		//	}
-
-		//	obj.attributes = []
-		//	if (ele.attributes) for (var i = 0; i < ele.attributes.length; ++i) {
-		//		obj.attributes.push({ name: ele.attributes[i].name, value: ele.attributes[i].value })
-		//	}
-
-		//	return obj
-		//}
-		//var result = []
-		//for (var element = e.target; element != null; element = element.parentElement) {
-		//	result.push(processElement(element))
-		//}
-		//// console.log(result)
-		//window.external.onCaptureElement(JSON.stringify(result))
-
+		//debugger;
 		g_captureElement.push(e.target)
-		e.preventDefault();
-		e.stopPropagation();
-		e.stopImmediatePropagation()
-		return false
+		context.jsInvoke('captureElements', _x_captureFinish(true))
+		e.preventDefault(); e.stopPropagation(); e.stopImmediatePropagation(); return false
 	}
 
 	var g_captureElement = [];
@@ -140,10 +113,8 @@
 		window.document.addEventListener("click", captureElement, true)
 	}
 
-	window._x_captureFinish = function () {
-
-		debugger;
-
+	window._x_captureFinish = function (continued = false) {
+		//debugger;
 		var resultNodes = []
 
 		var eleToNode = function (ele) {
@@ -153,6 +124,7 @@
 				classNames: ele.className.split(' '),
 				attributes: [],
 				children: [],
+				config: { tag: true, col_content: true },
 				_element: ele
 			}
 			if (ele.parentElement) {
@@ -192,10 +164,72 @@
 					}
 				} else { break; }
 			}
-			resultNodes.push(lastChildNode)
+			lastChildNode && (resultNodes.push(lastChildNode))
 		})
 
-		window._x_captureCancel()
+		if (!continued) { window._x_captureCancel() }
+
+		// 根据 node 上的 _element, 生成 config, 干预 config 的前提时, 默认的 tag:first 选择
+		//var analysisConfig = function (nodes, ancestorsNodes) {
+		//	nodes.forEach(function (node) {
+		//	})
+		//}
+		//analysisConfig(resultNodes, [])
+
+		var gen = function (nodes, tree) {
+			if (!nodes || nodes.length == 0) { return }
+			if (nodes.length == 1) {
+				tree.nodes.push(nodes[0])
+				gen(nodes[0].children, tree)
+			} else {
+				nodes.forEach(function (node) {
+					var sub = { nodes: [node], subs: [] }
+					tree.subs.push(sub)
+					gen(node.children, sub)
+				})
+			}
+		}
+		// 修改 config 使 在 ele 下, 使用nodes 构成的 JQuery 必须 唯一命中 nodes 中的 _element
+		var iden = function (element, nodes) {
+			var ele = $(element)
+			var lastNode = nodes[nodes.length - 1]
+			var targetElement = lastNode._element
+
+			// 
+			var strJQ = ''; nodes.forEach(function (node) { strJQ && (strJQ += '>'); strJQ += node.tagName })
+			var result = ele.find(strJQ); if (result.length == 0) { throw 'error 1' }
+
+			if (result.length == 1) {
+				if (result[0] == targetElement) { return; }
+				throw 'error 2'
+			}
+
+			// if (result[0] == targetElement) { lastNode.config.index = true }
+		}
+		
+		var signIndex = function (nodes) {
+			nodes && nodes.forEach(function (node) { node.config.index = true; signIndex(node.subs) })
+		}
+
+		var tree = { nodes: [], subs: [] }; gen(resultNodes, tree)
+		var func = function (dataItemNode, subs) {
+			subs.forEach(function (treeNode) {
+				// 唯一化
+				// iden(dataItemNode._element, treeNode.nodes)
+
+				// 标记index
+				// 说明: 分枝后, 每分枝必须唯一化一个字段值, 最基本的方法就是使用nth-child
+				signIndex(treeNode.nodes)
+
+				if (treeNode.subs.length > 0) {
+					func(treeNode.nodes[treeNode.nodes.length-1], treeNode.subs)
+				}
+			})
+			
+		}
+		var dataItemNode = tree.nodes[tree.nodes.length  - 1]
+		
+		func(dataItemNode, tree.subs);
 
 		var deleteElementField = function (nodes) {
 			nodes.forEach(function (node) {
@@ -204,7 +238,8 @@
 			})
 		}
 		deleteElementField(resultNodes)
-		window.external.onCaptureElement(JSON.stringify(resultNodes))
+		// window.external.onCaptureElement(JSON.stringify(resultNodes))
+		return JSON.stringify(resultNodes)
 	}
 
 	window._x_captureCancel = function () {
@@ -216,3 +251,8 @@
 	}
 
 })()
+
+
+//var siblings = $(ele.parentElement).find(ele.tagName)
+//node.index = siblings.index(ele)
+//node.isLast = node.index == (siblings.length - 1)

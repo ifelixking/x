@@ -37,15 +37,10 @@ namespace WebViewer {
 		explicit JsContext(QObject *parent = nullptr) :QObject(parent) {}
 
 	signals:
-		void recvdMsg(const QString& msg);
-
-	public:
-		// 向页面发送消息
-		void sendMsg(QWebEnginePage* page, const QString& msg);
-
-		public slots:
-		// 接收到页面发送来的消息
-		void onMsg(const QString& msg);
+		void onJavaScriptInvoke(const QString & type, const QString & param);
+		
+	public slots:
+		void jsInvoke(const QString & type, const QString & param) { emit onJavaScriptInvoke(type, param); }
 	};
 
 }

@@ -21,6 +21,7 @@ namespace WebViewer {
 	public delegate void TitleChangedHandler(System::Object ^ sender, System::String ^ title);
 	public delegate void UrlChangedHandler(System::Object ^ sender, System::String ^ url);
 	public delegate void WindowCloseRequestedHandler(System::Object ^ sender);
+	public delegate void JavaScriptInvokeHandler(System::Object ^ sender, String ^ type, String ^ param);
 
 	public delegate void ScriptResultHandler(String^ str);
 
@@ -33,6 +34,10 @@ namespace WebViewer {
 		void RunJavaScript(System::String ^ script, ScriptResultHandler ^ handler);
 		void ShowDevTools();
 		void RunInit();
+		void Reload();
+		void Back();
+		void Stop();
+		void Forward();
 
 	public:
 		event LoadFinishedHandler ^ LoadFinished;
@@ -46,6 +51,7 @@ namespace WebViewer {
 		event TitleChangedHandler ^ TitleChanged;
 		event UrlChangedHandler ^ UrlChanged;
 		event WindowCloseRequestedHandler ^ WindowCloseRequested;
+		event JavaScriptInvokeHandler ^ JavaScriptInvoke;
 
 	internal:
 		void emitLoadFinish(bool ok) { LoadFinished(this, ok); }
@@ -59,6 +65,7 @@ namespace WebViewer {
 		void emitTitleChanged(const QString & title) { TitleChanged(this, gcnew System::String(title.toStdWString().c_str())); }
 		void emitUrlChanged(const QUrl & url) { UrlChanged(this, gcnew System::String(url.toString().toStdWString().c_str())); }
 		void emitWindowCloseRequested() { WindowCloseRequested(this); }
+		void emitJavaScriptInvoke(const QString & type, const QString & param) { JavaScriptInvoke(this, gcnew System::String(type.toStdWString().c_str()), gcnew System::String(param.toStdWString().c_str())); }
 
 	protected:
 		~WebView();

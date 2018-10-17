@@ -29,11 +29,25 @@ namespace Scripter
 			splitContainer3.Panel1.Controls.Add(treeViewCE); treeViewCE.BringToFront();
 
 			m_browser = new WebViewer.WebView() { Dock = DockStyle.Fill };
+			m_browser.LoadFinished += M_browser_LoadFinished;
+			m_browser.JavaScriptInvoke += M_browser_JavaScriptInvoke;
 			//m_browser.UserAgent = "Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/534+ (KHTML, like Gecko) Chrome/69.0.3497.100 Safari/537.36";
 			// m_browser.DocumentCompleted += M_browser_DocumentCompleted;
 			// m_browser.Navigating += M_browser_Navigating;
 			// m_browser.Navigated += M_browser_Navigated;
 			this.splitContainer1.Panel1.Controls.Add(m_browser);
+		}
+
+		private void M_browser_JavaScriptInvoke(object sender, string type, string param) {
+			if (type == "captureElements") {
+				onCaptureElement(param);
+			}
+		}
+
+		private void M_browser_LoadFinished(object sender, bool ok) {
+			Scripter.InjectInitializeScript(this.m_browser);
+			label1.Text = "Completed";
+			Application.DoEvents();
 		}
 
 		#region events
@@ -59,34 +73,29 @@ namespace Scripter
 		//}
 
 		private void inspectorToolStripMenuItem_Click(object sender, EventArgs e) {
-			// m_browser.ShowInspector();
+			m_browser.ShowDevTools();
 		}
 
 		private void backToolStripMenuItem_Click(object sender, EventArgs e) {
-			// m_browser.GoBack();
+			m_browser.Back();
 		}
 
 		private void forwardToolStripMenuItem_Click(object sender, EventArgs e) {
-			// m_browser.GoForward();
+			m_browser.Forward();
 		}
 
 		private void stopToolStripMenuItem_Click(object sender, EventArgs e) {
-			// m_browser.Stop();
+			m_browser.Stop();
 		}
 
 		private void exitToolStripMenuItem_Click(object sender, EventArgs e) {
 			this.Close();
 		}
-		#endregion
-
-		[PermissionSet(SecurityAction.Demand, Name = "FullTrust")]
-		[System.Runtime.InteropServices.ComVisible(true)]
-		public class JsExternObject
-		{
-			FormMain m_host;
-			public JsExternObject(FormMain host) { this.m_host = host; }
-			public void onCaptureElement(string jsonElements) { m_host.onCaptureElement(jsonElements); }
+		
+		private void reloadToolStripMenuItem_Click(object sender, EventArgs e) {
+			m_browser.Reload();
 		}
+		#endregion
 
 		private void recBuildTree(TreeNodeCollection parentCollection, Scripter.CaptureElement[] eles) {
 			foreach (var ele in eles) {
@@ -151,18 +160,27 @@ namespace Scripter
 
 				var fullJQ = string.Format("{0} > {1}", historyJQ, item.jq);
 				if (topFlag) { tmp.Clear(); tmp.AddRange(new string[dicCol.Count]); }
-				if (item.subItems != null) { recFillRawTree(item.subItems, node.Nodes, fullJQ, dicCol, tmp); }
 
+				// 
+				if (item.subItems != null) {
+					recFillRawTree(item.subItems, node.Nodes, fullJQ, dicCol, tmp);
+				}
 				if (item.attrs != null) foreach (var attr in item.attrs) {
 						var key = string.Format("{0} : {1}", fullJQ, attr.name);
 						if (!dicCol.TryGetValue(key, out int idx)) {
 							idx = dicCol.Count; dicCol.Add(key, idx); tmp.Add(null);
 							listView1.Columns.Add(attr.name);
 						}
-						tmp[idx] = HttpUtility.UrlDecode(attr.value);
+						// 注: table 显示树状多分枝时, 只取第一个节点, 有点类似 :first, 想看完整的可以在[raw]中看树状显示
+						if (tmp[idx] == null) { tmp[idx] = HttpUtility.UrlDecode(attr.value); }
 					}
 
-				if (topFlag) { listView1.Items.Add(new ListViewItem(tmp.ToArray())); }
+				if (topFlag) {
+					// 排除空数据
+					if (!tmp.All(i => string.IsNullOrWhiteSpace(i))) {
+						listView1.Items.Add(new ListViewItem(tmp.ToArray()));
+					}
+				}
 				nodes.Add(node);
 			}
 		}
@@ -187,25 +205,22 @@ namespace Scripter
 		}
 
 		private void flushResult() {
-			var result = Scripter.Select(m_browser, m_ceList);
+			Scripter.Select(m_browser, m_ceList, new Scripter.SelectResultHandler((result) => {
+				listView2.Items.Clear();
+				treeView1.BeginUpdate(); treeView1.Nodes.Clear();
+				listView1.BeginUpdate(); listView1.Clear();
+				Dictionary<string, int> dic = new Dictionary<string, int>();
+				List<string> tmp = new List<string>();
+				if (result != null) { recFillRawTree(result.data, treeView1.Nodes, string.Empty, dic, tmp, true); }
+				treeView1.EndUpdate();
+				if (listView1.Items.Count > 0) { listView1.AutoResizeColumns(ColumnHeaderAutoResizeStyle.ColumnContent); }
+				listView1.EndUpdate();
 
-			listView2.Items.Clear();
-			treeView1.BeginUpdate(); treeView1.Nodes.Clear();
-
-			listView1.BeginUpdate(); listView1.Clear();
-			Dictionary<string, int> dic = new Dictionary<string, int>();
-			List<string> tmp = new List<string>();
-
-			recFillRawTree(result.data, treeView1.Nodes, string.Empty, dic, tmp, true);
-
-
-			treeView1.EndUpdate();
-			if (listView1.Items.Count > 0) { listView1.AutoResizeColumns(ColumnHeaderAutoResizeStyle.ColumnContent); }
-			listView1.EndUpdate();
-
-			treeView_query.BeginUpdate(); treeView_query.Nodes.Clear();
-			recBuildQueryTree(result.query, treeView_query.Nodes);
-			treeView_query.EndUpdate();
+				treeView_query.BeginUpdate(); treeView_query.Nodes.Clear();
+				if (result != null) { recBuildQueryTree(result.query, treeView_query.Nodes); }
+				treeView_query.ExpandAll();
+				treeView_query.EndUpdate();
+			}));
 		}
 
 		private void treeViewCE_AfterSelect(object sender, TreeViewEventArgs e) {
@@ -236,7 +251,7 @@ namespace Scripter
 				for (var i = 0; i < item.classNames.Length; ++i) { var ckb = new CheckBox() { AutoSize = true, Text = item.classNames[i], Checked = item.config.classes.Contains(i) }; ckb.CheckedChanged += onCaptureSetting; ckbPanel_class.Controls.Add(ckb); }
 				ckb_index.Text = string.Format("i[{0}]", item.index != null ? item.index.ToString() : "-"); ckb_index.Enabled = item.index != null; ckb_index.Checked = item.index != null && item.config.index;
 				ckb_first.Enabled = item.index != null && item.index == 0; ckb_first.Checked = ckb_first.Enabled && item.config.first;
-				ckb_last.Enabled = item.isLast != null; ckb_first.Checked = ckb_first.Enabled && item.config.last;
+				ckb_last.Enabled = item.isLast != null && item.isLast.Value; ckb_first.Checked = ckb_first.Enabled && item.config.last;
 				ckb_odd.Enabled = item.index != null && item.index % 2 == 1; ckb_odd.Checked = ckb_odd.Enabled && item.config.odd;
 				ckb_even.Enabled = item.index != null && item.index % 2 == 0; ckb_even.Checked = ckb_even.Enabled && item.config.even;
 				ckb_content.Checked = item.config.content; txt_content.Text = HttpUtility.UrlDecode(item.innerText);
@@ -271,24 +286,24 @@ namespace Scripter
 		#endregion
 
 		private void startToolStripMenuItem_Click(object sender, EventArgs e) {
-			// m_browser.GetScriptManager.CallFunction("_x_captureStart", new object[] { });
+			m_browser.RunJavaScript("_x_captureStart()", null);
 		}
 
 		private void finishToolStripMenuItem_Click(object sender, EventArgs e) {
-			// m_browser.GetScriptManager.CallFunction("_x_captureFinish", new object[] { });
+			m_browser.RunJavaScript("_x_captureFinish()", new WebViewer.ScriptResultHandler(onCaptureElement));
 		}
 
 		private void cancelToolStripMenuItem_Click(object sender, EventArgs e) {
-			// m_browser.GetScriptManager.CallFunction("_x_captureCancel", new object[] { });
+			m_browser.RunJavaScript("_x_captureCancel()", null);
 		}
-
-		private void copySelectStringToolStripMenuItem_Click(object sender, EventArgs e) {
-			string selectString = JsonConvert.SerializeObject(m_ceList);
-			Clipboard.SetText(selectString);
-		}
-
+		
 		private void treeView_query_AfterSelect(object sender, TreeViewEventArgs e) {
 			txt_query.Text = e.Node.Text;
+		}
+
+
+		private void FormMain_Load(object sender, EventArgs e) {
+
 		}
 	}
 }

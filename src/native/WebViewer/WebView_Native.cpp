@@ -24,25 +24,27 @@ namespace WebViewer {
 		m_webChannel = new QWebChannel(this);
 		m_webChannel->registerObject("context", m_jsContext);
 		m_view->page()->setWebChannel(m_webChannel);
-		connect(m_jsContext, &JsContext::recvdMsg, this, [this](const QString& msg) {
-			qDebug()<<msg;
+		connect(m_jsContext, &JsContext::onJavaScriptInvoke, this, [this](const QString& type, const QString & param) {
+			WebView ^ webView = *((gcroot<WebView ^> *)this->m_host);
+			webView->emitJavaScriptInvoke(type, param);
 		});
 	}
 
 	WebView_Native::~WebView_Native() {
 		QObject::disconnect(m_view->page(), 0, this, 0);
+		QObject::disconnect(m_jsContext, 0, this, 0);
 	}
 
 	void WebView_Native::loadFinished(bool ok) {
-		//auto resourceAssembly = Reflection::Assembly::GetExecutingAssembly();
-		//auto resourceName = resourceAssembly->GetName()->Name + ".Resource";
-		//auto resourceManager = gcnew Resources::ResourceManager(resourceName, resourceAssembly);
-		//auto initScript_1 = cli::safe_cast<String^>(resourceManager->GetObject("qwebchannel"));
-		//pin_ptr<const WCHAR> str_initScript_1 = PtrToStringChars(initScript_1);
-		//m_view->page()->runJavaScript(QString::fromStdWString(str_initScript_1), [ok, this](const QVariant & result){
+		auto resourceAssembly = Reflection::Assembly::GetExecutingAssembly();
+		auto resourceName = resourceAssembly->GetName()->Name + ".Resource";
+		auto resourceManager = gcnew Resources::ResourceManager(resourceName, resourceAssembly);
+		auto initScript_1 = cli::safe_cast<String^>(resourceManager->GetObject("qwebchannel"));
+		pin_ptr<const WCHAR> str_initScript_1 = PtrToStringChars(initScript_1);
+		m_view->page()->runJavaScript(QString::fromStdWString(str_initScript_1), [ok, this](const QVariant & result) {
 			WebView ^ webView = *((gcroot<WebView ^> *)this->m_host);
 			webView->emitLoadFinish(ok);
-		//});
+		});
 	}
 	void WebView_Native::contentsSizeChanged(const QSizeF &size) {
 		WebView ^ webView = *((gcroot<WebView ^> *)this->m_host);
@@ -83,13 +85,6 @@ namespace WebViewer {
 	void WebView_Native::windowCloseRequested() {
 		WebView ^ webView = *((gcroot<WebView ^> *)this->m_host);
 		webView->emitWindowCloseRequested();
-	}
-
-	// ===================
-
-	void JsContext::onMsg(const QString &msg)
-	{
-		emit recvdMsg(msg);
 	}
 
 }
